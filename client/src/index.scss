@@ -34,7 +34,8 @@ canvas {
 	background-color: #1a1a1a;
 	border-radius: 0.5rem;
 	width: 1024px;
-	height: 480px;
+	min-width: 90vw;
+	max-width: 90vw;
 }
 
 h1 {

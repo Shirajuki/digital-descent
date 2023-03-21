@@ -9,6 +9,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@geckos.io/client": "^2.3.0",
 		"jotai": "^2.0.3",
 		"phaser": "^3.55.2",
 		"react": "^18.2.0",

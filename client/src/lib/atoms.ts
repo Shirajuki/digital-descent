@@ -1,5 +1,5 @@
 import { atom } from "jotai";
+import PhaserEngine from "./engine";
 
-const lobbyIdAtom = atom("");
-
-export { lobbyIdAtom };
+export const lobbyIdAtom = atom("");
+export const engineAtom = atom<PhaserEngine | null>(null);

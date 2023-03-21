@@ -320,6 +320,20 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.12.tgz#3a11d13e9a5b0c05db88991b234d8baba1f96487"
   integrity sha512-JOOxw49BVZx2/5tW3FqkdjSD/5gXYeVGPDcB0lvap0gLQshkh1Nyel1QazC+wNxus3xPlsYAgqU1BUmrmCvWtw==
 
+"@geckos.io/client@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@geckos.io/client/-/client-2.3.0.tgz#2f728d7ee2af4b305e3b3caf4c0cd141c10cc690"
+  integrity sha512-FpSSaRqvLaszUr73C2XQ9K/6ffQW6x8kdKHNrwHn8fMWB1ST3UrcS4izJZ5WMCmpysSwUFhXa8BIUzrESk9aCw==
+  dependencies:
+    "@geckos.io/common" "^2.3.0"
+
+"@geckos.io/common@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@geckos.io/common/-/common-2.3.0.tgz#423221cf42ca303f766483338e93942c4bfa3499"
+  integrity sha512-si9IYj1ZDlYZCtgynmeqqp9bQzvjFpSmzVj36AszcFiHp4Nz4J+gYfeo6MiKWjEJyCgxz6riOFZ0PCcPmMj6DA==
+  dependencies:
+    "@yandeu/events" "0.0.6"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -401,6 +415,11 @@
     "@babel/plugin-transform-react-jsx-source" "^7.19.6"
     magic-string "^0.27.0"
     react-refresh "^0.14.0"
+
+"@yandeu/events@0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@yandeu/events/-/events-0.0.6.tgz#34792ce8efab2ae7854fc1fdefc92c2d55a070a9"
+  integrity sha512-TDwm4kpur8fqWduqZmrgSc3VLYIOflroVB2JhsM8XxL7KrVzviCXdiEGdUmslGi+ymMl5VsmOlw1+5vjoAsQPg==
 
 ansi-styles@^3.2.1:
   version "3.2.1"
