@@ -1,10 +1,22 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import './index.css'
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Game from "./Game";
+import "./index.scss";
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <Game />,
+	},
+	{
+		path: "about",
+		element: <div>About</div>,
+	},
+]);
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+	<StrictMode>
+		<RouterProvider router={router} />
+	</StrictMode>
+);
