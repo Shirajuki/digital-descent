@@ -7,7 +7,7 @@ import geckos from "@geckos.io/client";
 
 function Game() {
 	// Retrieve lobby id
-	const [lobbyId, setLobbyId] = useAtom(lobbyIdAtom);
+	const [_lobbyId, setLobbyId] = useAtom(lobbyIdAtom);
 	const [engine, setEngine] = useAtom(engineAtom);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 

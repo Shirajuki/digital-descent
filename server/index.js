@@ -31,7 +31,7 @@ io.onConnection((channel) => {
 		const roomId = data.roomId;
 		if (!roomId) return;
 
-		// If room exists, join room
+		// If room exists, join the room
 		// TODO: set max number of players on room (4-6)?
 		// TODO: eventually add password lock as well?
 		if (rooms[roomId]) {
@@ -39,7 +39,7 @@ io.onConnection((channel) => {
 			rooms[roomId].players[data.id] = data;
 			io.room(roomId).emit("joined", roomId);
 		} else {
-			// Else create new room
+			// Else create a new room
 			channel.join(roomId);
 			rooms[roomId] = { players: {}, status: "started" };
 			io.room(roomId).emit("joined", roomId);

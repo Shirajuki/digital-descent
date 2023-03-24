@@ -7,11 +7,15 @@ import "./index.scss";
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <Game />,
+		element: <div>main menu</div>,
 	},
 	{
-		path: "about",
-		element: <div>About</div>,
+		path: "lobby",
+		element: <div>lobby</div>,
+	},
+	{
+		path: "game",
+		element: <Game />,
 	},
 ]);
 
