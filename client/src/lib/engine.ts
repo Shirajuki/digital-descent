@@ -228,7 +228,6 @@ export default class PhaserEngine {
 				scene.players.push(player);
 			}
 		}
-		// console.log(window.channel.id, serverPlayers, scene.players);
 
 		// Update player position
 		for (let i = 0; i < scene.players.length; i++) {

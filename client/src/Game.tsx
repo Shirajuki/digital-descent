@@ -1,4 +1,4 @@
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { engineAtom, lobbyIdAtom } from "./lib/atoms";
 
 import { useEffect, useRef, useState } from "react";
@@ -22,11 +22,13 @@ function Game() {
 		}
 	}, [setEngine]);
 
+	// Load geckos channel
 	useEffect(() => {
-		const nchannel = geckos({ port: 3000 }); // default port is 9208
+		const nchannel = geckos({ port: 3000 });
 		setChannel(nchannel);
 	}, []);
 
+	// Initialize listeners for geckos
 	useEffect(() => {
 		if (!channel || !engine) return;
 
@@ -34,22 +36,20 @@ function Game() {
 		(window as any).channel = channel;
 
 		channel.onConnect((error: any) => {
-			if (error) {
-				console.error(error.message);
-				return;
-			}
+			if (error) return console.error(error.message);
 
-			channel.on("chat message", (data: any) => {
-				console.log(`You got the message ${data}`);
+			channel.on("joined", (data: string) => {
+				setLobbyId(data);
+				console.log(`You joined the room ${data}`);
 			});
 
 			channel.on("update", (data: any) => {
 				engine.update(data);
 			});
 
-			channel.emit("chat message", "a short message sent to the server");
+			channel.emit("join", { roomId: "test-room" });
 		});
-	}, [channel, engine]);
+	}, [channel, engine, setLobbyId]);
 
 	return (
 		<div className="App">
