@@ -9,3 +9,10 @@ export type Player = {
 	};
 	animationState: string;
 };
+
+// Use window object to globally share data between components
+declare global {
+	interface Window {
+		channel: any;
+	}
+}

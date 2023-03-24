@@ -9,7 +9,6 @@ function Game() {
 	// Retrieve lobby id
 	const [lobbyId, setLobbyId] = useAtom(lobbyIdAtom);
 	const [engine, setEngine] = useAtom(engineAtom);
-	const [channel, setChannel] = useState<any>();
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	// Load game engine
@@ -22,34 +21,27 @@ function Game() {
 		}
 	}, [setEngine]);
 
-	// Load geckos channel
+	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
-		const nchannel = geckos({ port: 3000 });
-		setChannel(nchannel);
-	}, []);
+		if (!engine) return;
 
-	// Initialize listeners for geckos
-	useEffect(() => {
-		if (!channel || !engine) return;
-
-		// TODO: use a singleton object to share states between component and classes
-		(window as any).channel = channel;
+		const channel = geckos({ port: 3000 });
+		window.channel = channel;
 
 		channel.onConnect((error: any) => {
 			if (error) return console.error(error.message);
 
-			channel.on("joined", (data: string) => {
+			channel.on("joined", (data: any) => {
 				setLobbyId(data);
 				console.log(`You joined the room ${data}`);
 			});
-
 			channel.on("update", (data: any) => {
 				engine.update(data);
 			});
 
 			channel.emit("join", { roomId: "test-room" });
 		});
-	}, [channel, engine, setLobbyId]);
+	}, [engine, setLobbyId]);
 
 	return (
 		<div className="App">

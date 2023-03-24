@@ -3,15 +3,13 @@ import http from "http";
 import express from "express";
 import api from "./routes/api.js";
 
-const app = express();
+const rooms = {};
 
+const app = express();
 app.use("/api", api);
 
 const server = http.createServer(app);
 const io = geckos();
-
-const rooms = {};
-
 io.addServer(server);
 io.onConnection((channel) => {
 	console.log(`${channel.id} connected`);
@@ -50,7 +48,6 @@ io.onConnection((channel) => {
 	});
 
 	channel.on("update", (data) => {
-		console.log(channel.rooms);
 		if (rooms[channel.roomId]) {
 			rooms[channel.roomId].players[data.id] = data;
 			io.room(channel.roomId).emit("update", rooms[channel.roomId].players);
