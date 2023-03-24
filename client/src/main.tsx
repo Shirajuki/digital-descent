@@ -2,6 +2,7 @@ import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Game from "./Game";
+import Lobby from "./Lobby";
 import "./index.scss";
 
 const router = createBrowserRouter([
@@ -11,7 +12,7 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "lobby",
-		element: <div>lobby</div>,
+		element: <Lobby />,
 	},
 	{
 		path: "game",
