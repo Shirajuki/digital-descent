@@ -1,7 +1,5 @@
 <p align="center"><img src="./cover.png" alt="Cover image" height="400" /></p>
-<p>
-  <a href="https://azurlane.koumakan.jp/File:Minato_Aqua.png" style="color: gray; font-size: 10px;text-decoration: none">Illustration from Azur Lane Wiki</a>
-</p>
+
 <h1 align="center">Digital Descent: Managing the Agile Realm</h1>
 
 <p align="center">
@@ -13,7 +11,7 @@
   </a>
 </p>
 
-A Work In Progress Touhou, Azur Lane, Gundemonium Recollection and Harmful Park inspired danmaku JS horizontal scrolling 2D shooting game ⚓
+A Work In Progress game for teaching Agile Software Development concepts
 
 - P2P for (proximity) chat
 - Client-Server architecture
