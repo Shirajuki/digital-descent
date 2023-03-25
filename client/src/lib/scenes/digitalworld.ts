@@ -135,7 +135,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		const channel = (window as any).channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("update", {
+			channel.emit("game-update", {
 				id: channel.id,
 				x: this.player.x,
 				y: this.player.y,
