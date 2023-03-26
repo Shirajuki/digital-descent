@@ -27,5 +27,6 @@ export type ChatType = {
 declare global {
 	interface Window {
 		channel: any;
+		exploration: any;
 	}
 }
