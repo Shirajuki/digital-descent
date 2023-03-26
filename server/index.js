@@ -27,7 +27,15 @@ io.onConnection((channel) => {
 		}
 	});
 
-	channel.on("join", (data) => {
+	channel.on("message-send", (data) => {
+		if (data?.message)
+			io.room(channel.roomId).emit("message-update", {
+				sender: channel.id,
+				message: data.message,
+			});
+	});
+
+	channel.on("lobby-join", (data) => {
 		const roomId = data.roomId;
 		if (!roomId) return;
 
@@ -37,20 +45,23 @@ io.onConnection((channel) => {
 		if (rooms[roomId]) {
 			channel.join(roomId);
 			rooms[roomId].players[data.id] = data;
-			io.room(roomId).emit("joined", roomId);
+			io.room(roomId).emit("lobby-joined", roomId);
 		} else {
 			// Else create a new room
 			channel.join(roomId);
 			rooms[roomId] = { players: {}, status: "started" };
-			io.room(roomId).emit("joined", roomId);
+			io.room(roomId).emit("lobby-joined", roomId);
 		}
 		console.log(`${channel.id} joined room ${channel.roomId}`);
 	});
 
-	channel.on("update", (data) => {
+	channel.on("game-update", (data) => {
 		if (rooms[channel.roomId]) {
 			rooms[channel.roomId].players[data.id] = data;
-			io.room(channel.roomId).emit("update", rooms[channel.roomId].players);
+			io.room(channel.roomId).emit(
+				"game-update",
+				rooms[channel.roomId].players
+			);
 		}
 	});
 });
