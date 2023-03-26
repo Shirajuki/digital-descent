@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-export type Player = {
+export type PlayerType = {
 	sprite: Phaser.GameObjects.Sprite;
 	movement: {
 		left: boolean;
@@ -10,7 +10,12 @@ export type Player = {
 	animationState: string;
 };
 
-// Use window object to globally share data between components
+export type ChatType = {
+	sender: string;
+	message: string;
+};
+
+// Use window object to globally share data between modules and components
 declare global {
 	interface Window {
 		channel: any;
