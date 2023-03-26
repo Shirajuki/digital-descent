@@ -1,16 +1,16 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
 import { chatAtom, roomIdAtom } from "../../atoms";
-import { ChatType } from "../../types";
+import { ChatPropsType, ChatType } from "../../types";
+import { clearFocus } from "../../utils";
 
-function Chat() {
+function Chat({ channel, className = "" }: ChatPropsType) {
 	const roomId = useAtomValue(roomIdAtom);
 	const [chat, setChat] = useAtom(chatAtom);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const channel = window.channel;
 		if (channel && setChat && chatRef.current) {
 			console.log(chatRef.current);
 			channel.on("message-update", (data: any) => {
@@ -21,18 +21,24 @@ function Chat() {
 				}, 100);
 			});
 		}
-	}, [setChat, chatRef.current]);
+	}, [channel, setChat, chatRef.current]);
 
 	const sendMessage = (event: any) => {
 		event.preventDefault();
+		clearFocus();
 		const message = event.target.message.value;
 		window.channel.emit("message-send", { roomId, message });
 		if (inputRef.current) inputRef.current.value = "";
 	};
 
 	return (
-		<div className="bg-slate-700 bg-opacity-70 rounded-md p-4 max-w-md">
-			<div ref={chatRef} className="max-h-48 overflow-auto mb-4">
+		<div
+			className={`bg-gray-800 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${className}`}
+		>
+			<div
+				ref={chatRef}
+				className="max-h-48 w-[26rem] overflow-hidden hover:overflow-auto mb-4"
+			>
 				{chat.map((msg: ChatType, index: number) => (
 					<p key={index} className="pr-2">
 						{msg.sender}: {msg.message}
@@ -46,12 +52,14 @@ function Chat() {
 				<input
 					ref={inputRef}
 					className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm"
+					tabIndex={-1}
 					type="text"
 					id="message"
 					name="message"
 				/>
 				<button
 					className="py-1 px-3 bg-slate-600 text-sm rounded-sm"
+					tabIndex={-1}
 					type="submit"
 				>
 					Send

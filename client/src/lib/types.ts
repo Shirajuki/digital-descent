@@ -1,4 +1,12 @@
 import * as Phaser from "phaser";
+
+export type PropsType = {
+	className?: string;
+};
+export type ChatPropsType = {
+	channel: any;
+} & PropsType;
+
 export type PlayerType = {
 	sprite: Phaser.GameObjects.Sprite;
 	movement: {

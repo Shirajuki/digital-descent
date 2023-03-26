@@ -28,7 +28,7 @@ function Lobby() {
 	return (
 		<div className="App">
 			<div>Lobby</div>
-			<Chat />
+			<Chat channel={window.channel} />
 		</div>
 	);
 }

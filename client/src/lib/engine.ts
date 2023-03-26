@@ -2,6 +2,7 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH, SCALE } from "./constants";
 import * as Phaser from "phaser";
 import DigitalWorldScene from "./scenes/digitalworld";
 import Scene from "./scenes/scene";
+import { clearFocus } from "./utils";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -119,6 +120,11 @@ export default class PhaserEngine {
 		}
 	}
 
-	init() {}
+	init() {
+		this.canvas.addEventListener("mousedown", () => {
+			clearFocus();
+		});
+	}
+
 	render() {}
 }

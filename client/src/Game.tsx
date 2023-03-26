@@ -4,6 +4,7 @@ import { engineAtom, roomIdAtom } from "./lib/atoms";
 import { useEffect, useRef, useState } from "react";
 import PhaserEngine from "./lib/engine";
 import geckos from "@geckos.io/client";
+import Chat from "./lib/components/chat/Chat";
 
 function Game() {
 	// Retrieve lobby id
@@ -24,7 +25,6 @@ function Game() {
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
 		if (!engine) return;
-
 		const channel = geckos({ port: 3000 });
 		window.channel = channel;
 
@@ -47,7 +47,10 @@ function Game() {
 	return (
 		<div className="App">
 			<main>
-				<canvas id="canvas" className="canvas" ref={canvasRef}></canvas>
+				<div className="max-w-[90vw] min-w-[90vw] relative">
+					<canvas id="canvas" className="canvas" ref={canvasRef}></canvas>
+					<Chat channel={window.channel} className="absolute bottom-2 left-2" />
+				</div>
 			</main>
 		</div>
 	);

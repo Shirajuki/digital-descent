@@ -51,6 +51,7 @@ export default class DigitalWorldScene extends Scene {
 
 		// Keyboard input setup
 		this.input.keyboard.on("keydown", (event: any) => {
+			if (document?.activeElement?.nodeName === "INPUT") return;
 			const { key } = event;
 			if (key === "ArrowLeft" || key === "a") {
 				this.player.movement.left = true;
