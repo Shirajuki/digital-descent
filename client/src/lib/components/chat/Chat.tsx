@@ -23,12 +23,14 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 		}
 	}, [channel, setChat, chatRef.current]);
 
-	const sendMessage = (event: any) => {
+	const sendMessage = (event: any, clearFocus = false) => {
 		event.preventDefault();
-		clearFocus();
-		const message = event.target.message.value;
-		window.channel.emit("message-send", { roomId, message });
-		if (inputRef.current) inputRef.current.value = "";
+		if (inputRef.current) {
+			const message = inputRef.current.value;
+			window.channel.emit("message-send", { roomId, message });
+			inputRef.current.value = "";
+			inputRef.current.focus();
+		}
 	};
 
 	return (
@@ -45,26 +47,32 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 					</p>
 				))}
 			</div>
-			<form
-				onSubmit={sendMessage}
-				className="w-full flex justify-between gap-1"
-			>
-				<input
-					ref={inputRef}
-					className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm"
-					tabIndex={-1}
-					type="text"
-					id="message"
-					name="message"
-				/>
+			<div className="w-full flex justify-between gap-1">
+				<form
+					onSubmit={sendMessage}
+					className="w-full flex justify-between gap-1"
+				>
+					<input
+						ref={inputRef}
+						className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm"
+						tabIndex={-1}
+						type="text"
+						id="message"
+						name="message"
+					/>
+				</form>
 				<button
 					className="py-1 px-3 bg-slate-600 text-sm rounded-sm"
 					tabIndex={-1}
 					type="submit"
+					onClick={(event) => {
+						sendMessage(event);
+						clearFocus();
+					}}
 				>
 					Send
 				</button>
-			</form>
+			</div>
 		</div>
 	);
 }
