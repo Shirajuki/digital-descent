@@ -57,6 +57,10 @@ export default class ExplorationScene extends Scene {
 			this.add.sprite(distance, 0, "teleportingPad"),
 			this.add.sprite(-distance, 0, "teleportingPad"),
 		];
+		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
+			pad.setDepth(-10000);
+			pad.setAngle(20);
+		});
 
 		// Setup text
 		this.text = this.add.text(15, 15, "", {
@@ -144,6 +148,21 @@ export default class ExplorationScene extends Scene {
 		this.text.text = `Pos: ${Math.round(this.player.x)},${Math.round(
 			this.player.y
 		)}`.trim();
+
+		// Check player collision
+		for (let i = 0; i < this.teleportingPads.length; i++) {
+			const pad = this.teleportingPads[i];
+			if (
+				this.player.x < pad.x + pad.width + 100 &&
+				this.player.x + this.player.width > pad.x - 100 &&
+				this.player.y < pad.y + pad.height + 100 &&
+				this.player.height + this.player.y > pad.y - 100
+			) {
+				pad.setScale(12);
+			} else {
+				pad.setScale(6);
+			}
+		}
 
 		// Multiplayer test
 		const channel = (window as any).channel;

@@ -81,7 +81,8 @@ export default class DigitalWorldScene extends Scene {
 			}
 		});
 
-		this.scene.start("exploration");
+		this.game.currentScene = "exploration";
+		this.scene.start(this.game.currentScene);
 	}
 
 	getSpriteInfo() {

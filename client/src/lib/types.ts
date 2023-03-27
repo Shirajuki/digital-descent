@@ -31,3 +31,8 @@ declare global {
 		engine: any; // For testing and debugging purposes
 	}
 }
+declare module "phaser" {
+	interface Game {
+		currentScene: string;
+	}
+}
