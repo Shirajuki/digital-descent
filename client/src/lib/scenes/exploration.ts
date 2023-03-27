@@ -48,6 +48,7 @@ export default class ExplorationScene extends Scene {
 			down: false,
 		};
 		this.player.animationState = "idle";
+		this.player.onTeleportingPad = false;
 
 		// Create teleporting pad
 		const distance = 500;
@@ -159,10 +160,14 @@ export default class ExplorationScene extends Scene {
 				this.player.height + this.player.y > pad.y - 100
 			) {
 				pad.setScale(12);
+				this.player.onTeleportingPad = true;
 			} else {
 				pad.setScale(6);
+				this.player.onTeleportingPad = false;
 			}
 		}
+
+		// Trigger teleporting pad if enough players
 
 		// Multiplayer test
 		const channel = (window as any).channel;
@@ -173,6 +178,7 @@ export default class ExplorationScene extends Scene {
 				x: this.player.x,
 				y: this.player.y,
 				movement: this.player.movement,
+				onTeleportingPad: this.player.onTeleportingPad,
 			});
 		}
 	}

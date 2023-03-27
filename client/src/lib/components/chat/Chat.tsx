@@ -12,7 +12,6 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 
 	useEffect(() => {
 		if (channel && setChat && chatRef.current) {
-			console.log(chatRef.current);
 			channel.on("message-update", (data: any) => {
 				setChat((ochat) => [...ochat, data]);
 				(window as any).test = chatRef.current;
