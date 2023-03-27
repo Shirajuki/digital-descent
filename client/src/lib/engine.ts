@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import DigitalWorldScene from "./scenes/digitalworld";
 import Scene from "./scenes/scene";
 import { clearFocus } from "./utils";
+import ExplorationScene from "./scenes/exploration";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -45,7 +46,10 @@ export default class PhaserEngine {
 				queue: true,
 			} as Phaser.Types.Core.InputConfig,
 			backgroundColor: "#1a1a1a",
-			scene: [DigitalWorldScene],
+			scene: [
+				new DigitalWorldScene("digitalworld"),
+				new ExplorationScene("exploration"),
+			],
 			render: { pixelArt: true, antialias: true },
 		};
 		this.game = new Phaser.Game(this.config);
@@ -121,6 +125,7 @@ export default class PhaserEngine {
 	}
 
 	init() {
+		window.engine = this;
 		this.canvas.addEventListener("mousedown", () => {
 			clearFocus();
 		});

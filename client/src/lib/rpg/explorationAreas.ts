@@ -1,5 +1,8 @@
 // Different areas to explore
 // Each area costs 1 step, taking a chosen amount of steps will finish the quest
+
+import { weightedRandom } from "../utils";
+
 // - Monster should scale to players level? - type battleon style
 export enum Area {
 	RESTING = "resting",
@@ -43,10 +46,19 @@ const subQuestArea = () => {
 	return { type: Area.SUBQUEST, data: data };
 };
 
-export const areas = [
-	restingArea,
-	treasureArea,
-	challengeArea,
-	monsterArea,
-	subQuestArea,
+export const AREAS = [
+	{ area: restingArea, weight: 20 },
+	{ area: treasureArea, weight: 10 },
+	{ area: challengeArea, weight: 30 },
+	{ area: monsterArea, weight: 60 },
+	{ area: subQuestArea, weight: 15 },
 ];
+
+export const generateAvailableAreas = () => {
+	const areas = [];
+	for (let i = 0; i < 4; i++) {
+		const area = AREAS[weightedRandom(AREAS)].area();
+		areas.push(area);
+	}
+	return areas;
+};

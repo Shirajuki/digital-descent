@@ -1,12 +1,19 @@
 import { SCALE, SPEED } from "../constants";
+import { generateAvailableAreas } from "../rpg/explorationAreas";
 import Scene from "./scene";
 
-export default class DigitalWorldScene extends Scene {
+export default class ExplorationScene extends Scene {
+	public teleportingPads: any[] = [];
+
 	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
 	}
 	preload() {
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
+			frameWidth: 32,
+			frameHeight: 32,
+		});
+		this.load.spritesheet("teleportingPad", "sprites/spritesheet.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
@@ -42,8 +49,17 @@ export default class DigitalWorldScene extends Scene {
 		};
 		this.player.animationState = "idle";
 
+		// Create teleporting pad
+		const distance = 500;
+		this.teleportingPads = [
+			this.add.sprite(0, distance, "teleportingPad"),
+			this.add.sprite(0, -distance, "teleportingPad"),
+			this.add.sprite(distance, 0, "teleportingPad"),
+			this.add.sprite(-distance, 0, "teleportingPad"),
+		];
+
 		// Setup text
-		this.text = this.add.text(15, 15, this.getSpriteInfo(), {
+		this.text = this.add.text(15, 15, "", {
 			fontFamily: "Arial",
 			fontSize: "32px",
 			color: "#fff",
@@ -81,18 +97,8 @@ export default class DigitalWorldScene extends Scene {
 			}
 		});
 
-		this.scene.start("exploration");
-	}
-
-	getSpriteInfo() {
-		return `
-State: ${this.player.animationState}
-Frame: ${
-			this.player.animationState === "idle"
-				? this.player.anims.currentFrame.index
-				: this.player.anims.currentFrame.index + 10
-		}
-Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
+		const areas = generateAvailableAreas();
+		console.log(areas);
 	}
 
 	update(_time: any, _delta: any) {
@@ -135,7 +141,9 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		this.player.setDepth(this.player.y);
 
 		// Update text
-		this.text.text = this.getSpriteInfo();
+		this.text.text = `Pos: ${Math.round(this.player.x)},${Math.round(
+			this.player.y
+		)}`.trim();
 
 		// Multiplayer test
 		const channel = (window as any).channel;

@@ -6,5 +6,6 @@ export default class Scene extends Phaser.Scene {
 	public text: any;
 	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
+		console.log("LOAD SCENE", config);
 	}
 }
