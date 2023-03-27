@@ -1,9 +1,11 @@
 import { SCALE, SPEED } from "../constants";
-import { generateAvailableAreas } from "../rpg/explorationAreas";
+import { AREAS, generateAvailableAreas } from "../rpg/explorationAreas";
 import Scene from "./scene";
 
 export default class ExplorationScene extends Scene {
 	public teleportingPads: any[] = [];
+	public areas: any;
+	public currentArea: any;
 
 	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
@@ -53,14 +55,14 @@ export default class ExplorationScene extends Scene {
 		// Create teleporting pad
 		const distance = 500;
 		this.teleportingPads = [
-			this.add.sprite(0, distance, "teleportingPad"),
+			this.add.sprite(-distance, 0, "teleportingPad"),
 			this.add.sprite(0, -distance, "teleportingPad"),
 			this.add.sprite(distance, 0, "teleportingPad"),
-			this.add.sprite(-distance, 0, "teleportingPad"),
+			this.add.sprite(0, distance, "teleportingPad"),
 		];
 		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
 			pad.setDepth(-10000);
-			pad.setAngle(20);
+			pad.setAngle(180);
 		});
 
 		// Setup text
@@ -102,8 +104,8 @@ export default class ExplorationScene extends Scene {
 			}
 		});
 
-		const areas = generateAvailableAreas();
-		console.log(areas);
+		this.currentArea = AREAS.STARTING.area();
+		this.areas = generateAvailableAreas();
 	}
 
 	update(_time: any, _delta: any) {
@@ -160,14 +162,21 @@ export default class ExplorationScene extends Scene {
 				this.player.height + this.player.y > pad.y - 100
 			) {
 				pad.setScale(12);
-				this.player.onTeleportingPad = true;
+				this.player.onTeleportingPad = i;
+				break;
 			} else {
 				pad.setScale(6);
-				this.player.onTeleportingPad = false;
+				this.player.onTeleportingPad = -1;
 			}
 		}
 
 		// Trigger teleporting pad if enough players
+		if (this.player.onTeleportingPad > -1) {
+			// Get area data
+			const area = this.areas[this.player.onTeleportingPad];
+			console.log(this.areas, area, this.player.onTeleportingPad);
+			// Load area data
+		}
 
 		// Multiplayer test
 		const channel = (window as any).channel;

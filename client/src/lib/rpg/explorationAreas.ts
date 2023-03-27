@@ -4,18 +4,18 @@
 import { weightedRandom } from "../utils";
 
 // - Monster should scale to players level? - type battleon style
-export enum Area {
-	RESTING = "resting",
-	TREASURE = "treasure",
-	CHALLENGE = "challenge",
-	MONSTER = "monster",
-	SUBQUEST = "SUBQUEST",
-}
+const startingArea = () => {
+	console.log("starting area");
+	// Player HP and MP full hp
+	// Starting point, nothing fancy
+	const data = {};
+	return { type: "STARTING", data: data };
+};
 const restingArea = () => {
 	console.log("resting area");
 	// Player HP and MP partly recover
 	const data = {};
-	return { type: Area.RESTING, data: data };
+	return { type: "RESTING", data: data };
 };
 const treasureArea = () => {
 	console.log("treasure area");
@@ -23,7 +23,7 @@ const treasureArea = () => {
 	// Skill UP
 	// Pandoras box
 	const data = {};
-	return { type: Area.TREASURE, data: data };
+	return { type: "TREASURE", data: data };
 };
 const challengeArea = () => {
 	console.log("challenge area"); // Tower of trials, exp and treasure, but difficult
@@ -31,33 +31,35 @@ const challengeArea = () => {
 	// - monster
 	// - puzzle
 	const data = {};
-	return { type: Area.CHALLENGE, data: data };
+	return { type: "CHALLENGE", data: data };
 };
 const monsterArea = () => {
 	console.log("monster area");
 	// Pick and spawn a set of monsters, turn based gameplay
 	const data = {};
-	return { type: Area.MONSTER, data: data };
+	return { type: "MONSTER", data: data };
 };
 const subQuestArea = () => {
 	console.log("more quests area"); // More rewards, but is only applied to current exploration run
 	// The choice of doing more quests for rewards
 	const data = {};
-	return { type: Area.SUBQUEST, data: data };
+	return { type: "SUBQUEST", data: data };
 };
 
-export const AREAS = [
-	{ area: restingArea, weight: 20 },
-	{ area: treasureArea, weight: 10 },
-	{ area: challengeArea, weight: 30 },
-	{ area: monsterArea, weight: 60 },
-	{ area: subQuestArea, weight: 15 },
-];
+export const AREAS = {
+	STARTING: { area: startingArea, weight: 0 },
+	RESTING: { area: restingArea, weight: 20 },
+	TREASURE: { area: treasureArea, weight: 10 },
+	CHALLENGE: { area: challengeArea, weight: 30 },
+	MONSTER: { area: monsterArea, weight: 60 },
+	SUBQUEST: { area: subQuestArea, weight: 15 },
+};
 
 export const generateAvailableAreas = () => {
 	const areas = [];
+	const availableAreas = Object.values(AREAS);
 	for (let i = 0; i < 4; i++) {
-		const area = AREAS[weightedRandom(AREAS)].area();
+		const area = availableAreas[weightedRandom(availableAreas)].area();
 		areas.push(area);
 	}
 	return areas;
