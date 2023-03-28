@@ -1,7 +1,13 @@
 import { SCALE, SPEED } from "../constants";
+import { generateEasyMonsters } from "../rpg/monster";
+import Battle from "../rpg/systems/battleSystem";
+import { ELEMENT } from "../rpg/utils";
 import Scene from "./scene";
 
-export default class DigitalWorldScene extends Scene {
+export default class BattleScene extends Scene {
+	public battle: any;
+	public monsters: any;
+
 	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
 	}
@@ -41,59 +47,48 @@ export default class DigitalWorldScene extends Scene {
 			down: false,
 		};
 		this.player.animationState = "idle";
-
-		// Setup text
-		this.text = this.add.text(15, 15, this.getSpriteInfo(), {
-			fontFamily: "Arial",
-			fontSize: "32px",
-			color: "#fff",
-		});
+		this.player.stats = {
+			HP: 10,
+			ATK: 10,
+			DEF: 10,
+			SPEED: 10,
+			ELEMENT: ELEMENT.LIGHT,
+			LEVEL: 1,
+		};
+		this.players.push(this.player);
 
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
-		// Keyboard input setup
-		this.input.keyboard.on("keydown", (event: any) => {
-			if (document?.activeElement?.nodeName === "INPUT") return;
-			const { key } = event;
-			if (key === "ArrowLeft" || key === "a") {
-				this.player.movement.left = true;
-				this.player.facing = 0;
-			} else if (key === "ArrowUp" || key === "w") {
-				this.player.movement.up = true;
-			} else if (key === "ArrowRight" || key === "d") {
-				this.player.movement.right = true;
-				this.player.facing = 1;
-			} else if (key === "ArrowDown" || key === "s") {
-				this.player.movement.down = true;
-			}
-		});
-		this.input.keyboard.on("keyup", (event: any) => {
-			const { key } = event;
-			if (key === "ArrowLeft" || key === "a") {
-				this.player.movement.left = false;
-			} else if (key === "ArrowUp" || key === "w") {
-				this.player.movement.up = false;
-			} else if (key === "ArrowRight" || key === "d") {
-				this.player.movement.right = false;
-			} else if (key === "ArrowDown" || key === "s") {
-				this.player.movement.down = false;
-			}
-		});
+		this.game.currentScene = "battle";
 
-		this.game.currentScene = "digitalworld";
-		this.game.scene.switch("digitalworld", "exploration");
-	}
+		let monsters = generateEasyMonsters(3);
+		this.monsters = [];
+		monsters.forEach((monster: any, index: number) => {
+			// TODO: update sprite
+			const monsterSprite = this.add.sprite(
+				200,
+				70 * index - 70,
+				"player"
+			) as any;
+			monsterSprite.setScale(SCALE);
+			monsterSprite.play("idle");
+			monsterSprite.flipX = true;
+			monsterSprite.animationState = "idle";
+			monsterSprite.stats = monster.stats;
+			this.monsters.push(monsterSprite);
+		});
+		this.battle = new Battle(this.players, this.monsters);
 
-	getSpriteInfo() {
-		return `
-State: ${this.player.animationState}
-Frame: ${
-			this.player.animationState === "idle"
-				? this.player.anims.currentFrame.index
-				: this.player.anims.currentFrame.index + 10
+		// Update battle state in server if not set yet
+		const channel = (window as any).channel;
+		if (channel) {
+			if (!this.player.id) this.player.id = channel.id;
+			channel.emit("battle-initialize", {
+				id: channel.id,
+				battle: this.battle,
+			});
 		}
-Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 	}
 
 	update(_time: any, _delta: any) {
@@ -135,9 +130,6 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		// Render depth of player
 		this.player.setDepth(this.player.y);
 
-		// Update text
-		this.text.text = this.getSpriteInfo();
-
 		// Multiplayer test
 		const channel = (window as any).channel;
 		if (channel) {
@@ -147,6 +139,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 				x: this.player.x,
 				y: this.player.y,
 				movement: this.player.movement,
+				stats: this.player.stats,
 			});
 		}
 	}

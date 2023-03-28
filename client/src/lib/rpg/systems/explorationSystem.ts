@@ -1,7 +1,6 @@
 // Different areas to explore
 // Each area costs 1 step, taking a chosen amount of steps will finish the quest
-
-import { weightedRandom } from "../utils";
+import { weightedRandom } from "../../utils";
 
 // - Monster should scale to players level? - type battleon style
 const startingArea = () => {

@@ -4,6 +4,7 @@ import DigitalWorldScene from "./scenes/digitalworld";
 import Scene from "./scenes/scene";
 import { clearFocus } from "./utils";
 import ExplorationScene from "./scenes/exploration";
+import BattleScene from "./scenes/battle";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -43,6 +44,7 @@ export default class PhaserEngine {
 			scene: [
 				new DigitalWorldScene({ key: "digitalworld" }),
 				new ExplorationScene({ key: "exploration" }),
+				new BattleScene({ key: "battle" }),
 			],
 			render: { pixelArt: true, antialias: true },
 		};
@@ -53,13 +55,13 @@ export default class PhaserEngine {
 	update(data: any) {
 		const scene = this.game.scene.getScene(this.game.currentScene) as Scene;
 		const serverPlayers = Object.keys(data).filter(
-			(p: any) => p != "undefined" && p != (window as any).channel.id
+			(p: any) => p != "undefined"
 		);
 
 		// Remove duplicate players and also remove disconnected
 		for (let i = 0; i < scene.players.length; i++) {
 			const player = scene.players[i];
-			if (!serverPlayers.includes(player.id)) {
+			if (!serverPlayers.includes(player.id) && scene.player != player.id) {
 				const p = scene.players.splice(i, 1)[0];
 				p.destroy();
 			}

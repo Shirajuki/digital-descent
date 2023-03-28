@@ -1,3 +1,5 @@
+import { weightedRandom } from "../utils";
+import { ELEMENT } from "./utils";
 /*
 
 Code Smell - Monsters that are made of lines of code or bugs that have come to life.
@@ -55,4 +57,46 @@ API Firefly - This firefly-like monster emits bright flashes of API responses th
 
 */
 
-export const presets = [];
+const slime = () => {
+	return {
+		name: "slime",
+		sprite: "./spritesheet.png",
+		stats: {
+			HP: 10,
+			ATK: 10,
+			DEF: 10,
+			SPEED: 5,
+			ELEMENT: ELEMENT.WATER,
+			LEVEL: 1,
+		},
+	};
+};
+
+export const EASY_MONSTERS = [
+	{ monster: slime, weight: 1 },
+	{ monster: slime, weight: 20 },
+];
+export const generateEasyMonsters = (num: number = 3) => {
+	const monsters = [];
+	for (let i = 0; i < num; i++) {
+		const monster = EASY_MONSTERS[weightedRandom(EASY_MONSTERS)].monster();
+		monsters.push(monster);
+	}
+	return monsters;
+};
+
+export const generateMediumMonsters = () => {
+	return [];
+};
+export const generateDifficultMonsters = () => {
+	return [];
+};
+
+export const MONSTER_PRESET_BY_DIFFICULTY = {
+	1: ["easy", "easy", "easy"],
+	2: ["easy", "easy", "easy"],
+	3: ["easy", "easy", "easy"],
+	4: ["easy", "easy", "easy"],
+	5: ["easy", "easy", "easy"],
+	6: ["easy", "easy", "easy"],
+};

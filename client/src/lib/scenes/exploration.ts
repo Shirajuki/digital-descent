@@ -1,5 +1,8 @@
 import { SCALE, SPEED } from "../constants";
-import { AREAS, generateAvailableAreas } from "../rpg/explorationAreas";
+import {
+	AREAS,
+	generateAvailableAreas,
+} from "../rpg/systems/explorationSystem";
 import Scene from "./scene";
 
 export default class ExplorationScene extends Scene {
@@ -104,6 +107,8 @@ export default class ExplorationScene extends Scene {
 			}
 		});
 
+		this.game.currentScene = "exploration";
+		this.game.scene.switch("exploration", "battle");
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
 	}
