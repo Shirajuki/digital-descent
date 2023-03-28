@@ -1,12 +1,21 @@
 import { SCALE, SPEED } from "../constants";
+import { AREAS, generateAvailableAreas } from "../rpg/explorationAreas";
 import Scene from "./scene";
 
-export default class DigitalWorldScene extends Scene {
+export default class ExplorationScene extends Scene {
+	public teleportingPads: any[] = [];
+	public areas: any;
+	public currentArea: any;
+
 	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
 	}
 	preload() {
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
+			frameWidth: 32,
+			frameHeight: 32,
+		});
+		this.load.spritesheet("teleportingPad", "sprites/spritesheet.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
@@ -41,9 +50,23 @@ export default class DigitalWorldScene extends Scene {
 			down: false,
 		};
 		this.player.animationState = "idle";
+		this.player.onTeleportingPad = false;
+
+		// Create teleporting pad
+		const distance = 500;
+		this.teleportingPads = [
+			this.add.sprite(-distance, 0, "teleportingPad"),
+			this.add.sprite(0, -distance, "teleportingPad"),
+			this.add.sprite(distance, 0, "teleportingPad"),
+			this.add.sprite(0, distance, "teleportingPad"),
+		];
+		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
+			pad.setDepth(-10000);
+			pad.setAngle(180);
+		});
 
 		// Setup text
-		this.text = this.add.text(15, 15, this.getSpriteInfo(), {
+		this.text = this.add.text(15, 15, "", {
 			fontFamily: "Arial",
 			fontSize: "32px",
 			color: "#fff",
@@ -81,19 +104,8 @@ export default class DigitalWorldScene extends Scene {
 			}
 		});
 
-		this.game.currentScene = "exploration";
-		this.scene.start(this.game.currentScene);
-	}
-
-	getSpriteInfo() {
-		return `
-State: ${this.player.animationState}
-Frame: ${
-			this.player.animationState === "idle"
-				? this.player.anims.currentFrame.index
-				: this.player.anims.currentFrame.index + 10
-		}
-Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
+		this.currentArea = AREAS.STARTING.area();
+		this.areas = generateAvailableAreas();
 	}
 
 	update(_time: any, _delta: any) {
@@ -136,7 +148,35 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		this.player.setDepth(this.player.y);
 
 		// Update text
-		this.text.text = this.getSpriteInfo();
+		this.text.text = `Pos: ${Math.round(this.player.x)},${Math.round(
+			this.player.y
+		)}`.trim();
+
+		// Check player collision
+		for (let i = 0; i < this.teleportingPads.length; i++) {
+			const pad = this.teleportingPads[i];
+			if (
+				this.player.x < pad.x + pad.width + 100 &&
+				this.player.x + this.player.width > pad.x - 100 &&
+				this.player.y < pad.y + pad.height + 100 &&
+				this.player.height + this.player.y > pad.y - 100
+			) {
+				pad.setScale(12);
+				this.player.onTeleportingPad = i;
+				break;
+			} else {
+				pad.setScale(6);
+				this.player.onTeleportingPad = -1;
+			}
+		}
+
+		// Trigger teleporting pad if enough players
+		if (this.player.onTeleportingPad > -1) {
+			// Get area data
+			const area = this.areas[this.player.onTeleportingPad];
+			console.log(this.areas, area, this.player.onTeleportingPad);
+			// Load area data
+		}
 
 		// Multiplayer test
 		const channel = (window as any).channel;
@@ -147,6 +187,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 				x: this.player.x,
 				y: this.player.y,
 				movement: this.player.movement,
+				onTeleportingPad: this.player.onTeleportingPad,
 			});
 		}
 	}

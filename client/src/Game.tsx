@@ -14,8 +14,9 @@ function Game() {
 
 	// Load game engine
 	useEffect(() => {
-		if (canvasRef.current) {
+		if (canvasRef.current && !window.engine) {
 			const nengine = new PhaserEngine(canvasRef.current);
+			window.engine = nengine;
 			nengine.init();
 			nengine.render();
 			setEngine(nengine);

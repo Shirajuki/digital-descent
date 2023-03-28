@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import DigitalWorldScene from "./scenes/digitalworld";
 import Scene from "./scenes/scene";
 import { clearFocus } from "./utils";
+import ExplorationScene from "./scenes/exploration";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -32,27 +33,25 @@ export default class PhaserEngine {
 				arcade: {
 					gravity: { y: 0 },
 					fps: 60,
-					debug: false,
-					debugShowBody: true,
-					debugShowStaticBody: true,
-					debugShowVelocity: true,
-					debugVelocityColor: 0xffff00,
-					debugBodyColor: 0x0000ff,
-					debugStaticBodyColor: 0xffffff,
+					debug: true,
 				},
 			},
 			input: {
 				queue: true,
 			} as Phaser.Types.Core.InputConfig,
 			backgroundColor: "#1a1a1a",
-			scene: [DigitalWorldScene],
+			scene: [
+				new DigitalWorldScene({ key: "digitalworld" }),
+				new ExplorationScene({ key: "exploration" }),
+			],
 			render: { pixelArt: true, antialias: true },
 		};
 		this.game = new Phaser.Game(this.config);
+		this.game.currentScene = "digitalworld";
 	}
 
 	update(data: any) {
-		const scene = this.game.scene.scenes[0] as Scene;
+		const scene = this.game.scene.getScene(this.game.currentScene) as Scene;
 		const serverPlayers = Object.keys(data).filter(
 			(p: any) => p != "undefined" && p != (window as any).channel.id
 		);
@@ -121,6 +120,7 @@ export default class PhaserEngine {
 	}
 
 	init() {
+		window.engine = this;
 		this.canvas.addEventListener("mousedown", () => {
 			clearFocus();
 		});

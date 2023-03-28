@@ -27,5 +27,12 @@ export type ChatType = {
 declare global {
 	interface Window {
 		channel: any;
+		exploration: any;
+		engine: any; // For testing and debugging purposes
+	}
+}
+declare module "phaser" {
+	interface Game {
+		currentScene: string;
 	}
 }
