@@ -55,13 +55,15 @@ export default class BattleScene extends Scene {
 		};
 		this.player.animationState = "idle";
 		this.player.stats = {
-			HP: 10,
+			HP: 100,
+			MAXHP: 100,
 			ATK: 10,
 			DEF: 10,
 			SPEED: 10,
 			ELEMENT: ELEMENT.LIGHT,
 			LEVEL: 1,
 		};
+		this.player.name = "Player 1";
 		this.players.push(this.player);
 
 		// Setup camera to follow player
@@ -83,6 +85,7 @@ export default class BattleScene extends Scene {
 			monsterSprite.setDepth(monsterSprite.y);
 			monsterSprite.flipX = false;
 			monsterSprite.animationState = "idle";
+			monsterSprite.name = monster.name;
 			monsterSprite.stats = monster.stats;
 			this.monsters.push(monsterSprite);
 		});

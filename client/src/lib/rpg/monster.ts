@@ -63,6 +63,7 @@ const slime = () => {
 		sprite: "./spritesheet.png",
 		stats: {
 			HP: 10,
+			MAXHP: 10,
 			ATK: 10,
 			DEF: 10,
 			SPEED: 5,

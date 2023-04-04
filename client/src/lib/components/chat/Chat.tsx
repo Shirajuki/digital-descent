@@ -41,7 +41,7 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 				className="max-h-48 w-[26rem] overflow-hidden hover:overflow-auto mb-4"
 			>
 				{chat.map((msg: ChatType, index: number) => (
-					<p key={index} className="pr-2">
+					<p key={index} className="pr-2 [overflow-wrap:break-word]">
 						{msg.sender}: {msg.message}
 					</p>
 				))}
@@ -53,7 +53,7 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 				>
 					<input
 						ref={inputRef}
-						className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm"
+						className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm px-2"
 						tabIndex={-1}
 						type="text"
 						id="message"
