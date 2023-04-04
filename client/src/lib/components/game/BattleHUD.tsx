@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import Battle from "../../rpg/systems/battleSystem";
 
@@ -8,6 +9,7 @@ const BattleHUD = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
 	const [battle, setBattle] = useState<Battle>();
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
+	const turnIndicator = useRef(null);
 
 	useEffect(() => {
 		if (engine?.game?.scene?.getScene(engine.game.currentScene)) {
@@ -19,9 +21,14 @@ const BattleHUD = () => {
 		}
 	}, [engine]);
 
+	useEffect(() => {
+		turnIndicator.current && autoAnimate(turnIndicator.current);
+	}, [turnIndicator]);
+
 	const normalAttack = useCallback(() => {
 		battle?.doAttack("normal");
 		forceUpdate();
+		setTimeout(() => forceUpdate(), 4000);
 	}, [battle]);
 	const chargeAttack = useCallback(() => {
 		battle?.doAttack("charge");
@@ -35,7 +42,10 @@ const BattleHUD = () => {
 	return (
 		<div className="absolute top-0 left-0 z-10 w-full h-full">
 			{/* Battle turn indicator */}
-			<div className="absolute top-5 left-5 flex flex-col gap-2 w-24 [user-select:none]">
+			<div
+				ref={turnIndicator}
+				className="absolute top-5 left-5 flex flex-col gap-2 w-24 [user-select:none]"
+			>
 				{battle?.turnQueue.map((turn, i) => (
 					<div
 						className="bg-slate-500 rounded-sm w-11/12 text-sm py-1 px-2 first:py-2 first:w-full"
@@ -50,7 +60,10 @@ const BattleHUD = () => {
 			<div className="absolute top-5 right-5 text-right [user-select:none] flex flex-col gap-4">
 				{battle?.players?.map((player, i) => (
 					<div
-						className="relative flex flex-col items-end"
+						className="relative flex flex-col items-end transition-all"
+						style={{
+							paddingRight: battle?.turnQueue[0]?.id === player.id ? 20 : 0,
+						}}
 						key={`${player.id}-${i}`}
 					>
 						<div className="flex items-center gap-3">
@@ -67,7 +80,14 @@ const BattleHUD = () => {
 							<p className="-my-[1px]">
 								<span>{player.stats.HP}</span> / {player.stats.MAXHP}
 							</p>
-							<div className="bg-green-500 h-[0.35rem] w-full"></div>
+							<div
+								className="bg-green-500 h-[0.35rem] w-full transition-all"
+								style={{
+									width: Math.floor(
+										(player.stats.HP / player.stats.MAXHP) * 100
+									),
+								}}
+							></div>
 						</div>
 					</div>
 				))}
