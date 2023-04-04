@@ -8,4 +8,7 @@ export default class Scene extends Phaser.Scene {
 		super(config);
 		console.log("LOAD SCENE", config);
 	}
+	create() {
+		console.log("CREATE SCENE", this);
+	}
 }

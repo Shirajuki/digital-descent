@@ -5,6 +5,7 @@ import { ELEMENT } from "../rpg/utils";
 import Scene from "./scene";
 
 export default class BattleScene extends Scene {
+	public centerPoint: any;
 	public battle: any;
 	public monsters: any;
 
@@ -18,6 +19,7 @@ export default class BattleScene extends Scene {
 		});
 	}
 	create() {
+		super.create();
 		// Animation set
 		this.anims.create({
 			key: "idle",
@@ -36,9 +38,14 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
+		// Create center point
+		this.centerPoint = this.add.sprite(0, 50, "player");
+		this.centerPoint.setVisible(false);
+
 		// Create player
-		this.player = this.add.sprite(0, 0, "player");
+		this.player = this.add.sprite(200, 0, "player");
 		this.player.setScale(SCALE);
+		this.player.flipX = true;
 		this.player.play("idle");
 		this.player.movement = {
 			left: false,
@@ -58,7 +65,7 @@ export default class BattleScene extends Scene {
 		this.players.push(this.player);
 
 		// Setup camera to follow player
-		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
+		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		this.game.currentScene = "battle";
 
@@ -67,13 +74,14 @@ export default class BattleScene extends Scene {
 		monsters.forEach((monster: any, index: number) => {
 			// TODO: update sprite
 			const monsterSprite = this.add.sprite(
-				200,
-				70 * index - 70,
+				-200 - 20 * index,
+				70 * index - 70 * Math.floor(monsters.length / 2),
 				"player"
 			) as any;
 			monsterSprite.setScale(SCALE);
 			monsterSprite.play("idle");
-			monsterSprite.flipX = true;
+			monsterSprite.setDepth(monsterSprite.y);
+			monsterSprite.flipX = false;
 			monsterSprite.animationState = "idle";
 			monsterSprite.stats = monster.stats;
 			this.monsters.push(monsterSprite);

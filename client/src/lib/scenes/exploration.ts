@@ -24,6 +24,7 @@ export default class ExplorationScene extends Scene {
 		});
 	}
 	create() {
+		super.create();
 		// Animation set
 		this.anims.create({
 			key: "idle",
@@ -108,7 +109,6 @@ export default class ExplorationScene extends Scene {
 		});
 
 		this.game.currentScene = "exploration";
-		this.game.scene.switch("exploration", "battle");
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
 	}
@@ -195,5 +195,7 @@ export default class ExplorationScene extends Scene {
 				onTeleportingPad: this.player.onTeleportingPad,
 			});
 		}
+
+		this.game.scene.switch("exploration", "battle");
 	}
 }

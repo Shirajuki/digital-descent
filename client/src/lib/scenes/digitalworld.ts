@@ -12,6 +12,7 @@ export default class DigitalWorldScene extends Scene {
 		});
 	}
 	create() {
+		super.create();
 		// Animation set
 		this.anims.create({
 			key: "idle",
@@ -82,7 +83,6 @@ export default class DigitalWorldScene extends Scene {
 		});
 
 		this.game.currentScene = "digitalworld";
-		this.game.scene.switch("digitalworld", "exploration");
 	}
 
 	getSpriteInfo() {
@@ -149,5 +149,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 				movement: this.player.movement,
 			});
 		}
+
+		this.game.scene.switch("digitalworld", "battle");
 	}
 }
