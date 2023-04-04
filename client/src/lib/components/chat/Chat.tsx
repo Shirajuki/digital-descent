@@ -34,7 +34,7 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 
 	return (
 		<div
-			className={`bg-gray-800 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${className}`}
+			className={`bg-gray-800 z-20 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${className}`}
 		>
 			<div
 				ref={chatRef}
