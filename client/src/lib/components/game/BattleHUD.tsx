@@ -1,26 +1,13 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import { ELEMENT } from "../../rpg/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import BattleScene from "../../scenes/battle";
 import Battle from "../../rpg/systems/battleSystem";
 
-const testTurn = [
-	{ id: "p1", name: "Player 1" },
-	{ id: "mob", name: "Monster 1" },
-	{ id: "mob", name: "Monster 2" },
-	{ id: "mob", name: "Monster 3" },
-];
-const testParty = [
-	{
-		id: "p1",
-		name: "Player 1",
-		stats: { hp: 100, maxHp: 100, level: 1, element: ELEMENT.FIRE },
-	},
-];
 const BattleHUD = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
 	const [battle, setBattle] = useState<Battle>();
+	const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
 	useEffect(() => {
 		if (engine?.game?.scene?.getScene(engine.game.currentScene)) {
@@ -31,6 +18,19 @@ const BattleHUD = () => {
 			console.log(battleScene.battle);
 		}
 	}, [engine]);
+
+	const normalAttack = useCallback(() => {
+		battle?.doAttack("normal");
+		forceUpdate();
+	}, [battle]);
+	const chargeAttack = useCallback(() => {
+		battle?.doAttack("charge");
+		forceUpdate();
+	}, [battle]);
+	const specialAttack = useCallback(() => {
+		battle?.doAttack("special");
+		forceUpdate();
+	}, [battle]);
 
 	return (
 		<div className="absolute top-0 left-0 z-10 w-full h-full">
@@ -46,7 +46,7 @@ const BattleHUD = () => {
 				))}
 			</div>
 
-			{/* Party / Player status information */}
+			{/* Party / player status information */}
 			<div className="absolute top-5 right-5 text-right [user-select:none] flex flex-col gap-4">
 				{battle?.players?.map((player, i) => (
 					<div
@@ -94,9 +94,18 @@ const BattleHUD = () => {
 					<button className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]"></button>
 					<button className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]"></button>
 
-					<button className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"></button>
-					<button className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]"></button>
-					<button className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]"></button>
+					<button
+						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"
+						onClick={() => specialAttack()}
+					></button>
+					<button
+						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]"
+						onClick={() => chargeAttack()}
+					></button>
+					<button
+						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]"
+						onClick={() => normalAttack()}
+					></button>
 				</div>
 			</div>
 		</div>

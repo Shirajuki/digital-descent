@@ -5,6 +5,12 @@ export default class Battle {
 	public players: any[];
 	public monsters: any[];
 	public turnQueue: any[];
+	public state: any = {
+		attacker: null,
+		target: null,
+		attacking: false,
+		attacked: false,
+	};
 
 	constructor(players: any[], monsters: any[]) {
 		this.players = players;
@@ -13,7 +19,6 @@ export default class Battle {
 		this.initializeQueue();
 		console.log("INITIALIZE BATTLE", players, monsters);
 		console.log(this.turnQueue);
-
 		(window as any).battle = this;
 	}
 
@@ -22,11 +27,12 @@ export default class Battle {
 		queue.sort((a, b) => b.stats.SPEED - a.stats.SPEED);
 		this.turnQueue = queue;
 	}
+
 	calculateDamage(player: any, monster: any) {
 		const elementEffectiveness =
 			ELEMENT_EFFECTIVENESS_TABLE[player.stats.ELEMENT][monster.stats.ELEMENT];
 		const damage =
-			(((((2 * player.stats.level) / 5 + 2) * player.stats.ATK) /
+			(((((2 * player.stats.LEVEL) / 5 + 2) * player.stats.ATK) /
 				monster.stats.DEF) *
 				elementEffectiveness *
 				randomInt(217, 255)) /
@@ -34,10 +40,28 @@ export default class Battle {
 		return { damage: Math.max(damage, 1), elementEffectiveness };
 	}
 
-	doTurn() {
+	doAttack(type: "normal" | "charge" | "special") {
+		if (type === "normal") {
+			console.log("normal");
+			if (!this.state.attacker) {
+				this.state = {
+					attacker: this.players[0],
+					target: this.state.target ?? this.monsters[0],
+					attacking: true,
+					attacked: false,
+				};
+			}
+		} else if (type === "charge") {
+			console.log("charge");
+		} else if (type === "special") {
+			console.log("special");
+		}
+	}
+
+	updateTurn() {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
-		console.log(attacker);
 		this.turnQueue.push(attacker); // Put attacker as last element in queue
+		// console.log(this.turnQueue);
 	}
 }
 

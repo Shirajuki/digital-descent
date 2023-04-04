@@ -1,4 +1,4 @@
-import { SCALE, SPEED } from "../constants";
+import { SCALE } from "../constants";
 import { generateEasyMonsters } from "../rpg/monster";
 import Battle from "../rpg/systems/battleSystem";
 import { ELEMENT } from "../rpg/utils";
@@ -8,6 +8,14 @@ export default class BattleScene extends Scene {
 	public centerPoint: any;
 	public battle: any;
 	public monsters: any;
+	public pointerSprite: any;
+	public playerLocations = {
+		0: { x: 200, y: 0 },
+		1: { x: 200, y: -70 },
+		2: { x: 200, y: 70 },
+		3: { x: 270, y: -35 },
+		4: { x: 270, y: 35 },
+	};
 
 	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
 		super(config);
@@ -20,6 +28,7 @@ export default class BattleScene extends Scene {
 	}
 	create() {
 		super.create();
+
 		// Animation set
 		this.anims.create({
 			key: "idle",
@@ -71,10 +80,12 @@ export default class BattleScene extends Scene {
 
 		this.game.currentScene = "battle";
 
+		// Generate monsters
 		let monsters = generateEasyMonsters(3);
 		this.monsters = [];
 		monsters.forEach((monster: any, index: number) => {
-			// TODO: update sprite
+			// TODO: update sprite with actual sprite image
+			// Create monster sprite
 			const monsterSprite = this.add.sprite(
 				-200 - 20 * index,
 				70 * index - 70 * Math.floor(monsters.length / 2),
@@ -87,9 +98,39 @@ export default class BattleScene extends Scene {
 			monsterSprite.animationState = "idle";
 			monsterSprite.name = monster.name;
 			monsterSprite.stats = monster.stats;
+
+			// Create hp bar on top of sprite
+			const monsterSpriteHp = this.add.rectangle(
+				monsterSprite.x,
+				monsterSprite.y - 30,
+				80,
+				5,
+				0x22c55e
+			);
+			monsterSpriteHp.setDepth(1000);
+			monsterSprite.hp = monsterSpriteHp;
 			this.monsters.push(monsterSprite);
 		});
+
 		this.battle = new Battle(this.players, this.monsters);
+
+		// Create pointer on top of first monster
+		this.pointerSprite = this.add.rectangle(
+			this.monsters[0].x,
+			this.monsters[0].y - 50,
+			25,
+			15,
+			0xffffff
+		) as any;
+
+		// Set monster to be clickable
+		this.monsters.forEach((monster: any, index: number) => {
+			monster.setInteractive();
+			monster.on("pointerup", () => {
+				if (!this.battle.state.attacking)
+					this.battle.state.target = this.battle.monsters[index];
+			});
+		});
 
 		// Update battle state in server if not set yet
 		const channel = (window as any).channel;
@@ -103,39 +144,88 @@ export default class BattleScene extends Scene {
 	}
 
 	update(_time: any, _delta: any) {
-		// Update player
-		let speed = SPEED;
-		const movement = Object.values(this.player.movement).filter(
-			(v) => v
-		).length;
-		if (movement > 1) speed *= 0.71;
-		if (this.player.movement.left) this.player.x -= speed;
-		if (this.player.movement.up) this.player.y -= speed;
-		if (this.player.movement.right) this.player.x += speed;
-		if (this.player.movement.down) this.player.y += speed;
 		if (
-			this.player.movement.left &&
-			!this.player.flipX &&
-			!this.player.movement.right
+			this.battle?.state?.attacker &&
+			this.battle?.state?.attacker?.id === this.player.id
 		) {
-			this.player.facing = 0;
-			this.player.flipX = true;
-		} else if (
-			this.player.movement.right &&
-			this.player.flipX &&
-			!this.player.movement.left
-		) {
-			this.player.facing = 1;
-			this.player.flipX = false;
+			if (!this.battle.state.attacked) {
+				this.tweens.add({
+					targets: this.player,
+					x: this.battle.state.target.x + 30,
+					y: this.battle.state.target.y + 1,
+					ease: "Back.easeOut",
+					duration: 2000,
+					delay: 500,
+					repeat: -1,
+				});
+				if (
+					Math.abs(this.player.x - this.battle.state.target.x) < 70 &&
+					Math.abs(this.player.y - this.battle.state.target.y) < 70
+				) {
+					if (!this.battle.state.attacked) {
+						const dmg = this.battle.calculateDamage(
+							this.battle.state.attacker,
+							this.battle.state.target
+						);
+						console.log(dmg);
+						this.battle.state.target.stats.HP = Math.max(
+							this.battle.state.target.stats.HP - dmg.damage,
+							0
+						);
+					}
+					this.battle.state.attacked = true;
+					this.tweens.add({
+						targets: this.battle.state.target,
+						alpha: 0,
+						ease: "Cubic.easeOut",
+						delay: 140,
+						duration: 100,
+						repeat: 1,
+						yoyo: true,
+					});
+				}
+			} else {
+				this.tweens.add({
+					targets: this.player,
+					x: this.playerLocations[0].x,
+					y: this.playerLocations[0].y,
+					ease: "Back.easeOut",
+					duration: 2000,
+					delay: 500,
+					repeat: -1,
+				});
+				if (
+					Math.abs(this.player.x - this.playerLocations[0].x) < 10 &&
+					Math.abs(this.player.y - this.playerLocations[0].y) < 10
+				) {
+					this.battle.state.attacking = false;
+					this.battle.state.attacked = false;
+					this.battle.state.attacker = null;
+					this.battle.updateTurn();
+				}
+			}
 		}
 
-		// Animate player
-		if (this.player.animationState !== "idle" && movement === 0) {
-			this.player.animationState = "idle";
-			this.player.play("idle");
-		} else if (this.player.animationState !== "run" && movement > 0) {
-			this.player.animationState = "run";
-			this.player.play("run");
+		// Move pointer to target monster
+		this.tweens.add({
+			targets: this.pointerSprite,
+			x: this.battle?.state?.target?.x ?? this.monsters[0].x,
+			y: (this.battle?.state?.target?.y ?? this.monsters[0].y) - 50,
+			depth: (this.battle?.state?.target?.y ?? this.monsters[0].y) + 1,
+			ease: "Linear",
+			duration: 100,
+			delay: 0,
+			repeat: -1,
+		});
+
+		// Update monster HP
+		for (let i = 0; i < this.monsters.length; i++) {
+			const monster = this.monsters[i];
+			monster.hp.width = Phaser.Math.Linear(
+				monster.hp.width,
+				80 * (monster.stats.HP / monster.stats.MAXHP),
+				0.05
+			);
 		}
 
 		// Render depth of player
