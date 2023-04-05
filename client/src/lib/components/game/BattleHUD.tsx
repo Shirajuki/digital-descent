@@ -46,10 +46,6 @@ const BattleHUD = () => {
 			setScaling(
 				(document.querySelector("canvas")?.clientWidth ?? 1157) / 1157
 			);
-			console.log(
-				"scaling",
-				(document.querySelector("canvas")?.clientWidth ?? 1157) / 1157
-			);
 		});
 	}, [setScaling]);
 
