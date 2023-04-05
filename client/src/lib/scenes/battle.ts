@@ -1,5 +1,5 @@
 import { SCALE } from "../constants";
-import { generateEasyMonsters } from "../rpg/monster";
+import { generateMonstersByPreset } from "../rpg/monster";
 import BattleSystem from "../rpg/systems/battleSystem";
 import { ELEMENT } from "../constants";
 import Scene from "./scene";
@@ -96,7 +96,7 @@ export default class BattleScene extends Scene {
 		this.game.currentScene = "battle";
 
 		// Generate monsters
-		let monsters = generateEasyMonsters(3);
+		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
 		this.monsters = [];
 		monsters.forEach((monster: any, index: number) => {
 			// TODO: update sprite with actual sprite image

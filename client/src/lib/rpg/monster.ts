@@ -82,20 +82,27 @@ export const EASY_MONSTERS = [
 	{ monster: slime, weight: 1 },
 	{ monster: slime, weight: 20 },
 ];
-export const generateEasyMonsters = (num: number = 3) => {
+export const MEDIUM_MONSTERS = [
+	{ monster: slime, weight: 1 },
+	{ monster: slime, weight: 20 },
+];
+export const HARD_MONSTERS = [
+	{ monster: slime, weight: 1 },
+	{ monster: slime, weight: 20 },
+];
+
+export const generateMonstersByPreset = (preset: string[]) => {
 	const monsters = [];
-	for (let i = 0; i < num; i++) {
-		const monster = EASY_MONSTERS[weightedRandom(EASY_MONSTERS)].monster();
-		monsters.push(monster);
+	for (let i = 0; i < preset.length; i++) {
+		const type = preset[i];
+		if (type === "easy")
+			monsters.push(EASY_MONSTERS[weightedRandom(EASY_MONSTERS)].monster());
+		else if (type === "medium")
+			monsters.push(MEDIUM_MONSTERS[weightedRandom(MEDIUM_MONSTERS)].monster());
+		else if (type === "hard")
+			monsters.push(HARD_MONSTERS[weightedRandom(HARD_MONSTERS)].monster());
 	}
 	return monsters;
-};
-
-export const generateMediumMonsters = () => {
-	return [];
-};
-export const generateDifficultMonsters = () => {
-	return [];
 };
 
 export const MONSTER_PRESET_BY_DIFFICULTY = {
