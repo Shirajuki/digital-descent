@@ -1,10 +1,14 @@
 import { SCALE } from "../constants";
 import { generateMonstersByPreset } from "../rpg/monster";
 import BattleSystem from "../rpg/systems/battleSystem";
-import { ELEMENT } from "../constants";
 import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
+
+/*
+engine.game.scene.getScene(engine.game.currentScene).switch("exploration")
+engine.game.scene.getScene(engine.game.currentScene).switch("battle")
+*/
 
 export default class BattleScene extends Scene {
 	public centerPoint: any;
@@ -63,18 +67,36 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
+		this.game.currentScene = "battle";
+
+		// Update battle state in server if not set yet
+		const channel = (window as any).channel;
+		if (channel) {
+			if (!this.player.id) this.player.id = channel.id;
+			channel.emit("battle-initialize", {
+				id: channel.id,
+				battle: this.battle,
+			});
+		}
+	}
+
+	initialize(): void {
+		super.initialize();
+
 		// Create center point for camera lock on
 		this.centerPoint = this.add.rectangle(0, 50, 50, 50, 0xffffff);
 		this.centerPoint.setVisible(false);
 
 		// Create player
+		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1");
-		this.players.push(this.player);
+		this.players = [
+			...this.players.filter((p) => p.id !== oldPlayer.id),
+			this.player,
+		];
 
-		// Setup camera to follow player
+		// Setup camera to follow centerpoint
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
-
-		this.game.currentScene = "battle";
 
 		// Generate monsters
 		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
@@ -130,15 +152,7 @@ export default class BattleScene extends Scene {
 			});
 		});
 
-		// Update battle state in server if not set yet
-		const channel = (window as any).channel;
-		if (channel) {
-			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("battle-initialize", {
-				id: channel.id,
-				battle: this.battle,
-			});
-		}
+		this.observable.notify();
 	}
 
 	update(_time: any, _delta: any) {

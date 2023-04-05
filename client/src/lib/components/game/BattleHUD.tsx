@@ -26,6 +26,7 @@ const BattleHUD = () => {
 			const battleScene: BattleScene = engine.game.scene.getScene(
 				engine.game.currentScene
 			) as BattleScene;
+			console.log(battleScene);
 			if (battleScene) {
 				setBattle(battleScene.battle);
 				setPlayer(battleScene.player);

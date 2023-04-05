@@ -9,6 +9,8 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 		if (engine) engine.observable.subscribe(() => forceUpdate());
 	}, [engine, forceUpdate]);
 
+	console.log(engine?.game.currentScene);
+
 	return <>{engine?.game.currentScene === "battle" ? <BattleHUD /> : <></>}</>;
 }
 

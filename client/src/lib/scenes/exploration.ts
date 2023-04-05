@@ -1,4 +1,4 @@
-import { SCALE, SPEED } from "../constants";
+import { SPEED } from "../constants";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
 import {
@@ -48,32 +48,6 @@ export default class ExplorationScene extends Scene {
 			repeat: -1,
 		});
 
-		// Create player
-		this.player = initializePlayer(this, "Player 1");
-
-		// Create teleporting pad
-		const distance = 500;
-		this.teleportingPads = [
-			this.add.sprite(-distance, 0, "teleportingPad"),
-			this.add.sprite(0, -distance, "teleportingPad"),
-			this.add.sprite(distance, 0, "teleportingPad"),
-			this.add.sprite(0, distance, "teleportingPad"),
-		];
-		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
-			pad.setDepth(-10000);
-			pad.setAngle(180);
-		});
-
-		// Setup text
-		this.text = this.add.text(15, 15, "", {
-			fontFamily: "Arial",
-			fontSize: "32px",
-			color: "#fff",
-		});
-
-		// Setup camera to follow player
-		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
-
 		// Keyboard input setup
 		this.input.keyboard.on("keydown", (event: any) => {
 			if (document?.activeElement?.nodeName === "INPUT") return;
@@ -104,6 +78,42 @@ export default class ExplorationScene extends Scene {
 		});
 
 		this.game.currentScene = "exploration";
+	}
+
+	initialize(): void {
+		super.initialize();
+
+		// Create player
+		const oldPlayer = this.player;
+		this.player = initializePlayer(this, "Player 1");
+		this.players = [
+			...this.players.filter((p) => p.id !== oldPlayer.id),
+			this.player,
+		];
+
+		// Create teleporting pad
+		const distance = 500;
+		this.teleportingPads = [
+			this.add.sprite(-distance, 0, "teleportingPad"),
+			this.add.sprite(0, -distance, "teleportingPad"),
+			this.add.sprite(distance, 0, "teleportingPad"),
+			this.add.sprite(0, distance, "teleportingPad"),
+		];
+		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
+			pad.setDepth(-10000);
+			pad.setAngle(180);
+		});
+
+		// Setup text
+		this.text = this.add.text(15, 15, "", {
+			fontFamily: "Arial",
+			fontSize: "32px",
+			color: "#fff",
+		});
+
+		// Setup camera to follow player
+		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
+
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
 	}
@@ -191,6 +201,6 @@ export default class ExplorationScene extends Scene {
 			});
 		}
 
-		this.game.scene.switch("exploration", "battle");
+		// this.switch("battle");
 	}
 }

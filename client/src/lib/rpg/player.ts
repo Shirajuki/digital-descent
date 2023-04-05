@@ -32,5 +32,7 @@ export const initializePlayer = (scene: any, name: string) => {
 		MAXCHARGE: 5,
 	};
 	player.name = "Player 1";
+	const channel = (window as any).channel;
+	if (channel) player.id = channel.id;
 	return player;
 };

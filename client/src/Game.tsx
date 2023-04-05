@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
 import { engineAtom, roomIdAtom } from "./lib/atoms";
-
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useRef } from "react";
 import PhaserEngine from "./lib/engine";
 import geckos from "@geckos.io/client";
 import Chat from "./lib/components/chat/Chat";

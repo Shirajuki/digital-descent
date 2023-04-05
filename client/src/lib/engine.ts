@@ -92,6 +92,7 @@ export default class PhaserEngine {
 		// Update player position
 		for (let i = 0; i < scene.players.length; i++) {
 			const player = scene.players[i];
+			if (player.id === scene.player.id) continue;
 			player.x = data[player.id].x;
 			player.y = data[player.id].y;
 			player.movement = data[player.id].movement;
