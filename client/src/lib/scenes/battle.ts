@@ -76,7 +76,7 @@ export default class BattleScene extends Scene {
 		this.player.animationState = "idle";
 		this.player.stats = {
 			HP: 100,
-			ATK: 10,
+			ATK: 20,
 			DEF: 10,
 			SPEED: 10,
 			ELEMENT: ELEMENT.LIGHT,
@@ -114,6 +114,7 @@ export default class BattleScene extends Scene {
 			monsterSprite.name = monster.name + " " + index;
 			monsterSprite.stats = monster.stats;
 			monsterSprite.battleStats = monster.battleStats;
+			monsterSprite.type = monster.type;
 
 			// Create hp bar on top of sprite
 			const monsterSpriteHp = this.add.rectangle(
@@ -163,11 +164,11 @@ export default class BattleScene extends Scene {
 		// Animate battle attacking state for player
 		const attacker = this.battle?.state?.attacker;
 		const target = this.battle?.state?.target;
-		if (attacker && target && attacker.id === this.player.id) {
+		if (attacker && target) {
 			if (!this.battle.state.attacked) {
 				this.tweens.add({
 					targets: attacker,
-					x: target.x + 30,
+					x: target.x + 30 * (attacker.x > target.x ? 1 : -1),
 					y: target.y + 1,
 					ease: "Back.easeOut",
 					duration: 2000,
@@ -204,16 +205,16 @@ export default class BattleScene extends Scene {
 			} else {
 				this.tweens.add({
 					targets: attacker,
-					x: this.playerLocations[0].x,
-					y: this.playerLocations[0].y,
+					x: this.battle.state.initialPosition.x,
+					y: this.battle.state.initialPosition.y,
 					ease: "Back.easeOut",
 					duration: 2000,
 					delay: 500,
 					repeat: -1,
 				});
 				if (
-					Math.abs(attacker.x - this.playerLocations[0].x) < 10 &&
-					Math.abs(attacker.y - this.playerLocations[0].y) < 10
+					Math.abs(attacker.x - this.battle.state.initialPosition.x) < 10 &&
+					Math.abs(attacker.y - this.battle.state.initialPosition.y) < 10
 				) {
 					this.battle.state.attacking = false;
 					this.battle.state.attacked = false;
@@ -226,8 +227,8 @@ export default class BattleScene extends Scene {
 		// Move pointer to player's target monster
 		this.tweens.add({
 			targets: this.pointerSprite,
-			x: this.battle?.state?.target?.x ?? this.monsters[0].x,
-			y: (this.battle?.state?.target?.y ?? this.monsters[0].y) - 50,
+			x: this.battle?.state?.target?.x ?? -1000,
+			y: (this.battle?.state?.target?.y ?? -1000) - 50,
 			depth: (this.battle?.state?.target?.y ?? this.monsters[0].y) + 1,
 			ease: "Linear",
 			duration: 100,
@@ -252,19 +253,16 @@ export default class BattleScene extends Scene {
 			monster.hp.width = Phaser.Math.Linear(
 				monster.hp.width,
 				80 * (monster.battleStats.HP / monster.stats.HP),
-				0.05
+				0.08
 			);
+			monster.hp.x = monster.x;
+			monster.hp.y = monster.y - 30;
 
 			// Check and set monster dead status if hp == 0
 			if (monster.hp.width < 0.1) {
 				console.log("Killed monster", monster.name);
 				monster.battleStats.dead = true;
 				this.battle.queueRemove(monster);
-
-				// Update pointer to the next alive monster
-				this.battle.state.target = this.monsters.find(
-					(m: any) => !m.battleStats.dead
-				);
 			}
 		}
 

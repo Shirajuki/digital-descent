@@ -60,6 +60,7 @@ API Firefly - This firefly-like monster emits bright flashes of API responses th
 const slime = () => {
 	return {
 		name: "slime",
+		type: "monster",
 		sprite: "./spritesheet.png",
 		stats: {
 			HP: 10,

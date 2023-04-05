@@ -92,7 +92,8 @@ const BattleHUD = () => {
 						</div>
 						<div className="pr-5 flex flex-col items-end w-32">
 							<p className="-my-[1px]">
-								<span>{player.battleStats.HP}</span> / {player.stats.HP}
+								<span>{Math.ceil(player.battleStats.HP)}</span> /{" "}
+								{player.stats.HP}
 							</p>
 							<div
 								className="bg-green-500 h-[0.35rem] w-full transition-all"

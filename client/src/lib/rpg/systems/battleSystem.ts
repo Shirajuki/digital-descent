@@ -12,7 +12,9 @@ export default class BattleSystem {
 		target: null,
 		attacking: false,
 		attacked: false,
+		initialPosition: { x: 0, y: 0 },
 	};
+	public playerTarget: any = null;
 
 	constructor(players: any[], monsters: any[]) {
 		this.players = players;
@@ -53,13 +55,16 @@ export default class BattleSystem {
 	doAttack(type: "normal" | "charge" | "special") {
 		if (type === "normal") {
 			console.log("normal");
+			// TODO: pick correct player at certain position and index
 			if (!this.state.attacker) {
 				this.state = {
 					attacker: this.players[0],
 					target: this.state.target ?? this.monsters[0],
 					attacking: true,
 					attacked: false,
+					initialPosition: { x: this.players[0].x, y: this.players[0].y },
 				};
+				this.playerTarget = this.state.target;
 			}
 		} else if (type === "charge") {
 			console.log("charge");
@@ -72,6 +77,23 @@ export default class BattleSystem {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
 		this.turnQueue.push(attacker); // Put attacker as last element in queue
 		this.observable.notify();
+
+		const nextTurn = this.turnQueue[0];
+		if (nextTurn?.type === "monster") {
+			// TODO: pick random players weighted by taunt level
+			this.state = {
+				attacker: nextTurn,
+				target: this.players[0],
+				attacking: true,
+				attacked: false,
+				initialPosition: { x: nextTurn.x, y: nextTurn.y },
+			};
+		} else {
+			// Update pointer to the next alive monster if players turn next
+			if (this.playerTarget.battleStats.dead)
+				this.state.target = this.monsters.find((e) => !e.battleStats.dead);
+			else this.state.target = this.playerTarget;
+		}
 	}
 }
 
