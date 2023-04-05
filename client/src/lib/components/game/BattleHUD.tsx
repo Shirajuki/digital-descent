@@ -51,7 +51,7 @@ const BattleHUD = () => {
 		battle?.doAttack("special");
 	}, [battle]);
 
-	if (!player) return <></>;
+	if (!player || !battle) return <></>;
 
 	return (
 		<div className="absolute top-0 left-0 z-10 w-full h-full">
@@ -60,7 +60,7 @@ const BattleHUD = () => {
 				ref={turnIndicator}
 				className="absolute top-5 left-5 flex flex-col gap-2 w-24 [user-select:none]"
 			>
-				{battle?.turnQueue.map((turn, i) => (
+				{battle.turnQueue.map((turn, i) => (
 					<div
 						className="bg-slate-500 rounded-sm w-11/12 text-sm py-1 px-2 first:py-2 first:w-full"
 						key={`${turn.name}-${i}`}
@@ -72,11 +72,11 @@ const BattleHUD = () => {
 
 			{/* Party / player status information */}
 			<div className="absolute top-5 right-5 text-right [user-select:none] flex flex-col gap-4">
-				{battle?.players?.map((player, i) => (
+				{battle.players?.map((player, i) => (
 					<div
 						className="relative flex flex-col items-end transition-all"
 						style={{
-							paddingRight: battle?.turnQueue[0]?.id === player.id ? 20 : 0,
+							paddingRight: battle.turnQueue[0]?.id === player.id ? 20 : 0,
 						}}
 						key={`${player.id}-${i}`}
 					>

@@ -227,8 +227,8 @@ export default class BattleScene extends Scene {
 		// Move pointer to player's target monster
 		this.tweens.add({
 			targets: this.pointerSprite,
-			x: this.battle?.state?.target?.x ?? -1000,
-			y: (this.battle?.state?.target?.y ?? -1000) - 50,
+			x: this.battle?.state?.target?.x ?? -2000,
+			y: (this.battle?.state?.target?.y ?? -2000) - 50,
 			depth: (this.battle?.state?.target?.y ?? this.monsters[0].y) + 1,
 			ease: "Linear",
 			duration: 100,
@@ -242,6 +242,14 @@ export default class BattleScene extends Scene {
 			if (monster.battleStats.dead) {
 				this.tweens.add({
 					targets: monster,
+					alpha: 0,
+					ease: "Linear",
+					duration: 300,
+					delay: 0,
+					repeat: -1,
+				});
+				this.tweens.add({
+					targets: monster.hp,
 					alpha: 0,
 					ease: "Linear",
 					duration: 300,
