@@ -71,7 +71,9 @@ const slime = () => {
 		},
 		battleStats: {
 			HP: 10,
+			dead: false,
 		},
+		itemDrop: [],
 	};
 };
 

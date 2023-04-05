@@ -30,6 +30,14 @@ export default class BattleSystem {
 		this.turnQueue = queue;
 	}
 
+	queueRemove(entity: any) {
+		this.turnQueue = this.turnQueue.filter((e) => e != entity);
+	}
+
+	queueAdd(entity: any) {
+		this.turnQueue.push(entity);
+	}
+
 	calculateDamage(player: any, monster: any) {
 		const elementEffectiveness =
 			ELEMENT_EFFECTIVENESS_TABLE[player.stats.ELEMENT][monster.stats.ELEMENT];

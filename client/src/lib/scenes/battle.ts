@@ -111,7 +111,7 @@ export default class BattleScene extends Scene {
 			monsterSprite.setDepth(monsterSprite.y);
 			monsterSprite.flipX = false;
 			monsterSprite.animationState = "idle";
-			monsterSprite.name = monster.name;
+			monsterSprite.name = monster.name + " " + index;
 			monsterSprite.stats = monster.stats;
 			monsterSprite.battleStats = monster.battleStats;
 
@@ -143,7 +143,7 @@ export default class BattleScene extends Scene {
 		this.monsters.forEach((monster: any, index: number) => {
 			monster.setInteractive();
 			monster.on("pointerup", () => {
-				if (!this.battle.state.attacking)
+				if (!this.battle.state.attacking && !monster.battleStats.dead)
 					this.battle.state.target = this.battle.monsters[index];
 			});
 		});
@@ -161,45 +161,38 @@ export default class BattleScene extends Scene {
 
 	update(_time: any, _delta: any) {
 		// Animate battle attacking state for player
-		if (
-			this.battle?.state?.attacker &&
-			this.battle?.state?.attacker?.id === this.player.id
-		) {
+		const attacker = this.battle?.state?.attacker;
+		const target = this.battle?.state?.target;
+		if (attacker && target && attacker.id === this.player.id) {
 			if (!this.battle.state.attacked) {
 				this.tweens.add({
-					targets: this.battle.state.attacker,
-					x: this.battle.state.target.x + 30,
-					y: this.battle.state.target.y + 1,
+					targets: attacker,
+					x: target.x + 30,
+					y: target.y + 1,
 					ease: "Back.easeOut",
 					duration: 2000,
 					delay: 500,
 					repeat: -1,
 				});
 				if (
-					Math.abs(this.battle.state.attacker.x - this.battle.state.target.x) <
-						70 &&
-					Math.abs(this.battle.state.attacker.y - this.battle.state.target.y) <
-						70
+					Math.abs(attacker.x - target.x) < 70 &&
+					Math.abs(attacker.y - target.y) < 70
 				) {
 					if (!this.battle.state.attacked) {
-						const dmg = this.battle.calculateDamage(
-							this.battle.state.attacker,
-							this.battle.state.target
-						);
+						const dmg = this.battle.calculateDamage(attacker, target);
 						console.log(dmg);
-						this.battle.state.target.battleStats.HP = Math.max(
-							this.battle.state.target.battleStats.HP - dmg.damage,
+						target.battleStats.HP = Math.max(
+							target.battleStats.HP - dmg.damage,
 							0
 						);
-						this.battle.state.attacker.battleStats.CHARGE = Math.min(
-							this.battle.state.attacker.battleStats.CHARGE + 1,
-							this.battle.state.attacker.battleStats.MAXCHARGE
+						attacker.battleStats.CHARGE = Math.min(
+							attacker.battleStats.CHARGE + 1,
+							attacker.battleStats.MAXCHARGE
 						);
-						console.log(this.battle.state.attacker.battleStats.CHARGE);
 					}
 					this.battle.state.attacked = true;
 					this.tweens.add({
-						targets: this.battle.state.target,
+						targets: target,
 						alpha: 0,
 						ease: "Cubic.easeOut",
 						delay: 140,
@@ -210,7 +203,7 @@ export default class BattleScene extends Scene {
 				}
 			} else {
 				this.tweens.add({
-					targets: this.battle.state.attacker,
+					targets: attacker,
 					x: this.playerLocations[0].x,
 					y: this.playerLocations[0].y,
 					ease: "Back.easeOut",
@@ -219,10 +212,8 @@ export default class BattleScene extends Scene {
 					repeat: -1,
 				});
 				if (
-					Math.abs(this.battle.state.attacker.x - this.playerLocations[0].x) <
-						10 &&
-					Math.abs(this.battle.state.attacker.y - this.playerLocations[0].y) <
-						10
+					Math.abs(attacker.x - this.playerLocations[0].x) < 10 &&
+					Math.abs(attacker.y - this.playerLocations[0].y) < 10
 				) {
 					this.battle.state.attacking = false;
 					this.battle.state.attacked = false;
@@ -247,11 +238,34 @@ export default class BattleScene extends Scene {
 		// Update monster HP using lerp
 		for (let i = 0; i < this.monsters.length; i++) {
 			const monster = this.monsters[i];
+			if (monster.battleStats.dead) {
+				this.tweens.add({
+					targets: monster,
+					alpha: 0,
+					ease: "Linear",
+					duration: 300,
+					delay: 0,
+					repeat: -1,
+				});
+				continue;
+			}
 			monster.hp.width = Phaser.Math.Linear(
 				monster.hp.width,
 				80 * (monster.battleStats.HP / monster.stats.HP),
 				0.05
 			);
+
+			// Check and set monster dead status if hp == 0
+			if (monster.hp.width < 0.1) {
+				console.log("Killed monster", monster.name);
+				monster.battleStats.dead = true;
+				this.battle.queueRemove(monster);
+
+				// Update pointer to the next alive monster
+				this.battle.state.target = this.monsters.find(
+					(m: any) => !m.battleStats.dead
+				);
+			}
 		}
 
 		// Render depth of player
