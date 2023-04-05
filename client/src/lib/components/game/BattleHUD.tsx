@@ -23,6 +23,7 @@ const BattleHUD = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
 	const [battle, setBattle] = useState<Battle>();
 	const [player, setPlayer] = useState<any>();
+	const [scaling, setScaling] = useState(1);
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
 	const [turnIndicator] = useAutoAnimate();
 	const [chargeIndicator] = useAutoAnimate();
@@ -37,9 +38,20 @@ const BattleHUD = () => {
 				setPlayer(battleScene.player);
 				battleScene.battle.observable.subscribe(() => forceUpdate());
 			}
-			console.log(battleScene.battle);
 		}
 	}, [engine]);
+
+	useEffect(() => {
+		window.addEventListener("resize", (event) => {
+			setScaling(
+				(document.querySelector("canvas")?.clientWidth ?? 1157) / 1157
+			);
+			console.log(
+				"scaling",
+				(document.querySelector("canvas")?.clientWidth ?? 1157) / 1157
+			);
+		});
+	}, [setScaling]);
 
 	const normalAttack = useCallback(() => {
 		battle?.doAttack("normal");
@@ -54,7 +66,10 @@ const BattleHUD = () => {
 	if (!player || !battle) return <></>;
 
 	return (
-		<div className="absolute top-0 left-0 z-10 w-full h-full">
+		<div
+			className="absolute top-0 left-0 z-10 w-full h-full"
+			style={{ zoom: scaling }}
+		>
 			{/* Battle turn indicator */}
 			<div
 				ref={turnIndicator}
