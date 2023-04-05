@@ -1,12 +1,6 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import React, {
-	useCallback,
-	useEffect,
-	useReducer,
-	useRef,
-	useState,
-} from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import Battle from "../../rpg/systems/battleSystem";
@@ -24,7 +18,6 @@ const BattleHUD = () => {
 	const [battle, setBattle] = useState<Battle>();
 	const [player, setPlayer] = useState<any>();
 	const [scaling, setScaling] = useState(1);
-	const [, forceUpdate] = useReducer((x) => x + 1, 0);
 	const [turnIndicator] = useAutoAnimate();
 	const [chargeIndicator] = useAutoAnimate();
 
@@ -36,7 +29,6 @@ const BattleHUD = () => {
 			if (battleScene) {
 				setBattle(battleScene.battle);
 				setPlayer(battleScene.player);
-				battleScene.battle.observable.subscribe(() => forceUpdate());
 			}
 		}
 	}, [engine]);
@@ -59,7 +51,8 @@ const BattleHUD = () => {
 		battle?.doAttack("special");
 	}, [battle]);
 
-	if (!player || !battle) return <></>;
+	if (!player || !player?.stats || !player?.battleStats || !battle)
+		return <></>;
 
 	return (
 		<div
@@ -83,40 +76,42 @@ const BattleHUD = () => {
 
 			{/* Party / player status information */}
 			<div className="absolute top-5 right-5 text-right [user-select:none] flex flex-col gap-4">
-				{battle.players?.map((player, i) => (
-					<div
-						className="relative flex flex-col items-end transition-all"
-						style={{
-							paddingRight: battle.turnQueue[0]?.id === player.id ? 20 : 0,
-						}}
-						key={`${player.id}-${i}`}
-					>
-						<div className="flex items-center gap-3">
-							<div className="flex gap-2 items-center">
-								<p className="text-xs">LV.{player.stats.LEVEL}</p>
-								<p>{player.name}</p>
-								<span className="px-1">•</span>
+				{battle.players
+					?.filter((player) => player.stats && player.battleStats)
+					.map((player, i) => (
+						<div
+							className="relative flex flex-col items-end transition-all"
+							style={{
+								paddingRight: battle.turnQueue[0]?.id === player.id ? 20 : 0,
+							}}
+							key={`${player.id}-${i}`}
+						>
+							<div className="flex items-center gap-3">
+								<div className="flex gap-2 items-center">
+									<p className="text-xs">LV.{player.stats.LEVEL}</p>
+									<p>{player.name}</p>
+									<span className="px-1">•</span>
+								</div>
+								<div className="w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm">
+									{player.stats.ELEMENT}
+								</div>
 							</div>
-							<div className="w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm">
-								{player.stats.ELEMENT}
+							<div className="pr-5 flex flex-col items-end w-32">
+								<p className="-my-[1px]">
+									<span>{Math.ceil(player.battleStats.HP)}</span> /{" "}
+									{player.stats.HP}
+								</p>
+								<div
+									className="bg-green-500 h-[0.35rem] w-full transition-all"
+									style={{
+										width: Math.floor(
+											(player.battleStats.HP / player.stats.HP) * 100
+										),
+									}}
+								></div>
 							</div>
 						</div>
-						<div className="pr-5 flex flex-col items-end w-32">
-							<p className="-my-[1px]">
-								<span>{Math.ceil(player.battleStats.HP)}</span> /{" "}
-								{player.stats.HP}
-							</p>
-							<div
-								className="bg-green-500 h-[0.35rem] w-full transition-all"
-								style={{
-									width: Math.floor(
-										(player.battleStats.HP / player.stats.HP) * 100
-									),
-								}}
-							></div>
-						</div>
-					</div>
-				))}
+					))}
 			</div>
 
 			{/* Limit counter for Special attack */}

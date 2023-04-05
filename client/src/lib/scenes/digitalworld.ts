@@ -1,9 +1,14 @@
 import { SCALE, SPEED } from "../constants";
+import Observable from "../observable";
+import { initializePlayer } from "../rpg/player";
 import Scene from "./scene";
 
 export default class DigitalWorldScene extends Scene {
-	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
-		super(config);
+	constructor(
+		config: string | Phaser.Types.Scenes.SettingsConfig,
+		observable: Observable
+	) {
+		super(config, observable);
 	}
 	preload() {
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
@@ -32,16 +37,7 @@ export default class DigitalWorldScene extends Scene {
 		});
 
 		// Create player
-		this.player = this.add.sprite(0, 0, "player");
-		this.player.setScale(SCALE);
-		this.player.play("idle");
-		this.player.movement = {
-			left: false,
-			up: false,
-			right: false,
-			down: false,
-		};
-		this.player.animationState = "idle";
+		this.player = initializePlayer(this, "Player 1");
 
 		// Setup text
 		this.text = this.add.text(15, 15, this.getSpriteInfo(), {
@@ -147,9 +143,11 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 				x: this.player.x,
 				y: this.player.y,
 				movement: this.player.movement,
+				stats: this.player.stats,
+				battleStats: this.player.battleStats,
 			});
 		}
 
-		this.game.scene.switch("digitalworld", "battle");
+		// this.game.scene.switch("digitalworld", "battle");
 	}
 }

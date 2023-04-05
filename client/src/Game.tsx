@@ -1,11 +1,11 @@
 import { useAtom } from "jotai";
 import { engineAtom, roomIdAtom } from "./lib/atoms";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import PhaserEngine from "./lib/engine";
 import geckos from "@geckos.io/client";
 import Chat from "./lib/components/chat/Chat";
-import BattleHUD from "./lib/components/game/BattleHUD";
+import HUD from "./lib/components/game/HUD";
 
 function Game() {
 	// Retrieve lobby id
@@ -51,7 +51,7 @@ function Game() {
 			<main>
 				<div className="max-w-[90vw] min-w-[90vw] relative">
 					<canvas id="canvas" className="canvas" ref={canvasRef}></canvas>
-					{engine?.game.currentScene === "battle" ? <BattleHUD /> : <></>}
+					<HUD engine={engine} />
 					<Chat channel={window.channel} className="absolute bottom-2 left-2" />
 				</div>
 			</main>

@@ -1,12 +1,10 @@
 import { randomInt } from "../../utils";
 import { ELEMENT_EFFECTIVENESS_TABLE } from "../../constants";
-import Observable from "../observable";
 
 export default class BattleSystem {
 	public players: any[];
 	public monsters: any[];
 	public turnQueue: any[];
-	public observable = new Observable();
 	public state: any = {
 		attacker: null,
 		target: null,
@@ -76,7 +74,6 @@ export default class BattleSystem {
 	updateTurn() {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
 		this.turnQueue.push(attacker); // Put attacker as last element in queue
-		this.observable.notify();
 
 		const nextTurn = this.turnQueue[0];
 		if (nextTurn?.type === "monster") {

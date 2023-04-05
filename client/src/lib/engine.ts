@@ -5,6 +5,7 @@ import Scene from "./scenes/scene";
 import { clearFocus } from "./utils";
 import ExplorationScene from "./scenes/exploration";
 import BattleScene from "./scenes/battle";
+import Observable from "./observable";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -13,6 +14,7 @@ export default class PhaserEngine {
 	public texture: { width: number; height: number };
 	public config: Phaser.Types.Core.GameConfig;
 	public game: Phaser.Game;
+	public observable = new Observable();
 
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
@@ -42,9 +44,9 @@ export default class PhaserEngine {
 			} as Phaser.Types.Core.InputConfig,
 			backgroundColor: "#1a1a1a",
 			scene: [
-				new DigitalWorldScene({ key: "digitalworld" }),
-				new ExplorationScene({ key: "exploration" }),
-				new BattleScene({ key: "battle" }),
+				new DigitalWorldScene({ key: "digitalworld" }, this.observable),
+				new ExplorationScene({ key: "exploration" }, this.observable),
+				new BattleScene({ key: "battle" }, this.observable),
 			],
 			render: { pixelArt: true, antialias: true },
 		};

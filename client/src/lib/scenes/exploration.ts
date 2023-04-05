@@ -1,4 +1,6 @@
 import { SCALE, SPEED } from "../constants";
+import Observable from "../observable";
+import { initializePlayer } from "../rpg/player";
 import {
 	AREAS,
 	generateAvailableAreas,
@@ -10,8 +12,11 @@ export default class ExplorationScene extends Scene {
 	public areas: any;
 	public currentArea: any;
 
-	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
-		super(config);
+	constructor(
+		config: string | Phaser.Types.Scenes.SettingsConfig,
+		observable: Observable
+	) {
+		super(config, observable);
 	}
 	preload() {
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
@@ -44,17 +49,7 @@ export default class ExplorationScene extends Scene {
 		});
 
 		// Create player
-		this.player = this.add.sprite(0, 0, "player");
-		this.player.setScale(SCALE);
-		this.player.play("idle");
-		this.player.movement = {
-			left: false,
-			up: false,
-			right: false,
-			down: false,
-		};
-		this.player.animationState = "idle";
-		this.player.onTeleportingPad = false;
+		this.player = initializePlayer(this, "Player 1");
 
 		// Create teleporting pad
 		const distance = 500;

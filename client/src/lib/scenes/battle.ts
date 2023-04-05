@@ -3,6 +3,8 @@ import { generateMonstersByPreset } from "../rpg/monster";
 import BattleSystem from "../rpg/systems/battleSystem";
 import { ELEMENT } from "../constants";
 import Scene from "./scene";
+import Observable from "../observable";
+import { initializePlayer } from "../rpg/player";
 
 export default class BattleScene extends Scene {
 	public centerPoint: any;
@@ -17,8 +19,11 @@ export default class BattleScene extends Scene {
 		4: { x: 270, y: 35 },
 	};
 
-	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
-		super(config);
+	constructor(
+		config: string | Phaser.Types.Scenes.SettingsConfig,
+		observable: Observable
+	) {
+		super(config, observable);
 	}
 	preload() {
 		// Load player sprites
@@ -63,31 +68,7 @@ export default class BattleScene extends Scene {
 		this.centerPoint.setVisible(false);
 
 		// Create player
-		this.player = this.add.sprite(200, 0, "player");
-		this.player.setScale(SCALE);
-		this.player.flipX = true;
-		this.player.play("idle");
-		this.player.movement = {
-			left: false,
-			up: false,
-			right: false,
-			down: false,
-		};
-		this.player.animationState = "idle";
-		this.player.stats = {
-			HP: 100,
-			ATK: 20,
-			DEF: 10,
-			SPEED: 10,
-			ELEMENT: ELEMENT.LIGHT,
-			LEVEL: 1,
-		};
-		this.player.battleStats = {
-			HP: 100,
-			CHARGE: 0,
-			MAXCHARGE: 5,
-		};
-		this.player.name = "Player 1";
+		this.player = initializePlayer(this, "Player 1");
 		this.players.push(this.player);
 
 		// Setup camera to follow player
@@ -220,6 +201,7 @@ export default class BattleScene extends Scene {
 					this.battle.state.attacked = false;
 					this.battle.state.attacker = null;
 					this.battle.updateTurn();
+					this.observable.notify();
 				}
 			}
 		}
