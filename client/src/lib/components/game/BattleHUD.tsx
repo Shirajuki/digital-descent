@@ -1,43 +1,57 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import React, {
+	useCallback,
+	useEffect,
+	useReducer,
+	useRef,
+	useState,
+} from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import Battle from "../../rpg/systems/battleSystem";
 
+function useAutoAnimate(options = {}) {
+	const [element, setElement] = React.useState<any>(null);
+	React.useEffect(() => {
+		if (element instanceof HTMLElement) autoAnimate(element, options);
+	}, [element]);
+	return [setElement];
+}
+
 const BattleHUD = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
 	const [battle, setBattle] = useState<Battle>();
+	const [player, setPlayer] = useState<any>();
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
-	const turnIndicator = useRef(null);
+	const [turnIndicator] = useAutoAnimate();
+	const [chargeIndicator] = useAutoAnimate();
 
 	useEffect(() => {
 		if (engine?.game?.scene?.getScene(engine.game.currentScene)) {
 			const battleScene: BattleScene = engine.game.scene.getScene(
 				engine.game.currentScene
 			) as BattleScene;
-			if (battleScene) setBattle(battleScene.battle);
+			if (battleScene) {
+				setBattle(battleScene.battle);
+				setPlayer(battleScene.player);
+				battleScene.battle.observable.subscribe(() => forceUpdate());
+			}
 			console.log(battleScene.battle);
 		}
 	}, [engine]);
 
-	useEffect(() => {
-		turnIndicator.current && autoAnimate(turnIndicator.current);
-	}, [turnIndicator]);
-
 	const normalAttack = useCallback(() => {
 		battle?.doAttack("normal");
-		forceUpdate();
-		setTimeout(() => forceUpdate(), 4000);
 	}, [battle]);
 	const chargeAttack = useCallback(() => {
 		battle?.doAttack("charge");
-		forceUpdate();
 	}, [battle]);
 	const specialAttack = useCallback(() => {
 		battle?.doAttack("special");
-		forceUpdate();
 	}, [battle]);
+
+	if (!player) return <></>;
 
 	return (
 		<div className="absolute top-0 left-0 z-10 w-full h-full">
@@ -78,13 +92,13 @@ const BattleHUD = () => {
 						</div>
 						<div className="pr-5 flex flex-col items-end w-32">
 							<p className="-my-[1px]">
-								<span>{player.stats.HP}</span> / {player.stats.MAXHP}
+								<span>{player.battleStats.HP}</span> / {player.stats.HP}
 							</p>
 							<div
 								className="bg-green-500 h-[0.35rem] w-full transition-all"
 								style={{
 									width: Math.floor(
-										(player.stats.HP / player.stats.MAXHP) * 100
+										(player.battleStats.HP / player.stats.HP) * 100
 									),
 								}}
 							></div>
@@ -96,15 +110,27 @@ const BattleHUD = () => {
 			{/* Limit counter for Special attack */}
 			<div className="absolute right-[17rem] bottom-6 flex gap-3 items-center justify-center [user-select:none]">
 				<div className="flex items-center gap-2">
-					<p className="text-2xl">1</p>
+					<p className="text-2xl">{player.battleStats.CHARGE}</p>
 					<span className="opacity-80">/</span>
 				</div>
-				<div className="flex gap-1 h-[1.75rem] items-center justify-center">
-					<div className="rotate-12 bg-slate-500 w-[0.6rem] h-[1.75rem] rounded-md"></div>
-					<div className="rotate-12 bg-slate-800 w-[0.6rem] h-[1.75rem] rounded-md"></div>
-					<div className="rotate-12 bg-slate-800 w-[0.6rem] h-[1.75rem] rounded-md"></div>
-					<div className="rotate-12 bg-slate-800 w-[0.6rem] h-[1.75rem] rounded-md"></div>
-					<div className="rotate-12 bg-slate-800 w-[0.6rem] h-[1.75rem] rounded-md"></div>
+				<div
+					ref={chargeIndicator}
+					className="flex gap-1 h-[1.75rem] items-center justify-center"
+				>
+					{new Array(player.battleStats.CHARGE).fill(0).map((_, i) => (
+						<p
+							key={"filledCharge" + i}
+							className="!rotate-12 bg-slate-500 w-[0.6rem] h-[1.75rem] rounded-md"
+						></p>
+					))}
+					{new Array(player.battleStats.MAXCHARGE - player.battleStats.CHARGE)
+						.fill(0)
+						.map((_, i) => (
+							<p
+								key={"emptyCharge" + i}
+								className="!rotate-12 bg-slate-800 w-[0.6rem] h-[1.75rem] rounded-md"
+							></p>
+						))}
 				</div>
 			</div>
 

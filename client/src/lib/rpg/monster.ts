@@ -1,5 +1,5 @@
 import { weightedRandom } from "../utils";
-import { ELEMENT } from "./utils";
+import { ELEMENT } from "./../constants";
 /*
 
 Code Smell - Monsters that are made of lines of code or bugs that have come to life.
@@ -63,12 +63,14 @@ const slime = () => {
 		sprite: "./spritesheet.png",
 		stats: {
 			HP: 10,
-			MAXHP: 10,
 			ATK: 10,
 			DEF: 10,
 			SPEED: 5,
 			ELEMENT: ELEMENT.WATER,
 			LEVEL: 1,
+		},
+		battleStats: {
+			HP: 10,
 		},
 	};
 };

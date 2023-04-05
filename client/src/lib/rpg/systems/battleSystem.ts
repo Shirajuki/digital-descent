@@ -1,10 +1,12 @@
 import { randomInt } from "../../utils";
-import { ELEMENT_EFFECTIVENESS_TABLE } from "../utils";
+import { ELEMENT_EFFECTIVENESS_TABLE } from "../../constants";
+import Observable from "../observable";
 
-export default class Battle {
+export default class BattleSystem {
 	public players: any[];
 	public monsters: any[];
 	public turnQueue: any[];
+	public observable = new Observable();
 	public state: any = {
 		attacker: null,
 		target: null,
@@ -61,7 +63,7 @@ export default class Battle {
 	updateTurn() {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
 		this.turnQueue.push(attacker); // Put attacker as last element in queue
-		// console.log(this.turnQueue);
+		this.observable.notify();
 	}
 }
 

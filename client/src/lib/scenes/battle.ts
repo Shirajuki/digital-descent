@@ -1,7 +1,7 @@
 import { SCALE } from "../constants";
 import { generateEasyMonsters } from "../rpg/monster";
-import Battle from "../rpg/systems/battleSystem";
-import { ELEMENT } from "../rpg/utils";
+import BattleSystem from "../rpg/systems/battleSystem";
+import { ELEMENT } from "../constants";
 import Scene from "./scene";
 
 export default class BattleScene extends Scene {
@@ -21,7 +21,18 @@ export default class BattleScene extends Scene {
 		super(config);
 	}
 	preload() {
+		// Load player sprites
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
+			frameWidth: 32,
+			frameHeight: 32,
+		});
+
+		// Load player customization / accessories
+		// TODO: add head accessories
+		// TODO: add other accessories
+
+		// Load all monster sprites
+		this.load.spritesheet("monster", "sprites/spritesheet.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
@@ -47,8 +58,8 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
-		// Create center point
-		this.centerPoint = this.add.sprite(0, 50, "player");
+		// Create center point for camera lock on
+		this.centerPoint = this.add.rectangle(0, 50, 50, 50, 0xffffff);
 		this.centerPoint.setVisible(false);
 
 		// Create player
@@ -65,12 +76,16 @@ export default class BattleScene extends Scene {
 		this.player.animationState = "idle";
 		this.player.stats = {
 			HP: 100,
-			MAXHP: 100,
 			ATK: 10,
 			DEF: 10,
 			SPEED: 10,
 			ELEMENT: ELEMENT.LIGHT,
 			LEVEL: 1,
+		};
+		this.player.battleStats = {
+			HP: 100,
+			CHARGE: 0,
+			MAXCHARGE: 5,
 		};
 		this.player.name = "Player 1";
 		this.players.push(this.player);
@@ -98,6 +113,7 @@ export default class BattleScene extends Scene {
 			monsterSprite.animationState = "idle";
 			monsterSprite.name = monster.name;
 			monsterSprite.stats = monster.stats;
+			monsterSprite.battleStats = monster.battleStats;
 
 			// Create hp bar on top of sprite
 			const monsterSpriteHp = this.add.rectangle(
@@ -112,7 +128,7 @@ export default class BattleScene extends Scene {
 			this.monsters.push(monsterSprite);
 		});
 
-		this.battle = new Battle(this.players, this.monsters);
+		this.battle = new BattleSystem(this.players, this.monsters);
 
 		// Create pointer on top of first monster
 		this.pointerSprite = this.add.rectangle(
@@ -144,13 +160,14 @@ export default class BattleScene extends Scene {
 	}
 
 	update(_time: any, _delta: any) {
+		// Animate battle attacking state for player
 		if (
 			this.battle?.state?.attacker &&
 			this.battle?.state?.attacker?.id === this.player.id
 		) {
 			if (!this.battle.state.attacked) {
 				this.tweens.add({
-					targets: this.player,
+					targets: this.battle.state.attacker,
 					x: this.battle.state.target.x + 30,
 					y: this.battle.state.target.y + 1,
 					ease: "Back.easeOut",
@@ -159,8 +176,10 @@ export default class BattleScene extends Scene {
 					repeat: -1,
 				});
 				if (
-					Math.abs(this.player.x - this.battle.state.target.x) < 70 &&
-					Math.abs(this.player.y - this.battle.state.target.y) < 70
+					Math.abs(this.battle.state.attacker.x - this.battle.state.target.x) <
+						70 &&
+					Math.abs(this.battle.state.attacker.y - this.battle.state.target.y) <
+						70
 				) {
 					if (!this.battle.state.attacked) {
 						const dmg = this.battle.calculateDamage(
@@ -168,10 +187,15 @@ export default class BattleScene extends Scene {
 							this.battle.state.target
 						);
 						console.log(dmg);
-						this.battle.state.target.stats.HP = Math.max(
-							this.battle.state.target.stats.HP - dmg.damage,
+						this.battle.state.target.battleStats.HP = Math.max(
+							this.battle.state.target.battleStats.HP - dmg.damage,
 							0
 						);
+						this.battle.state.attacker.battleStats.CHARGE = Math.min(
+							this.battle.state.attacker.battleStats.CHARGE + 1,
+							this.battle.state.attacker.battleStats.MAXCHARGE
+						);
+						console.log(this.battle.state.attacker.battleStats.CHARGE);
 					}
 					this.battle.state.attacked = true;
 					this.tweens.add({
@@ -186,7 +210,7 @@ export default class BattleScene extends Scene {
 				}
 			} else {
 				this.tweens.add({
-					targets: this.player,
+					targets: this.battle.state.attacker,
 					x: this.playerLocations[0].x,
 					y: this.playerLocations[0].y,
 					ease: "Back.easeOut",
@@ -195,8 +219,10 @@ export default class BattleScene extends Scene {
 					repeat: -1,
 				});
 				if (
-					Math.abs(this.player.x - this.playerLocations[0].x) < 10 &&
-					Math.abs(this.player.y - this.playerLocations[0].y) < 10
+					Math.abs(this.battle.state.attacker.x - this.playerLocations[0].x) <
+						10 &&
+					Math.abs(this.battle.state.attacker.y - this.playerLocations[0].y) <
+						10
 				) {
 					this.battle.state.attacking = false;
 					this.battle.state.attacked = false;
@@ -206,7 +232,7 @@ export default class BattleScene extends Scene {
 			}
 		}
 
-		// Move pointer to target monster
+		// Move pointer to player's target monster
 		this.tweens.add({
 			targets: this.pointerSprite,
 			x: this.battle?.state?.target?.x ?? this.monsters[0].x,
@@ -218,12 +244,12 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
-		// Update monster HP
+		// Update monster HP using lerp
 		for (let i = 0; i < this.monsters.length; i++) {
 			const monster = this.monsters[i];
 			monster.hp.width = Phaser.Math.Linear(
 				monster.hp.width,
-				80 * (monster.stats.HP / monster.stats.MAXHP),
+				80 * (monster.battleStats.HP / monster.stats.HP),
 				0.05
 			);
 		}
@@ -232,6 +258,7 @@ export default class BattleScene extends Scene {
 		this.player.setDepth(this.player.y);
 
 		// Multiplayer test
+		// TODO: Make this battle-update
 		const channel = (window as any).channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
