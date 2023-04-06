@@ -31,7 +31,7 @@ export default class BattleScene extends Scene {
 	}
 	preload() {
 		// Load player sprites
-		this.load.spritesheet("player", "sprites/spritesheet.png", {
+		this.load.spritesheet("player", "sprites/spritesheet2.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
@@ -41,7 +41,7 @@ export default class BattleScene extends Scene {
 		// TODO: add other accessories
 
 		// Load all monster sprites
-		this.load.spritesheet("monster", "sprites/spritesheet.png", {
+		this.load.spritesheet("monster", "sprites/spritesheet2.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});

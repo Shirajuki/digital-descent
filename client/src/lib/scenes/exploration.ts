@@ -19,11 +19,11 @@ export default class ExplorationScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
-		this.load.spritesheet("player", "sprites/spritesheet.png", {
+		this.load.spritesheet("player", "sprites/spritesheet2.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
-		this.load.spritesheet("teleportingPad", "sprites/spritesheet.png", {
+		this.load.spritesheet("teleportingPad", "sprites/spritesheet2.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
