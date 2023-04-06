@@ -68,16 +68,6 @@ export default class BattleScene extends Scene {
 		});
 
 		this.game.currentScene = "battle";
-
-		// Update battle state in server if not set yet
-		const channel = (window as any).channel;
-		if (channel) {
-			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("battle-initialize", {
-				id: channel.id,
-				battle: this.battle,
-			});
-		}
 	}
 
 	initialize(): void {
@@ -132,7 +122,23 @@ export default class BattleScene extends Scene {
 			this.monsters.push(monsterSprite);
 		});
 
+		// Initialize battle
 		this.battle = new BattleSystem(this.players, this.monsters);
+		const channel = (window as any).channel;
+		if (channel) {
+			channel.emit("battle-initialize", {
+				players: this.players.map((p) => p.id),
+				monsters: this.monsters.map((m: any, i: number) => {
+					return {
+						id: "monster" + i,
+						name: m.name,
+						stats: m.stats,
+						battleStats: m.battleStats,
+						type: m.type,
+					};
+				}),
+			});
+		}
 
 		// Create pointer on top of first monster
 		this.pointerSprite = this.add.rectangle(
@@ -147,8 +153,10 @@ export default class BattleScene extends Scene {
 		this.monsters.forEach((monster: any, index: number) => {
 			monster.setInteractive();
 			monster.on("pointerup", () => {
-				if (!this.battle.state.attacking && !monster.battleStats.dead)
+				if (!this.battle.state.attacking && !monster.battleStats.dead) {
 					this.battle.state.target = this.battle.monsters[index];
+					this.battle.playerTarget = this.battle.monsters[index];
+				}
 			});
 		});
 
@@ -156,65 +164,155 @@ export default class BattleScene extends Scene {
 	}
 
 	sync(data: any) {
-		const serverPlayers = Object.keys(data.players).filter(
-			(p: any) => p != "undefined"
-		);
-		const serverPlayersData = serverPlayers.map((p) => data.players[p]);
+		if (data.type === "turn") {
+			const state = data.state;
+			const attacker =
+				this.players.find((p) => p.id === data.state.attacker) ||
+				this.monsters.find((m: any) => m.id === data.state.attacker);
+			const target =
+				this.players.find((p) => p.id === data.state.target) ||
+				this.monsters.find((m: any) => m.id === data.state.target);
+			this.battle.state = {
+				...state,
+				attacker: attacker,
+				target: target,
+			};
+			this.battle.damage = data.damage;
+			console.log("UPDATE state....", data, this.battle.state, this.battle);
+		} else if (data.type === "initialize") {
+			// Update monsters
+			this.monsters.forEach((m: any) => {
+				m.hp.destroy();
+				m.destroy();
+			});
+			this.monsters = [];
+			data.battle.monsters.forEach((monster: any, index: number) => {
+				const monsterSprite = this.add.sprite(
+					-200 - 20 * index,
+					70 * index - 70 * Math.floor(data.battle.monsters.length / 2),
+					"player"
+				) as any;
+				monsterSprite.setScale(SCALE);
+				monsterSprite.play("idle");
+				monsterSprite.setDepth(monsterSprite.y);
+				monsterSprite.flipX = false;
+				monsterSprite.animationState = "idle";
+				monsterSprite.name = monster.name + " " + index;
+				monsterSprite.stats = monster.stats;
+				monsterSprite.battleStats = monster.battleStats;
+				monsterSprite.type = monster.type;
+				monsterSprite.id = "monster" + index;
 
-		// Remove disconnected players
-		for (let i = 0; i < this.players.length; i++) {
-			const player = this.players[i];
-			if (!serverPlayers.includes(player.id) && this.player.id !== player.id) {
-				const p = this.players.splice(i, 1)[0];
-				p.destroy();
-			}
-		}
+				// Create hp bar on top of sprite
+				const monsterSpriteHp = this.add.rectangle(
+					monsterSprite.x,
+					monsterSprite.y - 30,
+					80,
+					5,
+					0x22c55e
+				);
+				monsterSpriteHp.setDepth(1000);
+				monsterSprite.hp = monsterSpriteHp;
+				this.monsters.push(monsterSprite);
+			});
+			// Reinitialize battle
+			this.battle = new BattleSystem(this.players, this.monsters);
+			// Set monster to be clickable
+			this.monsters.forEach((monster: any, index: number) => {
+				monster.setInteractive();
+				monster.on("pointerup", () => {
+					if (!this.battle.state.attacking && !monster.battleStats.dead)
+						this.battle.state.target = this.battle.monsters[index];
+				});
+			});
 
-		// Add new players if found
-		const clientPlayers = this.players.map((player: any) => player.id);
-		for (let i = 0; i < serverPlayers.length; i++) {
-			if (!clientPlayers.includes(serverPlayers[i])) {
-				const player: any = initializePlayer(this, serverPlayersData[i].id);
-				player.id = serverPlayersData[i].id;
-				player.name = serverPlayersData[i].id;
-				this.players.push(player);
-			}
-		}
-
-		// If clientPlayers and serverPlayers mismatch
-		if (clientPlayers.join() !== serverPlayers.join()) {
-			// Reorder clientPlayers to be like serverPlayers
-			const orderedPlayers = serverPlayers.map((pid: string) =>
-				this.players.find((p) => p.id === pid)
-			);
-			this.players = orderedPlayers;
-
-			// Reintialize the queue
-			this.battle.initializeQueue();
 			this.observable.notify();
 		}
+		if (data.type === "update") {
+			const serverPlayers = Object.keys(data.players).filter(
+				(p: any) => p != "undefined"
+			);
+			const serverPlayersData = serverPlayers.map((p) => data.players[p]);
 
-		// Update player position
-		for (let i = 0; i < this.players.length; i++) {
-			const player = this.players[i];
-			// Relocate player starting position
-			if (player.id === this.player.id) {
-				this.player.x = this.playerLocations[i].x;
-				this.player.y = this.playerLocations[i].y;
-				continue;
-			}
-			player.x = data.players[player.id].x;
-			player.y = data.players[player.id].y;
-
-			// Reset player animation
-			if (!player.flipX) player.flipX = true;
-			if (player.animationState !== "idle") {
-				player.animationState = "idle";
-				player.play("idle");
+			// Remove disconnected players
+			for (let i = 0; i < this.players.length; i++) {
+				const player = this.players[i];
+				if (
+					!serverPlayers.includes(player.id) &&
+					this.player.id !== player.id
+				) {
+					const p = this.players.splice(i, 1)[0];
+					p.destroy();
+				}
 			}
 
-			// Set depth
-			player.setDepth(player.y);
+			// Add new players if found
+			const clientPlayers = this.players.map((player: any) => player.id);
+			for (let i = 0; i < serverPlayers.length; i++) {
+				if (!clientPlayers.includes(serverPlayers[i])) {
+					const player: any = initializePlayer(this, serverPlayersData[i].id);
+					player.id = serverPlayersData[i].id;
+					player.name = serverPlayersData[i].id;
+					this.players.push(player);
+				}
+			}
+
+			// If clientPlayers and serverPlayers mismatch
+			if (clientPlayers.join() !== serverPlayers.join()) {
+				// Reorder clientPlayers to be like serverPlayers
+				const orderedPlayers = serverPlayers.map((pid: string) =>
+					this.players.find((p) => p.id === pid)
+				);
+				this.players = orderedPlayers;
+				if (!this.players.find((p) => p === this.player)) {
+					this.players.find((p) => p.id === this.player.id)?.destroy();
+					this.players = this.players.map((p) =>
+						p.id === this.player.id ? this.player : p
+					);
+				}
+			}
+
+			// Update player position
+			for (let i = 0; i < this.players.length; i++) {
+				const player = this.players[i];
+				// Relocate player starting position
+				if (player.id === this.player.id) {
+					this.player.x = this.playerLocations[i].x;
+					this.player.y = this.playerLocations[i].y;
+					continue;
+				}
+				player.x = data.players[player.id].x;
+				player.y = data.players[player.id].y;
+
+				// Reset player animation
+				if (!player.flipX) player.flipX = true;
+				if (player.animationState !== "idle") {
+					player.animationState = "idle";
+					player.play("idle");
+				}
+
+				// Set depth
+				player.setDepth(player.y);
+			}
+
+			// Update BattleHUD
+			if (clientPlayers.join() !== serverPlayers.join()) {
+				const channel = (window as any).channel;
+				if (channel) {
+					channel.emit("battle-initialize", {
+						players: this.players.map((p) => p.id),
+						monsters: this.monsters.map((m: any) => {
+							return {
+								name: m.name,
+								stats: m.stats,
+								battleStats: m.battleStats,
+								type: m.type,
+							};
+						}),
+					});
+				}
+				this.observable.notify();
+			}
 		}
 	}
 
@@ -238,10 +336,9 @@ export default class BattleScene extends Scene {
 					Math.abs(attacker.y - target.y) < 70
 				) {
 					if (!this.battle.state.attacked) {
-						const dmg = this.battle.calculateDamage(attacker, target);
-						console.log(dmg);
+						console.log(this.battle.damage);
 						target.battleStats.HP = Math.max(
-							target.battleStats.HP - dmg.damage,
+							target.battleStats.HP - this.battle.damage.damage,
 							0
 						);
 						attacker.battleStats.CHARGE = Math.min(
@@ -347,8 +444,9 @@ export default class BattleScene extends Scene {
 					y: this.player.y,
 					movement: this.player.movement,
 					stats: this.player.stats,
+					battleStats: this.player.battleStats,
 				},
-				battle: {},
+				battle: this.battle,
 			});
 		}
 	}

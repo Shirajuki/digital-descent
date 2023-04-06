@@ -52,11 +52,28 @@ function Game() {
 			});
 
 			// Battle syncing
+			channel.on("battle-initialize", (data: any) => {
+				if (engine.game.currentScene === "battle") {
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync({
+						...data,
+						type: "initialize",
+					});
+				}
+			});
 			channel.on("battle-update", (data: any) => {
 				if (engine.game.currentScene === "battle") {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
-						data
-					);
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync({
+						...data,
+						type: "update",
+					});
+				}
+			});
+			channel.on("battle-turn", (data: any) => {
+				if (engine.game.currentScene === "battle") {
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync({
+						...data,
+						type: "turn",
+					});
 				}
 			});
 

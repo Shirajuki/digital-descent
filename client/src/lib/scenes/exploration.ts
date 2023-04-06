@@ -267,6 +267,8 @@ export default class ExplorationScene extends Scene {
 				x: this.player.x,
 				y: this.player.y,
 				movement: this.player.movement,
+				stats: this.player.stats,
+				battleStats: this.player.battleStats,
 				onTeleportingPad: this.player.onTeleportingPad,
 			});
 		}

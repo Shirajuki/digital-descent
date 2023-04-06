@@ -13,6 +13,7 @@ export default class BattleSystem {
 		initialPosition: { x: 0, y: 0 },
 	};
 	public playerTarget: any = null;
+	public damage: any = {};
 
 	constructor(players: any[], monsters: any[]) {
 		this.players = players;
@@ -50,19 +51,39 @@ export default class BattleSystem {
 		return { damage: Math.max(damage, 1), elementEffectiveness };
 	}
 
-	doAttack(type: "normal" | "charge" | "special") {
+	doAttack(type: "normal" | "charge" | "special", id: string) {
 		if (type === "normal") {
 			console.log("normal");
 			// TODO: pick correct player at certain position and index
 			if (!this.state.attacker) {
-				this.state = {
-					attacker: this.players[0],
+				const player = this.players.find((p) => p.id === id);
+
+				const state = {
+					attacker: player,
 					target: this.state.target ?? this.monsters[0],
 					attacking: true,
 					attacked: false,
-					initialPosition: { x: this.players[0].x, y: this.players[0].y },
+					initialPosition: { x: player.x, y: player.y },
 				};
-				this.playerTarget = this.state.target;
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("battle-turn", {
+						state: {
+							...state,
+							attacker: {
+								id: player.id,
+								stats: player.stats,
+								battleStats: player.battleStats,
+							},
+							target: {
+								id: state.target.id,
+								stats: state.target.stats,
+								battleStats: state.target.battleStats,
+							},
+						},
+					});
+				}
+				this.playerTarget = state.target;
 			}
 		} else if (type === "charge") {
 			console.log("charge");
@@ -87,9 +108,12 @@ export default class BattleSystem {
 			};
 		} else {
 			// Update pointer to the next alive monster if players turn next
-			if (this.playerTarget.battleStats.dead)
+			if (this.playerTarget?.battleStats?.dead)
 				this.state.target = this.monsters.find((e) => !e.battleStats.dead);
 			else this.state.target = this.playerTarget;
+
+			const channel = (window as any).channel;
+			if (channel) channel.emit("battle-turn-finished", {});
 		}
 	}
 }

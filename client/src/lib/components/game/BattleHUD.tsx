@@ -3,7 +3,7 @@ import { engineAtom } from "../../atoms";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
-import Battle from "../../rpg/systems/battleSystem";
+import BattleSystem from "../../rpg/systems/battleSystem";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -15,26 +15,12 @@ function useAutoAnimate(options = {}) {
 
 const BattleHUD = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
-	const [battle, setBattle] = useState<Battle>();
-	const [player, setPlayer] = useState<any>();
 	const [scaling, setScaling] = useState(1);
 	const [turnIndicator] = useAutoAnimate();
 	const [chargeIndicator] = useAutoAnimate();
 
 	useEffect(() => {
-		if (engine?.game?.scene?.getScene(engine.game.currentScene)) {
-			const battleScene: BattleScene = engine.game.scene.getScene(
-				engine.game.currentScene
-			) as BattleScene;
-			console.log(battleScene);
-			if (battleScene) {
-				setBattle(battleScene.battle);
-				setPlayer(battleScene.player);
-			}
-		}
-	}, [engine]);
-
-	useEffect(() => {
+		setScaling((document.querySelector("canvas")?.clientWidth ?? 1157) / 1157);
 		window.addEventListener("resize", (event) => {
 			setScaling(
 				(document.querySelector("canvas")?.clientWidth ?? 1157) / 1157
@@ -42,14 +28,21 @@ const BattleHUD = () => {
 		});
 	}, [setScaling]);
 
+	const battle: BattleSystem = (
+		engine?.game.scene.getScene(engine.game.currentScene) as BattleScene
+	)?.battle;
+	const player = (
+		engine?.game.scene.getScene(engine.game.currentScene) as BattleScene
+	)?.player;
+
 	const normalAttack = useCallback(() => {
-		battle?.doAttack("normal");
+		battle?.doAttack("normal", player.id);
 	}, [battle]);
 	const chargeAttack = useCallback(() => {
-		battle?.doAttack("charge");
+		battle?.doAttack("charge", player.id);
 	}, [battle]);
 	const specialAttack = useCallback(() => {
-		battle?.doAttack("special");
+		battle?.doAttack("special", player.id);
 	}, [battle]);
 
 	if (!player || !player?.stats || !player?.battleStats || !battle)
