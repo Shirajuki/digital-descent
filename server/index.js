@@ -49,7 +49,7 @@ io.onConnection((channel) => {
 		} else {
 			// Else create a new room
 			channel.join(roomId);
-			rooms[roomId] = { players: {}, status: "started" };
+			rooms[roomId] = { players: {}, battle: {}, status: "started" };
 			io.room(roomId).emit("lobby-joined", roomId);
 		}
 		console.log(`${channel.id} joined room ${channel.roomId}`);
@@ -62,6 +62,17 @@ io.onConnection((channel) => {
 				"game-update",
 				rooms[channel.roomId].players
 			);
+		}
+	});
+
+	channel.on("battle-update", (data) => {
+		if (rooms[channel.roomId] && data?.player) {
+			rooms[channel.roomId].players[data.player.id] = data.player;
+			// rooms[channel.roomId].battle = data;
+			io.room(channel.roomId).emit("battle-update", {
+				players: rooms[channel.roomId].players,
+				battle: rooms[channel.roomId].battle,
+			});
 		}
 	});
 });

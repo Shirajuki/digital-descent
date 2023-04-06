@@ -27,6 +27,7 @@ export default class Scene extends Phaser.Scene {
 		console.log("DESTROY SCENE", this);
 		this.children.removeAll();
 	}
+	sync(data: any) {}
 	switch(scene: string) {
 		console.log(this.game.currentScene);
 		// Cleanup scene

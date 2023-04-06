@@ -15,13 +15,13 @@ export default class BattleScene extends Scene {
 	public battle: any;
 	public monsters: any;
 	public pointerSprite: any;
-	public playerLocations = {
-		0: { x: 200, y: 0 },
-		1: { x: 200, y: -70 },
-		2: { x: 200, y: 70 },
-		3: { x: 270, y: -35 },
-		4: { x: 270, y: 35 },
-	};
+	public playerLocations = [
+		{ x: 200, y: 0 },
+		{ x: 180, y: -70 },
+		{ x: 220, y: 70 },
+		{ x: 270, y: -35 },
+		{ x: 290, y: 35 },
+	];
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -155,6 +155,69 @@ export default class BattleScene extends Scene {
 		this.observable.notify();
 	}
 
+	sync(data: any) {
+		const serverPlayers = Object.keys(data.players).filter(
+			(p: any) => p != "undefined"
+		);
+		const serverPlayersData = serverPlayers.map((p) => data.players[p]);
+
+		// Remove disconnected players
+		for (let i = 0; i < this.players.length; i++) {
+			const player = this.players[i];
+			if (!serverPlayers.includes(player.id) && this.player.id !== player.id) {
+				const p = this.players.splice(i, 1)[0];
+				p.destroy();
+			}
+		}
+
+		// Add new players if found
+		const clientPlayers = this.players.map((player: any) => player.id);
+		for (let i = 0; i < serverPlayers.length; i++) {
+			if (!clientPlayers.includes(serverPlayers[i])) {
+				const player: any = initializePlayer(this, serverPlayersData[i].id);
+				player.id = serverPlayersData[i].id;
+				player.name = serverPlayersData[i].id;
+				this.players.push(player);
+			}
+		}
+
+		// If clientPlayers and serverPlayers mismatch
+		if (clientPlayers.join() !== serverPlayers.join()) {
+			// Reorder clientPlayers to be like serverPlayers
+			const orderedPlayers = serverPlayers.map((pid: string) =>
+				this.players.find((p) => p.id === pid)
+			);
+			this.players = orderedPlayers;
+
+			// Reintialize the queue
+			this.battle.initializeQueue();
+			this.observable.notify();
+		}
+
+		// Update player position
+		for (let i = 0; i < this.players.length; i++) {
+			const player = this.players[i];
+			// Relocate player starting position
+			if (player.id === this.player.id) {
+				this.player.x = this.playerLocations[i].x;
+				this.player.y = this.playerLocations[i].y;
+				continue;
+			}
+			player.x = data.players[player.id].x;
+			player.y = data.players[player.id].y;
+
+			// Reset player animation
+			if (!player.flipX) player.flipX = true;
+			if (player.animationState !== "idle") {
+				player.animationState = "idle";
+				player.play("idle");
+			}
+
+			// Set depth
+			player.setDepth(player.y);
+		}
+	}
+
 	update(_time: any, _delta: any) {
 		// Animate battle attacking state for player
 		const attacker = this.battle?.state?.attacker;
@@ -274,16 +337,18 @@ export default class BattleScene extends Scene {
 		this.player.setDepth(this.player.y);
 
 		// Multiplayer test
-		// TODO: Make this battle-update
 		const channel = (window as any).channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("game-update", {
-				id: channel.id,
-				x: this.player.x,
-				y: this.player.y,
-				movement: this.player.movement,
-				stats: this.player.stats,
+			channel.emit("battle-update", {
+				player: {
+					id: channel.id,
+					x: this.player.x,
+					y: this.player.y,
+					movement: this.player.movement,
+					stats: this.player.stats,
+				},
+				battle: {},
 			});
 		}
 	}
