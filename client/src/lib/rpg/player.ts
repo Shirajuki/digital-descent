@@ -1,7 +1,7 @@
 import { ELEMENT, SCALE } from "../constants";
 
 export const initializePlayer = (scene: any, name: string) => {
-	const player = scene.add.sprite(200, 0, "player");
+	const player = scene.add.sprite(0, 0, "player");
 	// General
 	player.setScale(SCALE);
 	player.flipX = true;

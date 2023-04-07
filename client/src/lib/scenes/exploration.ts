@@ -326,6 +326,7 @@ export default class ExplorationScene extends Scene {
 		)}`.trim();
 
 		// Check player collision
+		let standingOnTeleporter = -1;
 		for (let i = 0; i < this.teleportingPads.length; i++) {
 			const pad = this.teleportingPads[i];
 			if (
@@ -335,20 +336,25 @@ export default class ExplorationScene extends Scene {
 				this.player.y > pad.y - 100
 			) {
 				pad.setScale(1.1);
-				this.player.onTeleportingPad = i;
+				standingOnTeleporter = i;
 				break;
 			} else {
 				pad.setScale(1);
-				this.player.onTeleportingPad = -1;
 			}
 		}
-
+		if (standingOnTeleporter > -1) {
+			this.player.onTeleportingPad += 1;
+			console.log(this.player.onTeleportingPad);
+		} else {
+			this.player.onTeleportingPad = -1;
+		}
 		// Trigger teleporting pad if enough players
-		if (this.player.onTeleportingPad > -1) {
+		if (this.player.onTeleportingPad >= 150) {
 			// Get area data
-			const area = this.areas[this.player.onTeleportingPad];
+			const area = this.areas[standingOnTeleporter];
 			console.log(this.areas, area, this.player.onTeleportingPad);
 			// Load area data
+			this.switch("battle");
 		}
 
 		// Multiplayer test
