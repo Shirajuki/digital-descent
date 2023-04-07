@@ -23,9 +23,38 @@ export default class ExplorationScene extends Scene {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
-		this.load.spritesheet("teleportingPad", "sprites/spritesheet2.png", {
-			frameWidth: 32,
-			frameHeight: 32,
+		this.load.spritesheet("teleportingPad", "sprites/teleportingPad.png", {
+			frameWidth: 400,
+			frameHeight: 200,
+		});
+		// Displays
+		this.load.spritesheet(
+			"towerOfTrialsDisplay",
+			"sprites/towerOfTrialsDisplay.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet("battleDisplay", "sprites/battleDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("subquestDisplay", "sprites/subquestDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("shopDisplay", "sprites/shopDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("treasureDisplay", "sprites/treasureDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("restDisplay", "sprites/restDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
 		});
 	}
 	create() {
@@ -78,7 +107,7 @@ export default class ExplorationScene extends Scene {
 		});
 
 		// Create teleporting pad
-		const distance = 500;
+		const distance = 600;
 		this.teleportingPads = [
 			this.add.sprite(-distance, 0, "teleportingPad"),
 			this.add.sprite(0, -distance, "teleportingPad"),
@@ -87,7 +116,6 @@ export default class ExplorationScene extends Scene {
 		];
 		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
 			pad.setDepth(-10000);
-			pad.setAngle(180);
 		});
 
 		// Setup text
@@ -186,6 +214,7 @@ export default class ExplorationScene extends Scene {
 
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
+		console.log(this.areas);
 	}
 
 	update(_time: any, _delta: any) {
@@ -236,16 +265,16 @@ export default class ExplorationScene extends Scene {
 		for (let i = 0; i < this.teleportingPads.length; i++) {
 			const pad = this.teleportingPads[i];
 			if (
-				this.player.x < pad.x + pad.width + 100 &&
-				this.player.x + this.player.width > pad.x - 100 &&
-				this.player.y < pad.y + pad.height + 100 &&
-				this.player.height + this.player.y > pad.y - 100
+				this.player.x < pad.x + 200 &&
+				this.player.x > pad.x - 200 &&
+				this.player.y < pad.y + 100 &&
+				this.player.y > pad.y - 100
 			) {
-				pad.setScale(12);
+				pad.setScale(1.1);
 				this.player.onTeleportingPad = i;
 				break;
 			} else {
-				pad.setScale(6);
+				pad.setScale(1);
 				this.player.onTeleportingPad = -1;
 			}
 		}
@@ -273,6 +302,6 @@ export default class ExplorationScene extends Scene {
 			});
 		}
 
-		this.switch("battle");
+		// this.switch("battle");
 	}
 }

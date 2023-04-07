@@ -2,7 +2,7 @@
 export const CANVAS_WIDTH = 1024;
 export const CANVAS_HEIGHT = 480;
 export const SPEED = 3;
-export const SCALE = 0.25;
+export const SCALE = 1;
 
 // RPG
 // https://static.wikia.nocookie.net/mstrike/images/1/13/Ms_us_guide06_img02.jpg/revision/latest?cb=20160324022429

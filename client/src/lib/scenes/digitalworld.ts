@@ -12,8 +12,8 @@ export default class DigitalWorldScene extends Scene {
 	}
 	preload() {
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
-			frameWidth: 320,
-			frameHeight: 320,
+			frameWidth: 72,
+			frameHeight: 72,
 		});
 	}
 	create() {

@@ -67,6 +67,20 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
+		// Setup texts
+		this.text = this.add.text(0, 0, "", {
+			fontFamily: "Arial",
+			fontSize: "32px",
+			color: "#ffffff",
+			stroke: "#000000",
+			strokeThickness: 6,
+		});
+		this.text.setAlpha(0);
+		this.text.setScale(0);
+		this.text.setDepth(1000);
+		this.text.setText("9001");
+		this.text.setOrigin(0.5, 0.5);
+
 		this.game.currentScene = "battle";
 	}
 
@@ -324,7 +338,7 @@ export default class BattleScene extends Scene {
 			if (!this.battle.state.attacked) {
 				this.tweens.add({
 					targets: attacker,
-					x: target.x + 30 * (attacker.x > target.x ? 1 : -1),
+					x: target.x + 50 * (attacker.x > target.x ? 1 : -1),
 					y: target.y + 1,
 					ease: "Back.easeOut",
 					duration: 2000,
@@ -336,6 +350,7 @@ export default class BattleScene extends Scene {
 					Math.abs(attacker.y - target.y) < 70
 				) {
 					if (!this.battle.state.attacked) {
+						// Attacked
 						console.log(this.battle.damage);
 						target.battleStats.HP = Math.max(
 							target.battleStats.HP - this.battle.damage.damage,
@@ -345,6 +360,17 @@ export default class BattleScene extends Scene {
 							attacker.battleStats.CHARGE + 1,
 							attacker.battleStats.MAXCHARGE
 						);
+						// Display hitIndicator
+						const dmg = "" + Math.floor(this.battle.damage.damage * 100) / 100;
+						this.text.setText(dmg);
+						this.text.x = target.x;
+						this.text.y = target.y + 20;
+						this.text.setScale(1);
+						this.text.setAlpha(1);
+						this.text.target = {
+							x: target.x + 150 * (attacker.type === "monster" ? 1 : -1),
+							y: target.y - 50,
+						};
 					}
 					this.battle.state.attacked = true;
 					this.tweens.add({
@@ -391,6 +417,20 @@ export default class BattleScene extends Scene {
 			delay: 0,
 			repeat: -1,
 		});
+
+		// Fade hitIndicator
+		this.text.scale = Phaser.Math.Linear(this.text.scale, 1.5, 0.01);
+		this.text.alpha = Phaser.Math.Linear(this.text.alpha, 0, 0.06);
+		this.text.x = Phaser.Math.Linear(
+			this.text.x,
+			this.text?.target?.x ?? 0,
+			0.015
+		);
+		this.text.y = Phaser.Math.Linear(
+			this.text.y,
+			this.text?.target?.y ?? 0,
+			0.01
+		);
 
 		// Update monster HP using lerp
 		for (let i = 0; i < this.monsters.length; i++) {
