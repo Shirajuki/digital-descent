@@ -9,6 +9,7 @@ import Scene from "./scene";
 
 export default class ExplorationScene extends Scene {
 	public teleportingPads: any[] = [];
+	public displays: any[] = [];
 	public areas: any;
 	public currentArea: any;
 
@@ -118,6 +119,39 @@ export default class ExplorationScene extends Scene {
 			pad.setDepth(-10000);
 		});
 
+		const areaTypeMapping = {
+			STARTING: "restDisplay",
+			RESTING: "restDisplay",
+			TREASURE: "treasureDisplay",
+			CHALLENGE: "towerOfTrialsDisplay",
+			BATTLE: "battleDisplay",
+			SUBQUEST: "subquestDisplay",
+			SHOP: "shopDisplay",
+		};
+		// Generate images for each area
+		for (let i = 0; i < this.displays.length; i++) {
+			this.displays[i].destroy();
+		}
+		this.displays.length = 0;
+		for (let i = 0; i < this.teleportingPads.length; i++) {
+			const type:
+				| "STARTING"
+				| "RESTING"
+				| "TREASURE"
+				| "CHALLENGE"
+				| "BATTLE"
+				| "SUBQUEST"
+				| "SHOP" = this.areas[i].type;
+			const teleportingPad = this.teleportingPads[i];
+			const display = this.add.sprite(
+				teleportingPad.x,
+				teleportingPad.y - 180,
+				areaTypeMapping[type]
+			);
+			display.setScale(0.5);
+			this.displays.push(display);
+		}
+
 		// Setup text
 		this.text = this.add.text(15, 15, "", {
 			fontFamily: "Arial",
@@ -214,7 +248,37 @@ export default class ExplorationScene extends Scene {
 
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
-		console.log(this.areas);
+		const areaTypeMapping = {
+			STARTING: "restDisplay",
+			RESTING: "restDisplay",
+			TREASURE: "treasureDisplay",
+			CHALLENGE: "towerOfTrialsDisplay",
+			BATTLE: "battleDisplay",
+			SUBQUEST: "subquestDisplay",
+			SHOP: "shopDisplay",
+		};
+		// Generate images for each area
+		for (let i = 0; i < this.displays.length; i++) {
+			this.displays[i].destroy();
+		}
+		this.displays.length = 0;
+		for (let i = 0; i < this.teleportingPads.length; i++) {
+			const type:
+				| "STARTING"
+				| "RESTING"
+				| "TREASURE"
+				| "CHALLENGE"
+				| "BATTLE"
+				| "SUBQUEST"
+				| "SHOP" = this.areas[i].type;
+			const teleportingPad = this.teleportingPads[i];
+			const display = this.add.sprite(
+				teleportingPad.x * 1,
+				teleportingPad.y * 1,
+				areaTypeMapping[type]
+			);
+			this.displays.push(display);
+		}
 	}
 
 	update(_time: any, _delta: any) {
