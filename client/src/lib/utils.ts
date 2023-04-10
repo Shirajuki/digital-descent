@@ -3,9 +3,11 @@ export const clearFocus = () => {
 		document.activeElement.blur();
 	}
 };
+
 export const randomInt = (min: number, max: number) => {
 	return Math.random() * (max - min) + min;
 };
+
 export const weightedRandom = (arr: any) => {
 	const cumulativeWeights: number[] = [];
 	for (let i = 0; i < arr.length; i += 1) {

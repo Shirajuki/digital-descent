@@ -1,7 +1,6 @@
-import { CANVAS_HEIGHT, CANVAS_WIDTH, SCALE } from "./constants";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "./constants";
 import * as Phaser from "phaser";
 import DigitalWorldScene from "./scenes/digitalworld";
-import Scene from "./scenes/scene";
 import { clearFocus } from "./utils";
 import ExplorationScene from "./scenes/exploration";
 import BattleScene from "./scenes/battle";

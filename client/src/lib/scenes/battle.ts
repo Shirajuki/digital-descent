@@ -468,14 +468,7 @@ export default class BattleScene extends Scene {
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("battle-update", {
-				player: {
-					id: channel.id,
-					x: this.player.x,
-					y: this.player.y,
-					movement: this.player.movement,
-					stats: this.player.stats,
-					battleStats: this.player.battleStats,
-				},
+				player: this.player.getData(),
 				battle: this.battle,
 			});
 		}
