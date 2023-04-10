@@ -87,7 +87,7 @@ export const initializePlayer = (
 
 		this.setDepth(this.y);
 	};
-	const channel = (window as any).channel;
+	const channel = window.channel;
 	if (channel) player.id = channel.id;
 	return player;
 };

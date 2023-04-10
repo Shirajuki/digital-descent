@@ -113,7 +113,7 @@ export default class BattleSystem {
 				this.state.target = this.monsters.find((e) => !e.battleStats.dead);
 			else this.state.target = this.playerTarget;
 
-			const channel = (window as any).channel;
+			const channel = window.channel;
 			if (channel) channel.emit("battle-turn-finished", {});
 		}
 	}

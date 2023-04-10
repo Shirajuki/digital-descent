@@ -101,7 +101,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		this.text.text = this.getSpriteInfo();
 
 		// Send player data to server
-		const channel = (window as any).channel;
+		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", { player: this.player.getData() });

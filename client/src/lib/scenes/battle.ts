@@ -158,7 +158,7 @@ export default class BattleScene extends Scene {
 
 		// Initialize battle
 		this.battle = new BattleSystem(this.players, this.monsters);
-		const channel = (window as any).channel;
+		const channel = window.channel;
 		if (channel) {
 			channel.emit("battle-initialize", {
 				players: this.players.map((p) => p.id),
@@ -314,7 +314,7 @@ export default class BattleScene extends Scene {
 
 			// Update BattleHUD
 			if (clientPlayers.join() !== serverPlayers.join()) {
-				const channel = (window as any).channel;
+				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-initialize", {
 						players: this.players.map((p) => p.id),
@@ -499,7 +499,7 @@ export default class BattleScene extends Scene {
 		this.player.setDepth(this.player.y);
 
 		// Multiplayer test
-		const channel = (window as any).channel;
+		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("battle-update", {

@@ -14,7 +14,6 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 		if (channel && setChat && chatRef.current) {
 			channel.on("message-update", (data: any) => {
 				setChat((ochat) => [...ochat, data]);
-				(window as any).test = chatRef.current;
 				setTimeout(() => {
 					chatRef?.current?.scrollTo({ top: chatRef?.current?.scrollHeight });
 				}, 100);
