@@ -19,7 +19,7 @@ export default class BattleScene extends Scene {
 
 	// Attack animation variables
 	public currentAttackDelay = 0;
-	public attackDelay = 80;
+	public attackDelay = 50;
 
 	// Player starting location
 	public playerLocations = [
@@ -46,6 +46,23 @@ export default class BattleScene extends Scene {
 	create() {
 		super.create();
 		// Animation set
+		this.anims.create({
+			key: "jump",
+			frames: this.anims.generateFrameNumbers("player", {
+				frames: [0, 23, 23, 24, 24, 0, 1, 2, 3],
+			}),
+			duration: 200,
+			frameRate: 4,
+			repeat: -1,
+		});
+		this.anims.create({
+			key: "land",
+			frames: this.anims.generateFrameNumbers("player", {
+				frames: [24],
+			}),
+			frameRate: 60,
+			repeat: -1,
+		});
 		this.anims.create({
 			key: "idle",
 			frames: this.anims.generateFrameNumbers("monster", {
@@ -91,7 +108,7 @@ export default class BattleScene extends Scene {
 
 		// Create player
 		const oldPlayer = this.player;
-		this.player = initializePlayer(this, "Player 1");
+		this.player = initializePlayer(this, "Player 1", oldPlayer);
 		this.players = [
 			...this.players.filter((p) => p.id !== oldPlayer?.id),
 			this.player,
@@ -332,7 +349,6 @@ export default class BattleScene extends Scene {
 		// Animate battle attacking state for player
 		const attacker = this.battle?.state?.attacker;
 		const target = this.battle?.state?.target;
-
 		if (attacker && target) {
 			if (!this.battle.state.attacked) {
 				this.tweens.add({
@@ -344,7 +360,10 @@ export default class BattleScene extends Scene {
 					delay: 400,
 					repeat: -1,
 				});
-				if (!isNaN(attacker?.movement?.left)) attacker.movement.left = true;
+				if (attacker?.animationState === "idle") {
+					attacker.play("jump");
+					attacker.animationState = "jump";
+				}
 				if (
 					Math.abs(attacker.x - target.x) < 70 &&
 					Math.abs(attacker.y - target.y) < 70
@@ -352,8 +371,10 @@ export default class BattleScene extends Scene {
 					if (!this.battle.state.attacked) {
 						this.currentAttackDelay = this.attackDelay;
 						// Attacked
-						if (!isNaN(attacker?.movement?.left))
-							attacker.movement.left = false;
+						if (attacker?.animationState === "jump") {
+							attacker.play("idle");
+							attacker.animationState = "idle";
+						}
 						console.log(this.battle.damage);
 						target.battleStats.HP = Math.max(
 							target.battleStats.HP - this.battle.damage.damage,
@@ -398,9 +419,10 @@ export default class BattleScene extends Scene {
 						delay: 500,
 						repeat: -1,
 					});
-					if (!isNaN(attacker?.movement?.left)) {
-						attacker.movement.left = false;
-						attacker.movement.right = true;
+					if (attacker?.animationState === "idle") {
+						attacker.play("jump");
+						attacker.animationState = "jump";
+						attacker.flipX = !attacker.flipX;
 					}
 				}
 				if (
@@ -408,10 +430,10 @@ export default class BattleScene extends Scene {
 					Math.abs(attacker.y - this.battle.state.initialPosition.y) < 10
 				) {
 					// Reset attacker movement
-					if (!isNaN(attacker?.movement?.left)) {
-						attacker.movement.left = false;
-						attacker.movement.right = false;
-						attacker.flipX = true;
+					if (attacker?.animationState === "jump") {
+						attacker.play("idle");
+						attacker.animationState = "idle";
+						attacker.flipX = !attacker.flipX;
 					}
 					this.battle.state.attacking = false;
 					this.battle.state.attacked = false;
@@ -485,7 +507,6 @@ export default class BattleScene extends Scene {
 				this.battle.queueRemove(monster);
 			}
 		}
-		this.player.updatePlayerAnimation();
 		// Render depth of player
 		this.player.setDepth(this.player.y);
 

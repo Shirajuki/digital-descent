@@ -1,6 +1,10 @@
 import { ELEMENT, SCALE, SPEED } from "../constants";
 
-export const initializePlayer = (scene: any, name: string) => {
+export const initializePlayer = (
+	scene: any,
+	name: string,
+	oldPlayer: any = null
+) => {
 	const player = scene.add.sprite(0, 0, "player");
 	// General
 	player.setScale(SCALE);
@@ -31,7 +35,12 @@ export const initializePlayer = (scene: any, name: string) => {
 		CHARGE: 0,
 		MAXCHARGE: 5,
 	};
-	player.name = "Player 1";
+	player.name = name;
+
+	if (oldPlayer) {
+		player.stats = oldPlayer.stats;
+		player.battleStats = oldPlayer.battleStats;
+	}
 
 	player.getData = function () {
 		return {

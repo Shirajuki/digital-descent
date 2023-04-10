@@ -70,7 +70,6 @@ export default class ExplorationScene extends Scene {
 	}
 	create() {
 		super.create();
-
 		inputInitPlayerMovement(this);
 
 		// Setup text
@@ -113,7 +112,6 @@ export default class ExplorationScene extends Scene {
 			...this.players.filter((p) => p.id !== oldPlayer?.id),
 			this.player,
 		];
-
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
