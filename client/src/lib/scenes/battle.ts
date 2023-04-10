@@ -56,14 +56,6 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 		this.anims.create({
-			key: "land",
-			frames: this.anims.generateFrameNumbers("player", {
-				frames: [24],
-			}),
-			frameRate: 60,
-			repeat: -1,
-		});
-		this.anims.create({
 			key: "idle",
 			frames: this.anims.generateFrameNumbers("monster", {
 				frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
