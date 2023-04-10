@@ -63,6 +63,43 @@ export default class ExplorationScene extends Scene {
 
 		inputInitPlayerMovement(this);
 
+		// Setup text
+		this.text = this.add.text(15, 15, "", {
+			fontFamily: "Arial",
+			fontSize: "32px",
+			color: "#fff",
+		});
+
+		this.preloaded = true;
+		this.initialize();
+	}
+
+	sync(data: any) {
+		const serverPlayers = Object.keys(data).filter(
+			(p: any) => p != "undefined"
+		);
+		const serverPlayersData = serverPlayers.map((p) => data[p]);
+		removeDuplicatePlayers(this, serverPlayers);
+		addPlayers(this, serverPlayers, serverPlayersData);
+		updatePlayers(this, data);
+	}
+
+	initialize(): void {
+		if (!this.preloaded) return;
+		super.initialize();
+		// Create player
+		const oldPlayer = this.player;
+		this.player = initializePlayer(this, "Player 1");
+		this.players = [
+			...this.players.filter((p) => p.id !== oldPlayer?.id),
+			this.player,
+		];
+
+		// Setup camera to follow player
+		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
+
+		this.currentArea = AREAS.STARTING.area();
+		this.areas = generateAvailableAreas();
 		// Create teleporting pad
 		const distance = 600;
 		this.teleportingPads = [
@@ -105,73 +142,6 @@ export default class ExplorationScene extends Scene {
 				areaTypeMapping[type]
 			);
 			display.setScale(0.5);
-			this.displays.push(display);
-		}
-
-		// Setup text
-		this.text = this.add.text(15, 15, "", {
-			fontFamily: "Arial",
-			fontSize: "32px",
-			color: "#fff",
-		});
-
-		this.game.currentScene = "exploration";
-	}
-
-	sync(data: any) {
-		const serverPlayers = Object.keys(data).filter(
-			(p: any) => p != "undefined"
-		);
-		const serverPlayersData = serverPlayers.map((p) => data[p]);
-		removeDuplicatePlayers(this, serverPlayers);
-		addPlayers(this, serverPlayers, serverPlayersData);
-		updatePlayers(this, data);
-	}
-
-	initialize(): void {
-		super.initialize();
-		// Create player
-		const oldPlayer = this.player;
-		this.player = initializePlayer(this, "Player 1");
-		this.players = [
-			...this.players.filter((p) => p.id !== oldPlayer.id),
-			this.player,
-		];
-
-		// Setup camera to follow player
-		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
-
-		this.currentArea = AREAS.STARTING.area();
-		this.areas = generateAvailableAreas();
-		const areaTypeMapping = {
-			STARTING: "restDisplay",
-			RESTING: "restDisplay",
-			TREASURE: "treasureDisplay",
-			CHALLENGE: "towerOfTrialsDisplay",
-			BATTLE: "battleDisplay",
-			SUBQUEST: "subquestDisplay",
-			SHOP: "shopDisplay",
-		};
-		// Generate images for each area
-		for (let i = 0; i < this.displays.length; i++) {
-			this.displays[i].destroy();
-		}
-		this.displays.length = 0;
-		for (let i = 0; i < this.teleportingPads.length; i++) {
-			const type:
-				| "STARTING"
-				| "RESTING"
-				| "TREASURE"
-				| "CHALLENGE"
-				| "BATTLE"
-				| "SUBQUEST"
-				| "SHOP" = this.areas[i].type;
-			const teleportingPad = this.teleportingPads[i];
-			const display = this.add.sprite(
-				teleportingPad.x * 1,
-				teleportingPad.y * 1,
-				areaTypeMapping[type]
-			);
 			this.displays.push(display);
 		}
 	}

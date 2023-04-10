@@ -63,7 +63,13 @@ export default class DigitalWorldScene extends Scene {
 
 		inputInitPlayerMovement(this);
 
-		this.game.currentScene = "digitalworld";
+		this.preloaded = true;
+		this.initialize();
+	}
+
+	initialize(): void {
+		if (!this.preloaded) return;
+		super.initialize();
 	}
 
 	getSpriteInfo() {

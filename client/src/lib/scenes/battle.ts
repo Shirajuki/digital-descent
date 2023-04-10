@@ -11,11 +11,17 @@ engine.game.scene.getScene(engine.game.currentScene).switch("battle")
 */
 
 export default class BattleScene extends Scene {
-	public text: any;
-	public centerPoint: any;
-	public battle: any;
-	public monsters: any;
+	public text: any; // Damage indicator text
+	public centerPoint: any; // Camera focuspoint
 	public pointerSprite: any;
+	public battle: any; // Battle System
+	public monsters: any;
+
+	// Attack animation variables
+	public currentAttackDelay = 0;
+	public attackDelay = 80;
+
+	// Player starting location
 	public playerLocations = [
 		{ x: 200, y: 0 },
 		{ x: 180, y: -70 },
@@ -71,10 +77,12 @@ export default class BattleScene extends Scene {
 		this.text.setText("9001");
 		this.text.setOrigin(0.5, 0.5);
 
-		this.game.currentScene = "battle";
+		this.preloaded = true;
+		this.initialize();
 	}
 
 	initialize(): void {
+		if (!this.preloaded) return;
 		super.initialize();
 
 		// Create center point for camera lock on
@@ -85,7 +93,7 @@ export default class BattleScene extends Scene {
 		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1");
 		this.players = [
-			...this.players.filter((p) => p.id !== oldPlayer.id),
+			...this.players.filter((p) => p.id !== oldPlayer?.id),
 			this.player,
 		];
 
@@ -269,9 +277,9 @@ export default class BattleScene extends Scene {
 				);
 				this.players = orderedPlayers;
 				if (!this.players.find((p) => p === this.player)) {
-					this.players.find((p) => p.id === this.player.id)?.destroy();
+					this.players.find((p) => p.id === this.player?.id)?.destroy();
 					this.players = this.players.map((p) =>
-						p.id === this.player.id ? this.player : p
+						p.id === this.player?.id ? this.player : p
 					);
 				}
 			}
@@ -324,6 +332,7 @@ export default class BattleScene extends Scene {
 		// Animate battle attacking state for player
 		const attacker = this.battle?.state?.attacker;
 		const target = this.battle?.state?.target;
+
 		if (attacker && target) {
 			if (!this.battle.state.attacked) {
 				this.tweens.add({
@@ -332,15 +341,19 @@ export default class BattleScene extends Scene {
 					y: target.y + 1,
 					ease: "Back.easeOut",
 					duration: 2000,
-					delay: 500,
+					delay: 400,
 					repeat: -1,
 				});
+				if (!isNaN(attacker?.movement?.left)) attacker.movement.left = true;
 				if (
 					Math.abs(attacker.x - target.x) < 70 &&
 					Math.abs(attacker.y - target.y) < 70
 				) {
 					if (!this.battle.state.attacked) {
+						this.currentAttackDelay = this.attackDelay;
 						// Attacked
+						if (!isNaN(attacker?.movement?.left))
+							attacker.movement.left = false;
 						console.log(this.battle.damage);
 						target.battleStats.HP = Math.max(
 							target.battleStats.HP - this.battle.damage.damage,
@@ -374,19 +387,32 @@ export default class BattleScene extends Scene {
 					});
 				}
 			} else {
-				this.tweens.add({
-					targets: attacker,
-					x: this.battle.state.initialPosition.x,
-					y: this.battle.state.initialPosition.y,
-					ease: "Back.easeOut",
-					duration: 2000,
-					delay: 500,
-					repeat: -1,
-				});
+				this.currentAttackDelay--;
+				if (this.currentAttackDelay < 0) {
+					this.tweens.add({
+						targets: attacker,
+						x: this.battle.state.initialPosition.x,
+						y: this.battle.state.initialPosition.y,
+						ease: "Back.easeOut",
+						duration: 2000,
+						delay: 500,
+						repeat: -1,
+					});
+					if (!isNaN(attacker?.movement?.left)) {
+						attacker.movement.left = false;
+						attacker.movement.right = true;
+					}
+				}
 				if (
 					Math.abs(attacker.x - this.battle.state.initialPosition.x) < 10 &&
 					Math.abs(attacker.y - this.battle.state.initialPosition.y) < 10
 				) {
+					// Reset attacker movement
+					if (!isNaN(attacker?.movement?.left)) {
+						attacker.movement.left = false;
+						attacker.movement.right = false;
+						attacker.flipX = true;
+					}
 					this.battle.state.attacking = false;
 					this.battle.state.attacked = false;
 					this.battle.state.attacker = null;
@@ -459,7 +485,7 @@ export default class BattleScene extends Scene {
 				this.battle.queueRemove(monster);
 			}
 		}
-
+		this.player.updatePlayerAnimation();
 		// Render depth of player
 		this.player.setDepth(this.player.y);
 

@@ -73,7 +73,6 @@ export const initializePlayer = (scene: any, name: string) => {
 		if (this.movement.down) this.y += speed;
 		this.updatePlayerAnimation();
 
-		// Update depth of player
 		this.setDepth(this.y);
 	};
 	const channel = (window as any).channel;

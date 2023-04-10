@@ -6,6 +6,7 @@ export default class Scene extends Phaser.Scene {
 	public player: any;
 	public key: string;
 	public observable: Observable;
+	public preloaded: boolean = false;
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
