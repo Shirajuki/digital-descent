@@ -209,7 +209,5 @@ export default class ExplorationScene extends Scene {
 				player: this.player.getData(),
 			});
 		}
-
-		// this.switch("battle");
 	}
 }
