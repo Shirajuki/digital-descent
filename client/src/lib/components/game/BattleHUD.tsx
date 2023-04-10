@@ -45,6 +45,13 @@ const BattleHUD = () => {
 		battle?.doAttack("special", player.id);
 	}, [battle]);
 
+	const healthPotion = useCallback(() => {
+		console.log("health potion");
+	}, [battle]);
+	const staminaPotion = useCallback(() => {
+		console.log("stamina potion");
+	}, [battle]);
+
 	if (!player || !player?.stats || !player?.battleStats || !battle)
 		return <></>;
 
@@ -91,15 +98,33 @@ const BattleHUD = () => {
 								</div>
 							</div>
 							<div className="pr-5 flex flex-col items-end w-32">
-								<p className="-my-[1px]">
-									<span>{Math.ceil(player.battleStats.HP)}</span> /{" "}
-									{player.stats.HP}
+								<p className="-my-[1px] text-xs">
+									<span>
+										<span className="text-xs">HP</span>{" "}
+										{Math.ceil(player.battleStats.HP)}
+									</span>{" "}
+									/ {player.stats.HP}
 								</p>
 								<div
 									className="bg-green-500 h-[0.35rem] w-full transition-all"
 									style={{
 										width: Math.floor(
 											(player.battleStats.HP / player.stats.HP) * 100
+										),
+									}}
+								></div>
+								<p className="-my-[1px] text-xs">
+									<span>
+										<span className="text-xs">SP</span>{" "}
+										{Math.ceil(player.battleStats.SP)}
+									</span>{" "}
+									/ {player.stats.SP}
+								</p>
+								<div
+									className="bg-blue-500 h-[0.35rem] w-full transition-all"
+									style={{
+										width: Math.floor(
+											(player.battleStats.SP / player.stats.SP) * 100
 										),
 									}}
 								></div>
@@ -138,8 +163,14 @@ const BattleHUD = () => {
 			{/* Button Groups for Items and Attacks */}
 			<div className="absolute right-5 bottom-5 w-4/12 h-2/6 text-right">
 				<div className="relative w-full h-full">
-					<button className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]"></button>
-					<button className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]"></button>
+					<button
+						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]"
+						onClick={() => healthPotion()}
+					></button>
+					<button
+						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]"
+						onClick={() => staminaPotion()}
+					></button>
 
 					<button
 						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"

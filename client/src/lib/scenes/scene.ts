@@ -15,21 +15,24 @@ export default class Scene extends Phaser.Scene {
 		super(config);
 		this.key = (config as any).key ? (config as any).key : config;
 		this.observable = observable;
-		console.log("LOAD SCENE", config);
+		console.log("LOAD SCENE " + this);
+	}
+	toString() {
+		return this.key;
 	}
 	create() {
-		console.log("CREATE SCENE", this);
+		console.log("CREATE SCENE " + this);
 	}
 	initialize() {
-		console.log("INIT SCENE", this);
+		console.log("INIT SCENE " + this);
 	}
 	destroy() {
-		console.log("DESTROY SCENE", this);
+		console.log("DESTROY SCENE " + this);
 		this.children.removeAll();
 	}
 	sync(data: any) {}
 	switch(scene: string) {
-		console.log(this.game.currentScene);
+		console.log(this.game.currentScene, "->", scene);
 		// Cleanup scene
 		(this.game.scene.getScene(this.game.currentScene) as Scene).destroy();
 

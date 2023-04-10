@@ -24,6 +24,7 @@ export const initializePlayer = (
 	// Battle
 	player.stats = {
 		HP: 100,
+		SP: 100,
 		ATK: 20,
 		DEF: 10,
 		SPEED: 10,
@@ -32,6 +33,7 @@ export const initializePlayer = (
 	};
 	player.battleStats = {
 		HP: 100,
+		SP: 100,
 		CHARGE: 0,
 		MAXCHARGE: 5,
 	};
@@ -47,6 +49,7 @@ export const initializePlayer = (
 			id: this.id,
 			x: this.x,
 			y: this.y,
+			animationState: this.animationState,
 			movement: this.movement,
 			stats: this.stats,
 			battleStats: this.battleStats,

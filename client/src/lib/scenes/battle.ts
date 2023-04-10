@@ -4,6 +4,7 @@ import BattleSystem from "../rpg/systems/battleSystem";
 import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
+import { removeDuplicatePlayers } from "../rpg/sync";
 
 /*
 engine.game.scene.getScene(engine.game.currentScene).switch("exploration")
@@ -63,6 +64,9 @@ export default class BattleScene extends Scene {
 			frameRate: 4,
 			repeat: -1,
 		});
+		// Monster animations
+		// TODO: remove this, too lazy to fix animation for monsters
+		// Maybe do this for the last boss / customer at each milestone tho :thinking:
 		this.anims.create({
 			key: "idle",
 			frames: this.anims.generateFrameNumbers("monster", {
@@ -258,24 +262,13 @@ export default class BattleScene extends Scene {
 			});
 
 			this.observable.notify();
-		}
-		if (data.type === "battle-update") {
+		} else if (data.type === "battle-update") {
 			const serverPlayers = Object.keys(data.players).filter(
 				(p: any) => p != "undefined"
 			);
 			const serverPlayersData = serverPlayers.map((p) => data.players[p]);
 
-			// Remove disconnected players
-			for (let i = 0; i < this.players.length; i++) {
-				const player = this.players[i];
-				if (
-					!serverPlayers.includes(player.id) &&
-					this.player.id !== player.id
-				) {
-					const p = this.players.splice(i, 1)[0];
-					p.destroy();
-				}
-			}
+			removeDuplicatePlayers(this, serverPlayers);
 
 			// Add new players if found
 			const clientPlayers = this.players.map((player: any) => player.id);
@@ -307,20 +300,13 @@ export default class BattleScene extends Scene {
 			for (let i = 0; i < this.players.length; i++) {
 				const player = this.players[i];
 				// Relocate player starting position
-				if (player.id === this.player.id) {
+				if (player.id === this.player?.id) {
 					this.player.x = this.playerLocations[i].x;
 					this.player.y = this.playerLocations[i].y;
 					continue;
 				}
 				player.x = data.players[player.id].x;
 				player.y = data.players[player.id].y;
-
-				// Reset player animation
-				if (!player.flipX) player.flipX = true;
-				if (player.animationState !== "idle") {
-					player.animationState = "idle";
-					player.play("idle");
-				}
 
 				// Set depth
 				player.setDepth(player.y);
