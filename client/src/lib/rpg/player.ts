@@ -19,7 +19,7 @@ export const initializePlayer = (
 	player.animationState = "idle";
 
 	// Exploration
-	player.onTeleportingPad = false;
+	player.onTeleportingPad = { standingTime: 0, teleporter: 0 };
 
 	// Battle
 	player.stats = {

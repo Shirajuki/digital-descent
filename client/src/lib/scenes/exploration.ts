@@ -178,18 +178,24 @@ export default class ExplorationScene extends Scene {
 			) {
 				pad.setScale(1.1);
 				standingOnTeleporter = i;
+				this.player.onTeleportingPad.teleporter = standingOnTeleporter;
 				break;
 			} else if (pad.scale !== 1) {
 				pad.setScale(1);
 			}
 		}
-		if (standingOnTeleporter > -1) this.player.onTeleportingPad += 1;
-		else this.player.onTeleportingPad = -1;
+		if (standingOnTeleporter > -1)
+			this.player.onTeleportingPad.standingTime += 1;
+		else this.player.onTeleportingPad.standingTime = 0;
 
 		// Trigger teleporting pad if enough players
-		if (this.player.onTeleportingPad >= 150) {
+		if (
+			this.players.every(
+				(player) => player.onTeleportingPad.standingTime >= 150
+			)
+		) {
 			// Get area data
-			const area = this.areas[standingOnTeleporter];
+			const area = this.areas[this.player.onTeleportingPad.teleporter];
 			console.log(this.areas, area, this.player.onTeleportingPad);
 			// Load area data
 			this.switch("battle");

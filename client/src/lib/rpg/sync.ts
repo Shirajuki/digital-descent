@@ -36,6 +36,7 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.x = playerData[player.id].x;
 		player.y = playerData[player.id].y;
 		player.movement = playerData[player.id].movement;
+		player.onTeleportingPad = playerData[player.id].onTeleportingPad;
 		player.updatePlayerAnimation();
 		player.setDepth(player.y);
 	}
