@@ -4,7 +4,6 @@ import Observable from "../observable";
 export default class Scene extends Phaser.Scene {
 	public players: any[] = [];
 	public player: any;
-	public text: any;
 	public key: string;
 	public observable: Observable;
 

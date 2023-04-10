@@ -4,6 +4,8 @@ import { initializePlayer } from "../rpg/player";
 import Scene from "./scene";
 
 export default class DigitalWorldScene extends Scene {
+	public text: any;
+
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
 		observable: Observable
@@ -11,10 +13,14 @@ export default class DigitalWorldScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
+		// Load player sprite
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
 			frameWidth: 72,
 			frameHeight: 72,
 		});
+		// Load player customization / accessories
+		// TODO: add head accessories
+		// TODO: add other accessories
 	}
 	create() {
 		super.create();
@@ -209,7 +215,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		// Update text
 		this.text.text = this.getSpriteInfo();
 
-		// Multiplayer test
+		// Send player data to server
 		const channel = (window as any).channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;

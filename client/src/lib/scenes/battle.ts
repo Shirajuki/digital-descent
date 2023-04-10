@@ -11,6 +11,7 @@ engine.game.scene.getScene(engine.game.currentScene).switch("battle")
 */
 
 export default class BattleScene extends Scene {
+	public text: any;
 	public centerPoint: any;
 	public battle: any;
 	public monsters: any;
@@ -30,16 +31,6 @@ export default class BattleScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
-		// Load player sprites
-		this.load.spritesheet("player", "sprites/spritesheet2.png", {
-			frameWidth: 32,
-			frameHeight: 32,
-		});
-
-		// Load player customization / accessories
-		// TODO: add head accessories
-		// TODO: add other accessories
-
 		// Load all monster sprites
 		this.load.spritesheet("monster", "sprites/spritesheet2.png", {
 			frameWidth: 32,
@@ -48,11 +39,10 @@ export default class BattleScene extends Scene {
 	}
 	create() {
 		super.create();
-
 		// Animation set
 		this.anims.create({
 			key: "idle",
-			frames: this.anims.generateFrameNumbers("player", {
+			frames: this.anims.generateFrameNumbers("monster", {
 				frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 			}),
 			frameRate: 10,
@@ -60,7 +50,7 @@ export default class BattleScene extends Scene {
 		});
 		this.anims.create({
 			key: "run",
-			frames: this.anims.generateFrameNumbers("player", {
+			frames: this.anims.generateFrameNumbers("monster", {
 				frames: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
 			}),
 			frameRate: 20,
@@ -111,7 +101,7 @@ export default class BattleScene extends Scene {
 			const monsterSprite = this.add.sprite(
 				-200 - 20 * index,
 				70 * index - 70 * Math.floor(monsters.length / 2),
-				"player"
+				"monster"
 			) as any;
 			monsterSprite.setScale(SCALE);
 			monsterSprite.play("idle");

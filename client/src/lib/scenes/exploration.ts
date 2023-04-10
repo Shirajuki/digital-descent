@@ -8,6 +8,7 @@ import {
 import Scene from "./scene";
 
 export default class ExplorationScene extends Scene {
+	public text: any;
 	public teleportingPads: any[] = [];
 	public displays: any[] = [];
 	public areas: any;
@@ -20,15 +21,13 @@ export default class ExplorationScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
-		this.load.spritesheet("player", "sprites/spritesheet2.png", {
-			frameWidth: 32,
-			frameHeight: 32,
-		});
+		// Teleporting pad
 		this.load.spritesheet("teleportingPad", "sprites/teleportingPad.png", {
 			frameWidth: 400,
 			frameHeight: 200,
 		});
-		// Displays
+
+		// Teleporting pad displays
 		this.load.spritesheet(
 			"towerOfTrialsDisplay",
 			"sprites/towerOfTrialsDisplay.png",
@@ -60,23 +59,6 @@ export default class ExplorationScene extends Scene {
 	}
 	create() {
 		super.create();
-		// Animation set
-		this.anims.create({
-			key: "idle",
-			frames: this.anims.generateFrameNumbers("player", {
-				frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-			}),
-			frameRate: 10,
-			repeat: -1,
-		});
-		this.anims.create({
-			key: "run",
-			frames: this.anims.generateFrameNumbers("player", {
-				frames: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-			}),
-			frameRate: 20,
-			repeat: -1,
-		});
 
 		// Keyboard input setup
 		this.input.keyboard.on("keydown", (event: any) => {
