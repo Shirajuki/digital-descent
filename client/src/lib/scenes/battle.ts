@@ -29,6 +29,14 @@ export default class BattleScene extends Scene {
 		{ x: 270, y: -35 },
 		{ x: 290, y: 35 },
 	];
+	// Monster starting location
+	public monsterLocations = [
+		{ x: -200, y: 0 },
+		{ x: -180, y: -70 },
+		{ x: -220, y: 70 },
+		{ x: -270, y: -35 },
+		{ x: -290, y: 35 },
+	];
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -112,12 +120,13 @@ export default class BattleScene extends Scene {
 		// Generate monsters
 		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
 		this.monsters = [];
-		monsters.forEach((monster: any, index: number) => {
+		for (let index = 0; index < monsters.length; index++) {
+			const monster = monsters[index];
 			// TODO: update sprite with actual sprite image
 			// Create monster sprite
 			const monsterSprite = this.add.sprite(
-				-200 - 20 * index,
-				70 * index - 70 * Math.floor(monsters.length / 2),
+				this.monsterLocations[index].x,
+				this.monsterLocations[index].y,
 				"monster"
 			) as any;
 			monsterSprite.setScale(SCALE);
@@ -141,7 +150,7 @@ export default class BattleScene extends Scene {
 			monsterSpriteHp.setDepth(1000);
 			monsterSprite.hp = monsterSpriteHp;
 			this.monsters.push(monsterSprite);
-		});
+		}
 
 		// Initialize battle
 		this.battle = new BattleSystem(this.players, this.monsters);
@@ -207,10 +216,11 @@ export default class BattleScene extends Scene {
 				m.destroy();
 			});
 			this.monsters = [];
-			data.battle.monsters.forEach((monster: any, index: number) => {
+			for (let index = 0; index < data.battle.monsters.length; index++) {
+				const monster = data.battle.monsters[index];
 				const monsterSprite = this.add.sprite(
-					-200 - 20 * index,
-					70 * index - 70 * Math.floor(data.battle.monsters.length / 2),
+					this.monsterLocations[index].x,
+					this.monsterLocations[index].y,
 					"player"
 				) as any;
 				monsterSprite.setScale(SCALE);
@@ -235,7 +245,7 @@ export default class BattleScene extends Scene {
 				monsterSpriteHp.setDepth(1000);
 				monsterSprite.hp = monsterSpriteHp;
 				this.monsters.push(monsterSprite);
-			});
+			}
 			// Reinitialize battle
 			this.battle = new BattleSystem(this.players, this.monsters);
 			// Set monster to be clickable
