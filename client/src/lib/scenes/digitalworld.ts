@@ -84,7 +84,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 	}
 
 	sync(data: any) {
-		const serverPlayers = Object.keys(data).filter(
+		const serverPlayers = Object.keys(data.players).filter(
 			(p: any) => p != "undefined"
 		);
 		const serverPlayersData = serverPlayers.map((p) => data[p]);
@@ -104,7 +104,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		const channel = (window as any).channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("game-update", this.player.getData());
+			channel.emit("game-update", { player: this.player.getData() });
 		}
 
 		this.switch("exploration");

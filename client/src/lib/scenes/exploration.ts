@@ -6,6 +6,7 @@ import {
 	AREAS,
 	generateAvailableAreas,
 } from "../rpg/systems/explorationSystem";
+import { AreaType } from "../types";
 import Scene from "./scene";
 
 export default class ExplorationScene extends Scene {
@@ -14,6 +15,15 @@ export default class ExplorationScene extends Scene {
 	public displays: any[] = [];
 	public areas: any;
 	public currentArea: any;
+	public areaTypeMapping = {
+		STARTING: "restDisplay",
+		RESTING: "restDisplay",
+		TREASURE: "treasureDisplay",
+		CHALLENGE: "towerOfTrialsDisplay",
+		BATTLE: "battleDisplay",
+		SUBQUEST: "subquestDisplay",
+		SHOP: "shopDisplay",
+	};
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -74,14 +84,23 @@ export default class ExplorationScene extends Scene {
 		this.initialize();
 	}
 
-	sync(data: any) {
-		const serverPlayers = Object.keys(data).filter(
-			(p: any) => p != "undefined"
-		);
-		const serverPlayersData = serverPlayers.map((p) => data[p]);
-		removeDuplicatePlayers(this, serverPlayers);
-		addPlayers(this, serverPlayers, serverPlayersData);
-		updatePlayers(this, data);
+	generateDisplays() {
+		// Generate images for each area
+		for (let i = 0; i < this.displays.length; i++) {
+			this.displays[i].destroy();
+		}
+		this.displays.length = 0;
+		for (let i = 0; i < this.teleportingPads.length; i++) {
+			const type: AreaType = this.areas[i].type;
+			const teleportingPad = this.teleportingPads[i];
+			const display = this.add.sprite(
+				teleportingPad.x,
+				teleportingPad.y - 180,
+				this.areaTypeMapping[type]
+			);
+			display.setScale(0.5);
+			this.displays.push(display);
+		}
 	}
 
 	initialize(): void {
@@ -111,38 +130,32 @@ export default class ExplorationScene extends Scene {
 		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
 			pad.setDepth(-10000);
 		});
+		this.generateDisplays();
 
-		const areaTypeMapping = {
-			STARTING: "restDisplay",
-			RESTING: "restDisplay",
-			TREASURE: "treasureDisplay",
-			CHALLENGE: "towerOfTrialsDisplay",
-			BATTLE: "battleDisplay",
-			SUBQUEST: "subquestDisplay",
-			SHOP: "shopDisplay",
-		};
-		// Generate images for each area
-		for (let i = 0; i < this.displays.length; i++) {
-			this.displays[i].destroy();
-		}
-		this.displays.length = 0;
-		for (let i = 0; i < this.teleportingPads.length; i++) {
-			const type:
-				| "STARTING"
-				| "RESTING"
-				| "TREASURE"
-				| "CHALLENGE"
-				| "BATTLE"
-				| "SUBQUEST"
-				| "SHOP" = this.areas[i].type;
-			const teleportingPad = this.teleportingPads[i];
-			const display = this.add.sprite(
-				teleportingPad.x,
-				teleportingPad.y - 180,
-				areaTypeMapping[type]
+		// Initialize exploration
+		setTimeout(() => {
+			const channel = window.channel;
+			if (channel) {
+				if (!this.player.id) this.player.id = channel.id;
+				channel.emit("exploration-initialize", {
+					exploration: { steps: 0, danger: 0, areas: this.areas },
+				});
+			}
+		}, 1000);
+	}
+
+	sync(data: any) {
+		if (data.type === "exploration-initialize") {
+			this.areas = data.exploration.areas;
+			this.generateDisplays();
+		} else if (data.type === "game-update") {
+			const serverPlayers = Object.keys(data.players).filter(
+				(p: any) => p != "undefined"
 			);
-			display.setScale(0.5);
-			this.displays.push(display);
+			const serverPlayersData = serverPlayers.map((p) => data.players[p]);
+			removeDuplicatePlayers(this, serverPlayers);
+			addPlayers(this, serverPlayers, serverPlayersData);
+			updatePlayers(this, data.players);
 		}
 	}
 
@@ -188,7 +201,9 @@ export default class ExplorationScene extends Scene {
 		const channel = (window as any).channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("game-update", this.player.getData());
+			channel.emit("game-update", {
+				player: this.player.getData(),
+			});
 		}
 
 		// this.switch("battle");

@@ -84,5 +84,3 @@ export default class BattleSystem {
 		return false;
 	}
 }
-
-export {};

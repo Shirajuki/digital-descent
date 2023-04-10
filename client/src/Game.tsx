@@ -51,29 +51,35 @@ function Game() {
 				}
 			});
 
+			// Exploration syncing
+			channel.on("exploration-initialize", (data: any) => {
+				if (engine.game.currentScene === "exploration") {
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+						data
+					);
+				}
+			});
+
 			// Battle syncing
 			channel.on("battle-initialize", (data: any) => {
 				if (engine.game.currentScene === "battle") {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync({
-						...data,
-						type: "initialize",
-					});
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+						data
+					);
 				}
 			});
 			channel.on("battle-update", (data: any) => {
 				if (engine.game.currentScene === "battle") {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync({
-						...data,
-						type: "update",
-					});
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+						data
+					);
 				}
 			});
 			channel.on("battle-turn", (data: any) => {
 				if (engine.game.currentScene === "battle") {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync({
-						...data,
-						type: "turn",
-					});
+					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+						data
+					);
 				}
 			});
 

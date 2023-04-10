@@ -3,6 +3,7 @@ import http from "http";
 import express from "express";
 import api from "./routes/api.js";
 import BattleSystem from "./system/battleSystem.js";
+import ExplorationSystem from "./system/explorationSystem.js";
 
 const rooms = {};
 
@@ -17,7 +18,6 @@ io.onConnection((channel) => {
 
 	channel.onDisconnect(() => {
 		console.log(`${channel.id} disconnected`);
-
 		// Remove player from room on disconnect
 		if (rooms[channel.roomId]) {
 			delete rooms[channel.roomId].players[channel.id];
@@ -50,7 +50,12 @@ io.onConnection((channel) => {
 		} else {
 			// Else create a new room
 			channel.join(roomId);
-			rooms[roomId] = { players: {}, battle: {}, status: "started" };
+			rooms[roomId] = {
+				players: {},
+				battle: {},
+				exploration: {},
+				status: "started",
+			};
 			io.room(roomId).emit("lobby-joined", roomId);
 		}
 		console.log(`${channel.id} joined room ${channel.roomId}`);
@@ -58,14 +63,40 @@ io.onConnection((channel) => {
 
 	channel.on("game-update", (data) => {
 		if (rooms[channel.roomId]) {
-			rooms[channel.roomId].players[data.id] = data;
-			io.room(channel.roomId).emit(
-				"game-update",
-				rooms[channel.roomId].players
-			);
+			rooms[channel.roomId].players[channel.id] = data.player;
+			io.room(channel.roomId).emit("game-update", {
+				players: rooms[channel.roomId].players,
+				type: "game-update",
+			});
 		}
 	});
 
+	// Exploration listeners
+	channel.on("exploration-initialize", (data) => {
+		if (rooms[channel.roomId] && data) {
+			// Initialize new exploration area if not found
+			const players = Object.values(rooms[channel.roomId].players).filter(
+				(p) => p.stats
+			);
+			if (rooms[channel.roomId].status !== "exploring") {
+				const areas = data.exploration.areas;
+				rooms[channel.roomId].status = "exploring";
+				rooms[channel.roomId].exploration = new ExplorationSystem(
+					players,
+					areas
+				);
+			} else {
+				rooms[channel.roomId].exploration.players = players;
+				rooms[channel.roomId].exploration.initializeDifficulty();
+			}
+			io.room(channel.roomId).emit("exploration-initialize", {
+				exploration: rooms[channel.roomId].exploration,
+				type: "exploration-initialize",
+			});
+		}
+	});
+
+	// Battle listeners
 	channel.on("battle-initialize", (data) => {
 		if (rooms[channel.roomId] && data) {
 			// Initialize new battle if not found
@@ -83,6 +114,7 @@ io.onConnection((channel) => {
 			}
 			io.room(channel.roomId).emit("battle-initialize", {
 				battle: rooms[channel.roomId].battle,
+				type: "battle-initialize",
 			});
 		}
 	});
@@ -97,6 +129,7 @@ io.onConnection((channel) => {
 			io.room(channel.roomId).emit("battle-update", {
 				players: rooms[channel.roomId].players,
 				battle: rooms[channel.roomId].battle,
+				type: "battle-update",
 			});
 		}
 	});
@@ -123,6 +156,7 @@ io.onConnection((channel) => {
 					attacker: data.state.attacker.id,
 					target: data.state.target.id,
 				},
+				type: "battle-turn",
 			});
 		}
 	});
@@ -131,6 +165,7 @@ io.onConnection((channel) => {
 			const battle = rooms[channel.roomId].battle;
 			if (battle.turnQueue[0].type !== "monster") return;
 			// Skip through monsters turn for now
+			// TODO: send monster damage calculation to players
 			while (battle.updateTurn()) {
 				continue;
 			}

@@ -176,7 +176,7 @@ export default class BattleScene extends Scene {
 	}
 
 	sync(data: any) {
-		if (data.type === "turn") {
+		if (data.type === "battle-turn") {
 			const state = data.state;
 			const attacker =
 				this.players.find((p) => p.id === data.state.attacker) ||
@@ -191,7 +191,7 @@ export default class BattleScene extends Scene {
 			};
 			this.battle.damage = data.damage;
 			console.log("UPDATE state....", data, this.battle.state, this.battle);
-		} else if (data.type === "initialize") {
+		} else if (data.type === "battle-initialize") {
 			// Update monsters
 			this.monsters.forEach((m: any) => {
 				m.hp.destroy();
@@ -240,7 +240,7 @@ export default class BattleScene extends Scene {
 
 			this.observable.notify();
 		}
-		if (data.type === "update") {
+		if (data.type === "battle-update") {
 			const serverPlayers = Object.keys(data.players).filter(
 				(p: any) => p != "undefined"
 			);

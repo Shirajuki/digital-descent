@@ -23,6 +23,15 @@ export type ChatType = {
 	message: string;
 };
 
+export type AreaType =
+	| "STARTING"
+	| "RESTING"
+	| "TREASURE"
+	| "CHALLENGE"
+	| "BATTLE"
+	| "SUBQUEST"
+	| "SHOP";
+
 // Use window object to globally share data between modules and components
 declare global {
 	interface Window {
