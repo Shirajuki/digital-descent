@@ -1,3 +1,5 @@
+import { weightedRandom } from "../utils";
+import { ELEMENT } from "./../constants";
 /*
 
 Code Smell - Monsters that are made of lines of code or bugs that have come to life.
@@ -55,4 +57,59 @@ API Firefly - This firefly-like monster emits bright flashes of API responses th
 
 */
 
-export const presets = [];
+const slime = () => {
+	return {
+		name: "slime",
+		type: "monster",
+		sprite: "./spritesheet.png",
+		stats: {
+			HP: 10,
+			ATK: 10,
+			DEF: 10,
+			SPEED: 5,
+			ELEMENT: ELEMENT.WATER,
+			LEVEL: 1,
+		},
+		battleStats: {
+			HP: 10,
+			dead: false,
+		},
+		itemDrop: [],
+	};
+};
+
+export const EASY_MONSTERS = [
+	{ monster: slime, weight: 1 },
+	{ monster: slime, weight: 20 },
+];
+export const MEDIUM_MONSTERS = [
+	{ monster: slime, weight: 1 },
+	{ monster: slime, weight: 20 },
+];
+export const HARD_MONSTERS = [
+	{ monster: slime, weight: 1 },
+	{ monster: slime, weight: 20 },
+];
+
+export const generateMonstersByPreset = (preset: string[]) => {
+	const monsters = [];
+	for (let i = 0; i < preset.length; i++) {
+		const type = preset[i];
+		if (type === "easy")
+			monsters.push(EASY_MONSTERS[weightedRandom(EASY_MONSTERS)].monster());
+		else if (type === "medium")
+			monsters.push(MEDIUM_MONSTERS[weightedRandom(MEDIUM_MONSTERS)].monster());
+		else if (type === "hard")
+			monsters.push(HARD_MONSTERS[weightedRandom(HARD_MONSTERS)].monster());
+	}
+	return monsters;
+};
+
+export const MONSTER_PRESET_BY_DIFFICULTY = {
+	1: ["easy", "easy", "easy"],
+	2: ["easy", "easy", "easy"],
+	3: ["easy", "easy", "easy"],
+	4: ["easy", "easy", "easy"],
+	5: ["easy", "easy", "easy"],
+	6: ["easy", "easy", "easy"],
+};

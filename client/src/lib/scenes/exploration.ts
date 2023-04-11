@@ -1,69 +1,76 @@
-import { SCALE, SPEED } from "../constants";
-import { AREAS, generateAvailableAreas } from "../rpg/explorationAreas";
+import Observable from "../observable";
+import { inputInitPlayerMovement } from "../rpg/input";
+import { initializePlayer } from "../rpg/player";
+import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
+import {
+	AREAS,
+	generateAvailableAreas,
+} from "../rpg/systems/explorationSystem";
+import { AreaType } from "../types";
 import Scene from "./scene";
 
 export default class ExplorationScene extends Scene {
 	public teleportingPads: any[] = [];
+	public text: any;
+	public displays: any[] = [];
 	public areas: any;
 	public currentArea: any;
+	public areaTypeMapping = {
+		STARTING: "restDisplay",
+		RESTING: "restDisplay",
+		TREASURE: "treasureDisplay",
+		CHALLENGE: "towerOfTrialsDisplay",
+		BATTLE: "battleDisplay",
+		SUBQUEST: "subquestDisplay",
+		SHOP: "shopDisplay",
+	};
 
-	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
-		super(config);
+	constructor(
+		config: string | Phaser.Types.Scenes.SettingsConfig,
+		observable: Observable
+	) {
+		super(config, observable);
 	}
 	preload() {
-		this.load.spritesheet("player", "sprites/spritesheet.png", {
-			frameWidth: 32,
-			frameHeight: 32,
+		// Teleporting pad
+		this.load.spritesheet("teleportingPad", "sprites/teleportingPad.png", {
+			frameWidth: 400,
+			frameHeight: 200,
 		});
-		this.load.spritesheet("teleportingPad", "sprites/spritesheet.png", {
-			frameWidth: 32,
-			frameHeight: 32,
+
+		// Teleporting pad displays
+		this.load.spritesheet(
+			"towerOfTrialsDisplay",
+			"sprites/towerOfTrialsDisplay.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet("battleDisplay", "sprites/battleDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("subquestDisplay", "sprites/subquestDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("shopDisplay", "sprites/shopDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("treasureDisplay", "sprites/treasureDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
+		});
+		this.load.spritesheet("restDisplay", "sprites/restDisplay.png", {
+			frameWidth: 400,
+			frameHeight: 400,
 		});
 	}
 	create() {
-		// Animation set
-		this.anims.create({
-			key: "idle",
-			frames: this.anims.generateFrameNumbers("player", {
-				frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-			}),
-			frameRate: 10,
-			repeat: -1,
-		});
-		this.anims.create({
-			key: "run",
-			frames: this.anims.generateFrameNumbers("player", {
-				frames: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-			}),
-			frameRate: 20,
-			repeat: -1,
-		});
-
-		// Create player
-		this.player = this.add.sprite(0, 0, "player");
-		this.player.setScale(SCALE);
-		this.player.play("idle");
-		this.player.movement = {
-			left: false,
-			up: false,
-			right: false,
-			down: false,
-		};
-		this.player.animationState = "idle";
-		this.player.onTeleportingPad = false;
-
-		// Create teleporting pad
-		const distance = 500;
-		this.teleportingPads = [
-			this.add.sprite(-distance, 0, "teleportingPad"),
-			this.add.sprite(0, -distance, "teleportingPad"),
-			this.add.sprite(distance, 0, "teleportingPad"),
-			this.add.sprite(0, distance, "teleportingPad"),
-		];
-		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
-			pad.setDepth(-10000);
-			pad.setAngle(180);
-		});
+		super.create();
+		inputInitPlayerMovement(this);
 
 		// Setup text
 		this.text = this.add.text(15, 15, "", {
@@ -72,80 +79,87 @@ export default class ExplorationScene extends Scene {
 			color: "#fff",
 		});
 
+		this.preloaded = true;
+		this.initialize();
+	}
+
+	generateDisplays() {
+		// Generate images for each area
+		for (let i = 0; i < this.displays.length; i++) {
+			this.displays[i].destroy();
+		}
+		this.displays.length = 0;
+		for (let i = 0; i < this.teleportingPads.length; i++) {
+			const type: AreaType = this.areas[i].type;
+			const teleportingPad = this.teleportingPads[i];
+			const display = this.add.sprite(
+				teleportingPad.x,
+				teleportingPad.y - 180,
+				this.areaTypeMapping[type]
+			);
+			display.setScale(0.5);
+			this.displays.push(display);
+		}
+	}
+
+	initialize(): void {
+		if (!this.preloaded) return;
+		super.initialize();
+		// Create player
+		const oldPlayer = this.player;
+		this.player = initializePlayer(this, "Player 1", oldPlayer);
+		this.players = [
+			...this.players.filter((p) => p.id !== oldPlayer?.id),
+			this.player,
+		];
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
-		// Keyboard input setup
-		this.input.keyboard.on("keydown", (event: any) => {
-			if (document?.activeElement?.nodeName === "INPUT") return;
-			const { key } = event;
-			if (key === "ArrowLeft" || key === "a") {
-				this.player.movement.left = true;
-				this.player.facing = 0;
-			} else if (key === "ArrowUp" || key === "w") {
-				this.player.movement.up = true;
-			} else if (key === "ArrowRight" || key === "d") {
-				this.player.movement.right = true;
-				this.player.facing = 1;
-			} else if (key === "ArrowDown" || key === "s") {
-				this.player.movement.down = true;
-			}
-		});
-		this.input.keyboard.on("keyup", (event: any) => {
-			const { key } = event;
-			if (key === "ArrowLeft" || key === "a") {
-				this.player.movement.left = false;
-			} else if (key === "ArrowUp" || key === "w") {
-				this.player.movement.up = false;
-			} else if (key === "ArrowRight" || key === "d") {
-				this.player.movement.right = false;
-			} else if (key === "ArrowDown" || key === "s") {
-				this.player.movement.down = false;
-			}
-		});
-
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
+		// Create teleporting pad
+		const distance = 600;
+		this.teleportingPads = [
+			this.add.sprite(-distance, 0, "teleportingPad"),
+			this.add.sprite(0, -distance, "teleportingPad"),
+			this.add.sprite(distance, 0, "teleportingPad"),
+			this.add.sprite(0, distance, "teleportingPad"),
+		];
+		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
+			pad.setDepth(-10000);
+		});
+		this.generateDisplays();
+
+		// Initialize exploration
+		setTimeout(() => {
+			const channel = window.channel;
+			if (channel) {
+				if (!this.player.id) this.player.id = channel.id;
+				channel.emit("exploration-initialize", {
+					exploration: { steps: 0, danger: 0, areas: this.areas },
+				});
+			}
+		}, 1000);
+	}
+
+	sync(data: any) {
+		if (data.type === "exploration-initialize") {
+			this.areas = data.exploration.areas;
+			this.generateDisplays();
+		} else if (data.type === "game-update") {
+			const serverPlayers = Object.keys(data.players).filter(
+				(p: any) => p != "undefined"
+			);
+			const serverPlayersData = serverPlayers.map((p) => data.players[p]);
+			removeDuplicatePlayers(this, serverPlayers);
+			addPlayers(this, serverPlayers, serverPlayersData);
+			updatePlayers(this, data.players);
+		}
 	}
 
 	update(_time: any, _delta: any) {
 		// Update player
-		let speed = SPEED;
-		const movement = Object.values(this.player.movement).filter(
-			(v) => v
-		).length;
-		if (movement > 1) speed *= 0.71;
-		if (this.player.movement.left) this.player.x -= speed;
-		if (this.player.movement.up) this.player.y -= speed;
-		if (this.player.movement.right) this.player.x += speed;
-		if (this.player.movement.down) this.player.y += speed;
-		if (
-			this.player.movement.left &&
-			!this.player.flipX &&
-			!this.player.movement.right
-		) {
-			this.player.facing = 0;
-			this.player.flipX = true;
-		} else if (
-			this.player.movement.right &&
-			this.player.flipX &&
-			!this.player.movement.left
-		) {
-			this.player.facing = 1;
-			this.player.flipX = false;
-		}
-
-		// Animate player
-		if (this.player.animationState !== "idle" && movement === 0) {
-			this.player.animationState = "idle";
-			this.player.play("idle");
-		} else if (this.player.animationState !== "run" && movement > 0) {
-			this.player.animationState = "run";
-			this.player.play("run");
-		}
-
-		// Render depth of player
-		this.player.setDepth(this.player.y);
+		this.player.updatePlayer();
 
 		// Update text
 		this.text.text = `Pos: ${Math.round(this.player.x)},${Math.round(
@@ -153,41 +167,46 @@ export default class ExplorationScene extends Scene {
 		)}`.trim();
 
 		// Check player collision
+		let standingOnTeleporter = -1;
 		for (let i = 0; i < this.teleportingPads.length; i++) {
 			const pad = this.teleportingPads[i];
 			if (
-				this.player.x < pad.x + pad.width + 100 &&
-				this.player.x + this.player.width > pad.x - 100 &&
-				this.player.y < pad.y + pad.height + 100 &&
-				this.player.height + this.player.y > pad.y - 100
+				this.player.x < pad.x + 200 &&
+				this.player.x > pad.x - 200 &&
+				this.player.y < pad.y + 100 &&
+				this.player.y > pad.y - 100
 			) {
-				pad.setScale(12);
-				this.player.onTeleportingPad = i;
+				pad.setScale(1.1);
+				standingOnTeleporter = i;
+				this.player.onTeleportingPad.teleporter = standingOnTeleporter;
 				break;
-			} else {
-				pad.setScale(6);
-				this.player.onTeleportingPad = -1;
+			} else if (pad.scale !== 1) {
+				pad.setScale(1);
 			}
 		}
+		if (standingOnTeleporter > -1)
+			this.player.onTeleportingPad.standingTime += 1;
+		else this.player.onTeleportingPad.standingTime = 0;
 
 		// Trigger teleporting pad if enough players
-		if (this.player.onTeleportingPad > -1) {
+		if (
+			this.players.every(
+				(player) => player.onTeleportingPad.standingTime >= 150
+			)
+		) {
 			// Get area data
-			const area = this.areas[this.player.onTeleportingPad];
+			const area = this.areas[this.player.onTeleportingPad.teleporter];
 			console.log(this.areas, area, this.player.onTeleportingPad);
 			// Load area data
+			this.switch("battle");
 		}
 
-		// Multiplayer test
-		const channel = (window as any).channel;
+		// Send player data to server
+		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", {
-				id: channel.id,
-				x: this.player.x,
-				y: this.player.y,
-				movement: this.player.movement,
-				onTeleportingPad: this.player.onTeleportingPad,
+				player: this.player.getData(),
 			});
 		}
 	}

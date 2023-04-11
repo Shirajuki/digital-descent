@@ -1,17 +1,30 @@
-import { SCALE, SPEED } from "../constants";
+import Observable from "../observable";
+import { inputInitPlayerMovement } from "../rpg/input";
+import { initializePlayer } from "../rpg/player";
+import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
 import Scene from "./scene";
 
 export default class DigitalWorldScene extends Scene {
-	constructor(config: string | Phaser.Types.Scenes.SettingsConfig) {
-		super(config);
+	public text: any;
+
+	constructor(
+		config: string | Phaser.Types.Scenes.SettingsConfig,
+		observable: Observable
+	) {
+		super(config, observable);
 	}
 	preload() {
+		// Load player sprite
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
-			frameWidth: 32,
-			frameHeight: 32,
+			frameWidth: 72,
+			frameHeight: 72,
 		});
+		// Load player customization / accessories
+		// TODO: add head accessories
+		// TODO: add other accessories
 	}
 	create() {
+		super.create();
 		// Animation set
 		this.anims.create({
 			key: "idle",
@@ -31,16 +44,12 @@ export default class DigitalWorldScene extends Scene {
 		});
 
 		// Create player
-		this.player = this.add.sprite(0, 0, "player");
-		this.player.setScale(SCALE);
-		this.player.play("idle");
-		this.player.movement = {
-			left: false,
-			up: false,
-			right: false,
-			down: false,
-		};
-		this.player.animationState = "idle";
+		const oldPlayer = this.player;
+		this.player = initializePlayer(this, "Player 1");
+		this.players = [
+			...this.players.filter((p) => p.id !== oldPlayer.id),
+			this.player,
+		];
 
 		// Setup text
 		this.text = this.add.text(15, 15, this.getSpriteInfo(), {
@@ -52,37 +61,15 @@ export default class DigitalWorldScene extends Scene {
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
-		// Keyboard input setup
-		this.input.keyboard.on("keydown", (event: any) => {
-			if (document?.activeElement?.nodeName === "INPUT") return;
-			const { key } = event;
-			if (key === "ArrowLeft" || key === "a") {
-				this.player.movement.left = true;
-				this.player.facing = 0;
-			} else if (key === "ArrowUp" || key === "w") {
-				this.player.movement.up = true;
-			} else if (key === "ArrowRight" || key === "d") {
-				this.player.movement.right = true;
-				this.player.facing = 1;
-			} else if (key === "ArrowDown" || key === "s") {
-				this.player.movement.down = true;
-			}
-		});
-		this.input.keyboard.on("keyup", (event: any) => {
-			const { key } = event;
-			if (key === "ArrowLeft" || key === "a") {
-				this.player.movement.left = false;
-			} else if (key === "ArrowUp" || key === "w") {
-				this.player.movement.up = false;
-			} else if (key === "ArrowRight" || key === "d") {
-				this.player.movement.right = false;
-			} else if (key === "ArrowDown" || key === "s") {
-				this.player.movement.down = false;
-			}
-		});
+		inputInitPlayerMovement(this);
 
-		this.game.currentScene = "exploration";
-		this.scene.start(this.game.currentScene);
+		this.preloaded = true;
+		this.initialize();
+	}
+
+	initialize(): void {
+		if (!this.preloaded) return;
+		super.initialize();
 	}
 
 	getSpriteInfo() {
@@ -96,58 +83,30 @@ Frame: ${
 Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 	}
 
+	sync(data: any) {
+		const serverPlayers = Object.keys(data.players).filter(
+			(p: any) => p != "undefined"
+		);
+		const serverPlayersData = serverPlayers.map((p) => data[p]);
+		removeDuplicatePlayers(this, serverPlayers);
+		addPlayers(this, serverPlayers, serverPlayersData);
+		updatePlayers(this, data);
+	}
+
 	update(_time: any, _delta: any) {
 		// Update player
-		let speed = SPEED;
-		const movement = Object.values(this.player.movement).filter(
-			(v) => v
-		).length;
-		if (movement > 1) speed *= 0.71;
-		if (this.player.movement.left) this.player.x -= speed;
-		if (this.player.movement.up) this.player.y -= speed;
-		if (this.player.movement.right) this.player.x += speed;
-		if (this.player.movement.down) this.player.y += speed;
-		if (
-			this.player.movement.left &&
-			!this.player.flipX &&
-			!this.player.movement.right
-		) {
-			this.player.facing = 0;
-			this.player.flipX = true;
-		} else if (
-			this.player.movement.right &&
-			this.player.flipX &&
-			!this.player.movement.left
-		) {
-			this.player.facing = 1;
-			this.player.flipX = false;
-		}
-
-		// Animate player
-		if (this.player.animationState !== "idle" && movement === 0) {
-			this.player.animationState = "idle";
-			this.player.play("idle");
-		} else if (this.player.animationState !== "run" && movement > 0) {
-			this.player.animationState = "run";
-			this.player.play("run");
-		}
-
-		// Render depth of player
-		this.player.setDepth(this.player.y);
+		this.player.updatePlayer();
 
 		// Update text
 		this.text.text = this.getSpriteInfo();
 
-		// Multiplayer test
-		const channel = (window as any).channel;
+		// Send player data to server
+		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("game-update", {
-				id: channel.id,
-				x: this.player.x,
-				y: this.player.y,
-				movement: this.player.movement,
-			});
+			channel.emit("game-update", { player: this.player.getData() });
 		}
+
+		this.switch("exploration");
 	}
 }

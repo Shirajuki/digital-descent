@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { roomIdAtom } from "./lib/atoms";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 import geckos from "@geckos.io/client";
 import Chat from "./lib/components/chat/Chat";

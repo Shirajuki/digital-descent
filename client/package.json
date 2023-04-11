@@ -9,6 +9,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@formkit/auto-animate": "^1.0.0-beta.6",
 		"@geckos.io/client": "^2.3.0",
 		"jotai": "^2.0.3",
 		"phaser": "^3.55.2",

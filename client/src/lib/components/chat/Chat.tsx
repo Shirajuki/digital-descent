@@ -14,7 +14,6 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 		if (channel && setChat && chatRef.current) {
 			channel.on("message-update", (data: any) => {
 				setChat((ochat) => [...ochat, data]);
-				(window as any).test = chatRef.current;
 				setTimeout(() => {
 					chatRef?.current?.scrollTo({ top: chatRef?.current?.scrollHeight });
 				}, 100);
@@ -34,14 +33,14 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 
 	return (
 		<div
-			className={`bg-gray-800 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${className}`}
+			className={`bg-gray-800 z-20 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${className}`}
 		>
 			<div
 				ref={chatRef}
 				className="max-h-48 w-[26rem] overflow-hidden hover:overflow-auto mb-4"
 			>
 				{chat.map((msg: ChatType, index: number) => (
-					<p key={index} className="pr-2">
+					<p key={index} className="pr-2 [overflow-wrap:break-word]">
 						{msg.sender}: {msg.message}
 					</p>
 				))}
@@ -53,7 +52,7 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 				>
 					<input
 						ref={inputRef}
-						className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm"
+						className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm px-2"
 						tabIndex={-1}
 						type="text"
 						id="message"
