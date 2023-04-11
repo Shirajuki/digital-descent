@@ -14,6 +14,8 @@ export default class BattleSystem {
 		this.players = players;
 		this.monsters = monsters;
 		this.turnQueue = [];
+		this.turns = 0;
+		this.ready = 0;
 		this.initializeQueue();
 	}
 
@@ -24,7 +26,7 @@ export default class BattleSystem {
 	}
 
 	queueRemove(entity) {
-		this.turnQueue = this.turnQueue.filter((e) => e != entity);
+		this.turnQueue = this.turnQueue.filter((e) => e.id != entity.id);
 	}
 
 	queueAdd(entity) {
@@ -67,20 +69,6 @@ export default class BattleSystem {
 	updateTurn() {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
 		this.turnQueue.push(attacker); // Put attacker as last element in queue
-
-		const nextTurn = this.turnQueue[0];
-		if (nextTurn?.type === "monster") {
-			/*
-			this.state = {
-				attacker: nextTurn,
-				target: this.players[0],
-				attacking: true,
-				attacked: false,
-				initialPosition: { x: nextTurn.x, y: nextTurn.y },
-			};
-			*/
-			return true;
-		}
-		return false;
+		this.turns++;
 	}
 }

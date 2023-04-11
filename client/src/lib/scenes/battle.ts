@@ -198,7 +198,10 @@ export default class BattleScene extends Scene {
 	}
 
 	sync(data: any) {
-		if (data.type === "battle-turn") {
+		if (data.type === "battle-pointer") {
+			this.battle.updatePointer(this.player.id);
+		} else if (data.type === "battle-turn") {
+			this.battle.updateTurn();
 			const state = data.state;
 			const attacker =
 				this.players.find((p) => p.id === data.state.attacker) ||
@@ -210,15 +213,17 @@ export default class BattleScene extends Scene {
 				...state,
 				attacker: attacker,
 				target: target,
+				initialPosition: { x: attacker.x, y: attacker.y },
 			};
 			this.battle.damage = data.damage;
 			console.log("UPDATE state....", data, this.battle.state, this.battle);
 		} else if (data.type === "battle-initialize") {
 			// Update monsters
-			this.monsters.forEach((m: any) => {
+			for (let i = 0; i < this?.monsters?.length; i++) {
+				const m = this.monsters[i];
 				m.hp.destroy();
 				m.destroy();
-			});
+			}
 			this.monsters = [];
 			for (let index = 0; index < data.battle.monsters.length; index++) {
 				const monster = data.battle.monsters[index];
@@ -317,7 +322,7 @@ export default class BattleScene extends Scene {
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-initialize", {
-						players: this.players.map((p) => p.id),
+						players: this.players?.map((p) => p.id) || [],
 						monsters: this.monsters.map((m: any) => {
 							return {
 								name: m.name,
@@ -426,7 +431,12 @@ export default class BattleScene extends Scene {
 					this.battle.state.attacking = false;
 					this.battle.state.attacked = false;
 					this.battle.state.attacker = null;
-					this.battle.updateTurn();
+					// Turn finished
+					const channel = window.channel;
+					if (channel)
+						channel.emit("battle-turn-finished", {
+							turns: this.battle.turns,
+						});
 					this.observable.notify();
 				}
 			}

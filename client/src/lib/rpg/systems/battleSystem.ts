@@ -5,6 +5,7 @@ export default class BattleSystem {
 	public players: any[];
 	public monsters: any[];
 	public turnQueue: any[];
+	public turns = 0;
 	public state: any = {
 		attacker: null,
 		target: null,
@@ -85,6 +86,7 @@ export default class BattleSystem {
 					});
 				}
 				this.playerTarget = state.target;
+				console.log(this.state.target);
 			}
 		} else if (type === "charge") {
 			console.log("charge");
@@ -96,25 +98,16 @@ export default class BattleSystem {
 	updateTurn() {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
 		this.turnQueue.push(attacker); // Put attacker as last element in queue
-
+		this.turns++;
+		this.updatePointer();
+	}
+	updatePointer() {
 		const nextTurn = this.turnQueue[0];
-		if (nextTurn?.type === "monster") {
-			// TODO: pick random players weighted by taunt level
-			this.state = {
-				attacker: nextTurn,
-				target: this.players[0],
-				attacking: true,
-				attacked: false,
-				initialPosition: { x: nextTurn.x, y: nextTurn.y },
-			};
-		} else {
+		if (nextTurn.type !== "monster") {
 			// Update pointer to the next alive monster if players turn next
 			if (this.playerTarget?.battleStats?.dead)
 				this.state.target = this.monsters.find((e) => !e.battleStats.dead);
 			else this.state.target = this.playerTarget;
-
-			const channel = window.channel;
-			if (channel) channel.emit("battle-turn-finished", {});
 		}
 	}
 }

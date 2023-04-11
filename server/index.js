@@ -112,7 +112,8 @@ io.onConnection((channel) => {
 				rooms[channel.roomId].battle.players = players;
 				rooms[channel.roomId].battle.initializeQueue();
 			}
-			io.room(channel.roomId).emit("battle-initialize", {
+			console.log(rooms[channel.roomId].players);
+			io.room(channel.roomId).emit("battle", {
 				battle: rooms[channel.roomId].battle,
 				type: "battle-initialize",
 			});
@@ -126,7 +127,7 @@ io.onConnection((channel) => {
 		) {
 			rooms[channel.roomId].players[data.player.id] = data.player;
 			// rooms[channel.roomId].battle = data;
-			io.room(channel.roomId).emit("battle-update", {
+			io.room(channel.roomId).emit("battle", {
 				players: rooms[channel.roomId].players,
 				battle: rooms[channel.roomId].battle,
 				type: "battle-update",
@@ -145,9 +146,15 @@ io.onConnection((channel) => {
 				data.state.attacker,
 				data.state.target
 			);
+			// Check and set monster dead status if hp == 0
+			const monster = battle.monsters.find(
+				(m) => m.id === data.state.target.id
+			);
+			monster.battleStats.HP -= damage.damage;
+			if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
+
 			// Update the turn queue
-			battle.updateTurn();
-			io.room(channel.roomId).emit("battle-turn", {
+			io.room(channel.roomId).emit("battle", {
 				players: rooms[channel.roomId].players,
 				battle: rooms[channel.roomId].battle,
 				damage: damage,
@@ -158,16 +165,45 @@ io.onConnection((channel) => {
 				},
 				type: "battle-turn",
 			});
+			battle.updateTurn();
 		}
 	});
-	channel.on("battle-turn-finished", () => {
-		if (rooms[channel.roomId]) {
+	channel.on("battle-turn-finished", (data) => {
+		if (rooms[channel.roomId] && data) {
 			const battle = rooms[channel.roomId].battle;
-			if (battle.turnQueue[0].type !== "monster") return;
-			// Skip through monsters turn for now
-			// TODO: send monster damage calculation to players
-			while (battle.updateTurn()) {
-				continue;
+			// Skip handling monster calculation if it's a player's turn
+			if (battle.turns !== data.turns) return;
+			// Check if all players are ready before continueing
+			const players = Object.values(rooms[channel.roomId].players).filter(
+				(p) => p.id
+			);
+			if (++battle.ready !== players.length) return;
+			if (battle.turnQueue[0].type === "monster") {
+				// Calculate monsters's damage and emit updated state to all clients
+				const monster = battle.turnQueue[0];
+				// TODO: pick random player by weighting
+				const player = players[0];
+				const damage = battle.calculateDamage(monster, player);
+				io.room(channel.roomId).emit("battle", {
+					players: rooms[channel.roomId].players,
+					battle: rooms[channel.roomId].battle,
+					damage: damage,
+					state: {
+						attacker: monster.id,
+						target: player.id,
+						attacking: true,
+						attacked: false,
+						initialPosition: { x: 0, y: 0 },
+					},
+					type: "battle-turn",
+				});
+				battle.updateTurn();
+				battle.ready = 0;
+			} else {
+				io.room(channel.roomId).emit("battle", {
+					type: "battle-pointer",
+				});
+				battle.ready = 0;
 			}
 		}
 	});
