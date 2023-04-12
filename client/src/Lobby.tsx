@@ -1,114 +1,72 @@
 import { useAtom } from "jotai";
 import { roomIdAtom } from "./lib/atoms";
 import { useEffect, useState } from "react";
-
-import geckos from "@geckos.io/client";
 import Chat from "./lib/components/chat/Chat";
 
-const testLobbies = [
-	{ id: "test1", name: "A dummy lobby name :)", joined: 1 },
-	{ id: "test2", name: "OraOraORa", joined: 1 },
+const players = [
+	{ id: "player1", name: "Player 1", customization: {}, ready: false },
+	{ id: "player2", name: "Player 2", customization: {}, ready: true },
 ];
 
 function Lobby() {
 	const [lobbyId, setLobbyId] = useAtom(roomIdAtom);
-	const [lobbyState, setLobbyState] = useState("menu");
 
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
-		const channel = geckos({ port: 3000 });
-		window.channel = channel;
-
-		channel.onConnect((error: any) => {
-			if (error) return console.error(error.message);
-
-			channel.on("lobby-joined", (data: any) => {
-				setLobbyId(data);
-				console.log(`You joined the room ${data}`);
-			});
-
-			channel.emit("lobby-join", { roomId: "test-room" });
-		});
+		const channel = window.channel;
+		console.log(channel?.id, lobbyId);
 	}, []);
-
-	const createLobby = (event: any) => {
-		event.preventDefault();
-		console.log(event);
-	};
-	const joinLobby = (id: string) => {
-		console.log(id);
-	};
 
 	return (
 		<main className="flex flex-col items-center w-screen">
-			{lobbyState === "menu" ? (
-				<div className="flex flex-col items-center gap-2 mb-6">
-					<h1 className="text-6xl font-bold">Digital Descent</h1>
-					<h2 className="text-2xl">Managing the Agile Realm</h2>
-				</div>
-			) : (
-				<div
-					className="cursor-pointer absolute top-12 left-12 flex flex-col items-center gap-2 mb-6 [zoom:0.5]"
-					onClick={() => setLobbyState("menu")}
-				>
-					<h1 className="text-6xl font-bold">Digital Descent</h1>
-					<h2 className="text-2xl">Managing the Agile Realm</h2>
-				</div>
-			)}
-			{lobbyState === "menu" ? (
-				<div className="flex flex-col w-full max-w-xl gap-2">
-					<button className="w-full" onClick={() => setLobbyState("play")}>
-						Play
-					</button>
-					<br />
-					<button className="w-full" onClick={() => setLobbyState("login")}>
-						Login
-					</button>
-					<button className="w-full" onClick={() => setLobbyState("highscore")}>
-						Highscore
-					</button>
-					<button className="w-full" onClick={() => setLobbyState("options")}>
-						Options
-					</button>
-					<button className="w-full" onClick={() => setLobbyState("credits")}>
-						Credits
-					</button>
-				</div>
-			) : (
-				<></>
-			)}
-
-			{lobbyState === "play" ? (
-				<div className="flex flex-col w-full max-w-xl gap-2">
-					<form onSubmit={createLobby} className="flex gap-2">
-						<input
-							type="text"
-							placeholder="Lobby name..."
-							className="w-full rounded-md border-0 px-5 py-2 bg-[#1a1a1a] cursor-pointer transition-all"
-						/>
-						<button className="w-5/12">Host game</button>
-					</form>
-					<span className="text-[#a6a6a6] m-2 text-center text-xs">• • •</span>
-					<div className="flex flex-col gap-2 h-72 bg-[rgba(255,255,255,0.05)] p-2 rounded-lg overflow-auto">
-						{testLobbies.map((l) => (
-							<button
-								className="w-full flex justify-between"
-								onClick={() => joinLobby(l.id)}
-								key={l.id}
+			<div className="flex w-full max-w-5xl gap-4">
+				<div className="w-8/12">
+					<div className="grid grid-cols-4 gap-3 mb-4 p-4 bg-[rgba(255,255,255,0.05)] rounded-md">
+						{players.map((player, index) => (
+							<div
+								key={player.id}
+								className="bg-slate-200 bg-opacity-10 h-48 rounded-sm flex flex-col gap justify-between items-center"
 							>
-								<span>{l.name}</span>
-								<span>
-									<span className="mr-4 text-xs text-[#a6a6a6]"> • </span>
-									<span>{l.joined} / 6</span>
-								</span>
-							</button>
+								<div className="bg-[rgba(255,255,255,0.05)] m-2 [width:calc(100%-1rem)] h-full text-center rounded-sm">
+									<div className="mt-3 mb-1">{player.name}</div>
+									<div className="sprite [zoom:1.1] mx-auto"></div>
+								</div>
+								<div
+									className={`bg-[rgba(255,255,255,0.05)] p-1 mb-2 [width:calc(100%-1rem)] text-center rounded-sm ${
+										player.ready ? "bg-green-400 bg-opacity-70" : ""
+									}`}
+								>
+									{player.ready ? "ready" : "not ready"}
+								</div>
+							</div>
+						))}
+						{new Array(8 - players.length).fill(0).map((_, index) => (
+							<div
+								key={players.length + index}
+								className="bg-slate-200 bg-opacity-10 h-48 rounded-sm"
+							></div>
 						))}
 					</div>
+					<div className="flex gap-4">
+						<Chat
+							channel={window.channel}
+							wrapperClassName="!bg-[rgba(255,255,255,0.05)]"
+							className="max-h-24 h-24"
+						/>
+						<div className="bg-[rgba(255,255,255,0.05)] w-full rounded-md p-2">
+							<p className="text-center">Observers</p>
+						</div>
+					</div>
 				</div>
-			) : (
-				<></>
-			)}
-			{/* <Chat channel={window.channel} /> */}
+				<div className="flex flex-col w-4/12 justify-between gap-4">
+					<div className="bg-[rgba(255,255,255,0.05)] p-4 h-full">
+						<div className="bg-slate-200 bg-opacity-10 h-72"></div>
+					</div>
+					<button className="w-full" onClick={() => 1}>
+						Ready
+					</button>
+				</div>
+			</div>
 		</main>
 	);
 }

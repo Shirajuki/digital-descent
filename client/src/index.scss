@@ -29,6 +29,23 @@ a {
 	}
 }
 
+.sprite {
+	display: block;
+	background-color: #535bf2;
+	background: url("sprites/spritesheet.png");
+	width: 72px;
+	height: 72px;
+	animation: animateSprite 1.2s infinite steps(11);
+}
+@keyframes animateSprite {
+	0% {
+		background-position-x: 0px;
+	}
+	100% {
+		background-position-x: calc(11 * -72px);
+	}
+}
+
 body {
 	margin: 0;
 	display: flex;

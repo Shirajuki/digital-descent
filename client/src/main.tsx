@@ -3,12 +3,13 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Game from "./Game";
 import Lobby from "./Lobby";
+import Menu from "./Menu";
 import "./index.scss";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <div>main menu</div>,
+		element: <Menu />,
 	},
 	{
 		path: "lobby",

@@ -77,7 +77,10 @@ function Game() {
 			<div className="max-w-[90vw] min-w-[90vw] relative">
 				<canvas id="canvas" className="canvas" ref={canvasRef}></canvas>
 				<HUD engine={engine} />
-				<Chat channel={window.channel} className="absolute bottom-2 left-2" />
+				<Chat
+					channel={window.channel}
+					wrapperClassName="absolute bottom-2 left-2"
+				/>
 			</div>
 		</main>
 	);
