@@ -8,14 +8,30 @@ const players = [
 	{ id: "player2", name: "Player 2", customization: {}, ready: true },
 	{ id: "player3", name: "Player 3", customization: {}, ready: false },
 ];
+type LobbyPlayersType = {
+	id: string;
+	name: string;
+	customization: any;
+	ready: boolean;
+};
 
 function Lobby() {
-	const [lobbyId, setLobbyId] = useAtom(roomIdAtom);
+	const [lobbyId, _setLobbyId] = useAtom(roomIdAtom);
+	const [player, setPlayers] = useState();
 
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
+		if ((window as any)?.lobbyInitialized) return;
+		(window as any).lobbyInitialized = true;
+
 		const channel = window.channel;
-		console.log(channel?.id, lobbyId);
+		if (channel) {
+			console.log(channel.id, lobbyId);
+			channel.on("lobby-update", (data: any) => {
+				setPlayers(data);
+			});
+			channel.emit("lobby-update", {});
+		}
 	}, []);
 
 	return (
@@ -27,7 +43,7 @@ function Lobby() {
 							<div
 								key={player.id}
 								className={`bg-slate-200 bg-opacity-0 h-48 rounded-sm flex flex-col gap justify-between items-center ${
-									index == 0
+									player.id == window?.channel?.id
 										? "border-stone-100 border-opacity-20 border-4 bg-opacity-0"
 										: ""
 								}`}

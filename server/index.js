@@ -15,15 +15,32 @@ const io = geckos();
 io.addServer(server);
 io.onConnection((channel) => {
 	console.log(`${channel.id} connected`);
+	io.emit(
+		"lobby-listing",
+		Object.keys(rooms).map((roomId) => {
+			return {
+				id: roomId,
+				name: rooms[roomId].name,
+				joined: rooms[roomId].joined,
+			};
+		})
+	);
 
 	channel.onDisconnect(() => {
 		console.log(`${channel.id} disconnected`);
+		const roomId = Object.keys(rooms).filter((roomId) =>
+			rooms[roomId].joined.includes(channel.id)
+		)[0];
+		console.log(rooms, roomId, channel.id);
 		// Remove player from room on disconnect
-		if (rooms[channel.roomId]) {
-			delete rooms[channel.roomId].players[channel.id];
+		if (rooms[roomId]) {
+			delete rooms[roomId].players[channel.id];
+			rooms[roomId].joined = rooms[roomId].joined.filter(
+				(id) => id === channel.id
+			);
 			// Delete room if all players have left
-			if (rooms[channel.roomId]?.players?.length === 0) {
-				delete rooms[channel.roomId];
+			if (rooms[roomId]?.joined.length === 0) {
+				delete rooms[roomId];
 			}
 		}
 	});
@@ -36,6 +53,33 @@ io.onConnection((channel) => {
 			});
 	});
 
+	channel.on("lobby-create", (data) => {
+		const roomId = data.roomId;
+		if (!roomId) return;
+		if (!rooms[roomId]) {
+			channel.join(roomId);
+			rooms[roomId] = {
+				players: {},
+				battle: {},
+				exploration: {},
+				name: data.name ?? "An open room",
+				joined: [channel.id],
+				status: "started",
+			};
+			io.room(roomId).emit("lobby-joined", roomId);
+			io.emit(
+				"lobby-listing",
+				Object.keys(rooms).map((roomId) => {
+					return {
+						id: roomId,
+						name: rooms[roomId].name,
+						joined: rooms[roomId].joined,
+					};
+				})
+			);
+		}
+	});
+
 	channel.on("lobby-join", (data) => {
 		const roomId = data.roomId;
 		if (!roomId) return;
@@ -46,6 +90,7 @@ io.onConnection((channel) => {
 		if (rooms[roomId]) {
 			channel.join(roomId);
 			rooms[roomId].players[data.id] = data;
+			rooms[roomId].joined.push(channel.id);
 			io.room(roomId).emit("lobby-joined", roomId);
 		} else {
 			// Else create a new room
@@ -54,11 +99,31 @@ io.onConnection((channel) => {
 				players: {},
 				battle: {},
 				exploration: {},
+				name: "An open room",
+				joined: [channel.id],
 				status: "started",
 			};
 			io.room(roomId).emit("lobby-joined", roomId);
 		}
+		io.emit(
+			"lobby-listing",
+			Object.keys(rooms).map((roomId) => {
+				return {
+					id: roomId,
+					name: rooms[roomId].name,
+					joined: rooms[roomId].joined,
+				};
+			})
+		);
 		console.log(`${channel.id} joined room ${channel.roomId}`);
+	});
+	channel.on("lobby-update", (data) => {
+		if (rooms[channel.roomId]) {
+			if (data?.player) {
+				console.log(data?.player);
+			}
+			io.room(roomId).emit("lobby-update", []);
+		}
 	});
 
 	channel.on("game-update", (data) => {

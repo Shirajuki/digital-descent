@@ -10,16 +10,24 @@ const testLobbies = [
 	{ id: "ora", name: "OraOraOra", joined: 1 },
 ];
 
+type LobbyType = {
+	id: string;
+	name: string;
+	joined: string[];
+};
+
 function Menu() {
 	const [lobbyId, setLobbyId] = useAtom(roomIdAtom);
 	const [lobbyState, setLobbyState] = useState("menu");
+	const [lobbies, setLobbies] = useState<LobbyType[]>();
 	const [channel, setChannel] = useState<any>();
 	const navigate = useNavigate();
 
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
-		if (!navigate || !setLobbyId || !setChannel) return;
-
+		if (!navigate || !setLobbyId || !setChannel || !setLobbyId) return;
+		if (window.channel) return;
+		console.log(1);
 		const channel = geckos({ port: 3000 });
 		window.channel = channel;
 		setChannel(channel);
@@ -31,8 +39,12 @@ function Menu() {
 				console.log(`You joined the room ${data}`);
 				navigate("/lobby");
 			});
+			channel.on("lobby-listing", (data: any) => {
+				console.log(data);
+				setLobbies(data);
+			});
 		});
-	}, [navigate, setLobbyId, setChannel]);
+	}, [navigate, setChannel, setLobbyId, setLobbies]);
 
 	const joinLobby = useCallback(
 		(id: string) => {
@@ -43,10 +55,13 @@ function Menu() {
 	const createLobby = useCallback(
 		(event: any) => {
 			event.preventDefault();
-			const id = event.target.lobbyId.value;
-			joinLobby(id);
+			const roomName = event.target.lobbyId.value;
+			channel?.emit("lobby-create", {
+				roomId: "" + Math.floor(Math.random() * 10 ** 10),
+				name: roomName,
+			});
 		},
-		[joinLobby]
+		[channel]
 	);
 
 	return (
@@ -101,20 +116,26 @@ function Menu() {
 						<button className="w-5/12">Host game</button>
 					</form>
 					<span className="text-[#a6a6a6] m-2 text-center text-xs">• • •</span>
-					<div className="flex flex-col gap-2 h-72 bg-[rgba(255,255,255,0.05)] p-2 rounded-lg overflow-auto">
-						{testLobbies.map((l) => (
-							<button
-								className="w-full flex justify-between"
-								onClick={() => joinLobby(l.id)}
-								key={l.id}
-							>
-								<span>{l.name}</span>
-								<span>
-									<span className="mr-4 text-xs text-[#a6a6a6]"> • </span>
-									<span>{l.joined} / 6</span>
-								</span>
-							</button>
-						))}
+					<div className="relative flex flex-col gap-2 h-72 bg-[rgba(255,255,255,0.05)] p-2 rounded-lg overflow-auto">
+						{lobbies && lobbies.length > 0 ? (
+							lobbies.map((l) => (
+								<button
+									className="w-full flex justify-between"
+									onClick={() => joinLobby(l.id)}
+									key={l.id}
+								>
+									<span>{l.name}</span>
+									<span>
+										<span className="mr-4 text-xs text-[#a6a6a6]"> • </span>
+										<span>{l.joined.length} / 8</span>
+									</span>
+								</button>
+							))
+						) : (
+							<p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+								no lobbies found...
+							</p>
+						)}
 					</div>
 				</div>
 			) : (

@@ -25,7 +25,7 @@ function Game() {
 
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
-		if (!engine) return;
+		if (!engine || !setRoomId) return;
 		const channel = geckos({ port: 3000 });
 		window.channel = channel;
 
