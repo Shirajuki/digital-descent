@@ -31,7 +31,8 @@ io.onConnection((channel) => {
 		const roomId = Object.keys(rooms).filter((roomId) =>
 			rooms[roomId].joined.includes(channel.id)
 		)[0];
-		console.log(rooms, roomId, channel.id);
+
+		if (!roomId) return;
 		// Remove player from room on disconnect
 		if (rooms[roomId]) {
 			delete rooms[roomId].players[channel.id];
@@ -66,6 +67,12 @@ io.onConnection((channel) => {
 				joined: [channel.id],
 				status: "started",
 			};
+			rooms[roomId].players[channel.id] = {
+				id: channel.id,
+				name: "Player",
+				customization: {},
+				ready: false,
+			};
 			io.room(roomId).emit("lobby-joined", roomId);
 			io.emit(
 				"lobby-listing",
@@ -77,6 +84,7 @@ io.onConnection((channel) => {
 					};
 				})
 			);
+			console.log(`${channel.id} created room ${channel.roomId}`);
 		}
 	});
 
@@ -89,7 +97,12 @@ io.onConnection((channel) => {
 		// TODO: eventually add password lock as well?
 		if (rooms[roomId]) {
 			channel.join(roomId);
-			rooms[roomId].players[data.id] = data;
+			rooms[roomId].players[channel.id] = {
+				id: channel.id,
+				name: "Player",
+				customization: {},
+				ready: false,
+			};
 			rooms[roomId].joined.push(channel.id);
 			io.room(roomId).emit("lobby-joined", roomId);
 		} else {
@@ -102,6 +115,12 @@ io.onConnection((channel) => {
 				name: "An open room",
 				joined: [channel.id],
 				status: "started",
+			};
+			rooms[roomId].players[channel.id] = {
+				id: channel.id,
+				name: "Player",
+				customization: {},
+				ready: false,
 			};
 			io.room(roomId).emit("lobby-joined", roomId);
 		}
@@ -118,11 +137,18 @@ io.onConnection((channel) => {
 		console.log(`${channel.id} joined room ${channel.roomId}`);
 	});
 	channel.on("lobby-update", (data) => {
-		if (rooms[channel.roomId]) {
+		const roomId = channel.roomId;
+		if (!roomId) return;
+		if (rooms[roomId]) {
+			console.log(123);
 			if (data?.player) {
+				rooms[roomId].players[channel.id] = data?.player;
 				console.log(data?.player);
 			}
-			io.room(roomId).emit("lobby-update", []);
+			io.room(roomId).emit(
+				"lobby-update",
+				Object.values(rooms[roomId].players)
+			);
 		}
 	});
 

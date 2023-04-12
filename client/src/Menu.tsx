@@ -17,7 +17,7 @@ type LobbyType = {
 };
 
 function Menu() {
-	const [lobbyId, setLobbyId] = useAtom(roomIdAtom);
+	const [_lobbyId, setLobbyId] = useAtom(roomIdAtom);
 	const [lobbyState, setLobbyState] = useState("menu");
 	const [lobbies, setLobbies] = useState<LobbyType[]>();
 	const [channel, setChannel] = useState<any>();
@@ -27,7 +27,6 @@ function Menu() {
 	useEffect(() => {
 		if (!navigate || !setLobbyId || !setChannel || !setLobbyId) return;
 		if (window.channel) return;
-		console.log(1);
 		const channel = geckos({ port: 3000 });
 		window.channel = channel;
 		setChannel(channel);
