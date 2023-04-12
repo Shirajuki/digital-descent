@@ -6,6 +6,7 @@ import Chat from "./lib/components/chat/Chat";
 const players = [
 	{ id: "player1", name: "Player 1", customization: {}, ready: false },
 	{ id: "player2", name: "Player 2", customization: {}, ready: true },
+	{ id: "player3", name: "Player 3", customization: {}, ready: false },
 ];
 
 function Lobby() {
@@ -25,7 +26,11 @@ function Lobby() {
 						{players.map((player, index) => (
 							<div
 								key={player.id}
-								className="bg-slate-200 bg-opacity-10 h-48 rounded-sm flex flex-col gap justify-between items-center"
+								className={`bg-slate-200 bg-opacity-0 h-48 rounded-sm flex flex-col gap justify-between items-center ${
+									index == 0
+										? "border-stone-100 border-opacity-20 border-4 bg-opacity-0"
+										: ""
+								}`}
 							>
 								<div className="bg-[rgba(255,255,255,0.05)] m-2 [width:calc(100%-1rem)] h-full text-center rounded-sm">
 									<div className="mt-3 mb-1">{player.name}</div>
