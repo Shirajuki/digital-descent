@@ -71,7 +71,7 @@ function Lobby() {
 			<div className="flex w-full max-w-5xl gap-4">
 				<div className="w-8/12">
 					<div className="grid grid-cols-4 gap-3 mb-4 p-4 bg-[rgba(255,255,255,0.05)] rounded-md">
-						{players?.map((player, index) => (
+						{players?.map((player) => (
 							<div
 								key={player.id}
 								className={`bg-slate-200 bg-opacity-0 h-48 rounded-sm flex flex-col gap justify-between items-center ${
@@ -85,7 +85,7 @@ function Lobby() {
 									<div className="sprite [zoom:1.1] mx-auto"></div>
 								</div>
 								<div
-									className={`bg-[rgba(255,255,255,0.05)] p-1 mb-2 [width:calc(100%-1rem)] text-center rounded-sm ${
+									className={`bg-[rgba(255,255,255,0.05)] p-1 mb-2 [width:calc(100%-1rem)] text-center rounded-sm transition-all duration-500 ${
 										player.ready ? "bg-green-400 bg-opacity-70" : ""
 									}`}
 								>
@@ -115,8 +115,15 @@ function Lobby() {
 					<div className="bg-[rgba(255,255,255,0.05)] p-4 h-full">
 						<div className="bg-slate-200 bg-opacity-10 h-72"></div>
 					</div>
-					<button className="w-full" onClick={() => toggleReady()}>
-						{player.ready ? "Unready" : "Ready"}
+					<button
+						className={`w-full h-20 text-3xl ${
+							player.ready
+								? "bg-red-400 bg-opacity-20"
+								: "bg-green-400 bg-opacity-50"
+						}`}
+						onClick={() => toggleReady()}
+					>
+						{player.ready ? "not ready" : "ready"}
 					</button>
 				</div>
 			</div>
