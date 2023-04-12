@@ -57,7 +57,7 @@ const BattleHUD = () => {
 
 	return (
 		<div
-			className="absolute top-0 left-0 z-10 w-full h-full"
+			className="absolute top-0 left-0 z-10 w-full h-full [font-family:var(--font-hud)]"
 			style={{ zoom: scaling }}
 		>
 			{/* Battle turn indicator */}

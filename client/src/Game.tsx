@@ -17,7 +17,6 @@ function Game() {
 	useEffect(() => {
 		if (canvasRef.current && !window.engine) {
 			const nengine = new PhaserEngine(canvasRef.current);
-			window.engine = nengine;
 			nengine.init();
 			nengine.render();
 			setEngine(nengine);
@@ -74,15 +73,13 @@ function Game() {
 	}, [engine, setRoomId]);
 
 	return (
-		<div className="App">
-			<main>
-				<div className="max-w-[90vw] min-w-[90vw] relative">
-					<canvas id="canvas" className="canvas" ref={canvasRef}></canvas>
-					<HUD engine={engine} />
-					<Chat channel={window.channel} className="absolute bottom-2 left-2" />
-				</div>
-			</main>
-		</div>
+		<main>
+			<div className="max-w-[90vw] min-w-[90vw] relative">
+				<canvas id="canvas" className="canvas" ref={canvasRef}></canvas>
+				<HUD engine={engine} />
+				<Chat channel={window.channel} className="absolute bottom-2 left-2" />
+			</div>
+		</main>
 	);
 }
 

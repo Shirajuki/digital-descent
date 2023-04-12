@@ -1,9 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import "https://fonts.googleapis.com/css2?family=DynaPuff:wght@400;700&family=Permanent+Marker&display=swap";
 :root {
-	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	--font-hud: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	--font-normal: "DynaPuff", cursive;
+	--font-fancy: "Permanent Marker", cursive;
+	font-family: var(--font-normal);
 	line-height: 1.5;
 	font-weight: 400;
 

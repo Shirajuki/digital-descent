@@ -1,4 +1,6 @@
-export const inputInitPlayerMovement = (scene: any) => {
+import Scene from "../scenes/scene";
+
+export const inputInitPlayerMovement = (scene: Scene) => {
 	// Keyboard input setup
 	scene.input.keyboard.on("keydown", (event: any) => {
 		if (document?.activeElement?.nodeName === "INPUT") return;
