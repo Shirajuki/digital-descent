@@ -70,6 +70,7 @@ export default class BattleSystem {
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
+						type: "normal",
 						state: {
 							...state,
 							attacker: {

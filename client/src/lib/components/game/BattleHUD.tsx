@@ -186,6 +186,9 @@ const BattleHUD = () => {
 					></button>
 				</div>
 			</div>
+
+			{/* Battle text popups */}
+			<div></div>
 		</div>
 	);
 };

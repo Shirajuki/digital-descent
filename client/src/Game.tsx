@@ -30,7 +30,6 @@ function Game() {
 
 		// Do not reinitialize gecko if sent from lobby
 		let channel: any;
-		console.log((window as any).lobbyInitialized);
 		if ((window as any).lobbyInitialized) {
 			channel = window.channel;
 		} else {
@@ -38,16 +37,14 @@ function Game() {
 			// TODO: at some point remove this when done with dev
 			channel = geckos({ port: 3000 });
 			window.channel = channel;
-			channel.onConnect((error: any) => {});
+			channel.onConnect((_error: any) => {
+				channel.on("lobby-joined", (data: any) => {
+					setRoomId(data);
+					console.log(`You joined the room ${data}`);
+				});
+				channel.emit("lobby-join", { roomId: "test-room" });
+			});
 		}
-
-		// TODO: Create a module for saving the different channel listeners in one module
-		// channel.onConnect((error: any) => {
-		// 	if (error) return console.error(error.message);
-		channel.on("lobby-joined", (data: any) => {
-			setRoomId(data);
-			console.log(`You joined the room ${data}`);
-		});
 
 		// Game syncing
 		channel.on("game-update", (data: any) => {
@@ -78,11 +75,6 @@ function Game() {
 				);
 			}
 		});
-
-		if (!(window as any).lobbyInitialized) {
-			channel.emit("lobby-join", { roomId: "test-room" });
-		}
-		// });
 	}, [engine, setRoomId]);
 
 	return (

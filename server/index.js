@@ -31,9 +31,13 @@ io.onConnection((channel) => {
 
 	channel.onDisconnect(() => {
 		console.log(`${channel.id} disconnected`);
-		const roomId = Object.keys(rooms).filter((roomId) =>
-			rooms[roomId].joined.includes(channel.id)
-		)[0];
+		const roomId =
+			Object.keys(rooms).filter((roomId) =>
+				Object.keys(rooms[roomId].players).includes(channel.id)
+			)[0] ??
+			Object.keys(rooms).filter((roomId) =>
+				rooms[roomId].joined.includes(channel.id)
+			)[0];
 
 		if (!roomId) return;
 		// Remove player from room on disconnect
@@ -104,6 +108,7 @@ io.onConnection((channel) => {
 		}
 	});
 	channel.on("lobby-join", (data) => {
+		console.log(data, rooms);
 		const roomId = data.roomId;
 		if (!roomId) return;
 

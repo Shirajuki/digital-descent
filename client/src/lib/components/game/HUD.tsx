@@ -11,7 +11,13 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 
 	// console.log(engine?.game.currentScene);
 
-	return <>{engine?.game.currentScene === "battle" ? <BattleHUD /> : <></>}</>;
+	return (
+		<>
+			{engine?.game.currentScene === "battle" ? <BattleHUD /> : <></>}
+			{/* {engine?.game.currentScene === "exploration" ? <ExplorationHUD /> : <></>} */}
+			{/* {engine?.game.currentScene === "digitalworld" ? <DigitalWorldHUD /> : <></>} */}
+		</>
+	);
 }
 
 export default HUD;
