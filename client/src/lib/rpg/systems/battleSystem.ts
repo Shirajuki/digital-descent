@@ -23,7 +23,7 @@ export default class BattleSystem {
 		this.initializeQueue();
 		console.log("INITIALIZE BATTLE", players, monsters);
 		console.log(this.turnQueue);
-		(window as any).battle = this;
+		// (window as any).battle = this;
 		setTimeout(() => (this.state.target = monsters[0]), 300);
 	}
 

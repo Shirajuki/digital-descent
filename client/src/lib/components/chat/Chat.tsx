@@ -1,21 +1,26 @@
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { chatAtom, roomIdAtom } from "../../atoms";
 import { ChatPropsType, ChatType } from "../../types";
 import { clearFocus } from "../../utils";
 
-function Chat({ channel, className = "" }: ChatPropsType) {
+function Chat({
+	channel,
+	wrapperClassName = "",
+	className = "",
+}: ChatPropsType) {
 	const roomId = useAtomValue(roomIdAtom);
 	const [chat, setChat] = useAtom(chatAtom);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (channel && setChat && chatRef.current) {
+		if (channel && setChat && chatRef.current && !channel.messageLoaded) {
+			channel.messageLoaded = true;
 			channel.on("message-update", (data: any) => {
 				setChat((ochat) => [...ochat, data]);
 				setTimeout(() => {
-					chatRef?.current?.scrollTo({ top: chatRef?.current?.scrollHeight });
+					chatRef?.current?.scrollTo({ top: 100000000000 });
 				}, 100);
 			});
 		}
@@ -33,11 +38,11 @@ function Chat({ channel, className = "" }: ChatPropsType) {
 
 	return (
 		<div
-			className={`bg-gray-800 z-20 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${className}`}
+			className={`bg-gray-800 z-20 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${wrapperClassName}`}
 		>
 			<div
 				ref={chatRef}
-				className="max-h-48 w-[26rem] overflow-hidden hover:overflow-auto mb-4"
+				className={`max-h-48 w-[26rem] overflow-hidden hover:overflow-auto mb-4 ${className}`}
 			>
 				{chat.map((msg: ChatType, index: number) => (
 					<p key={index} className="pr-2 [overflow-wrap:break-word]">

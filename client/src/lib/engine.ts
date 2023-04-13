@@ -35,7 +35,7 @@ export default class PhaserEngine {
 				arcade: {
 					gravity: { y: 0 },
 					fps: 60,
-					debug: true,
+					debug: false,
 				},
 			},
 			input: {
@@ -54,7 +54,6 @@ export default class PhaserEngine {
 	}
 
 	init() {
-		window.engine = this;
 		this.canvas.addEventListener("mousedown", () => {
 			clearFocus();
 		});

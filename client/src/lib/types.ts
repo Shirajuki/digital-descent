@@ -5,6 +5,7 @@ export type PropsType = {
 };
 export type ChatPropsType = {
 	channel: any;
+	wrapperClassName?: string;
 } & PropsType;
 
 export type PlayerType = {
