@@ -4,11 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import Chat from "./lib/components/chat/Chat";
 import { useNavigate } from "react-router-dom";
 
-const players = [
-	{ id: "player1", name: "Player 1", customization: {}, ready: false },
-	{ id: "player2", name: "Player 2", customization: {}, ready: true },
-	{ id: "player3", name: "Player 3", customization: {}, ready: false },
-];
 type LobbyPlayersType = {
 	id: string;
 	name: string;
@@ -24,7 +19,9 @@ function Lobby() {
 		name: "Player",
 		customization: {},
 		ready: false,
+		host: false,
 	});
+
 	const navigate = useNavigate();
 
 	// Load geckos channel and initialize listeners for geckos
@@ -39,6 +36,15 @@ function Lobby() {
 			channel.on("lobby-update", (data: any) => {
 				console.log(data);
 				setPlayers(data);
+				if (data.length === 1) {
+					setPlayer((player) => {
+						return { ...player, host: true };
+					});
+				}
+			});
+			channel.on("lobby-startgame", () => {
+				console.log("starting game...");
+				navigate("/game");
 			});
 
 			const player = {
@@ -46,6 +52,7 @@ function Lobby() {
 				name: "Player",
 				customization: {},
 				ready: false,
+				host: false,
 			};
 			setPlayer(player);
 			channel.emit("lobby-update", { player });
@@ -65,6 +72,11 @@ function Lobby() {
 		setPlayer(nplayer);
 		updateLobby(nplayer);
 	}, [updateLobby, player]);
+
+	const startGame = useCallback(() => {
+		window?.channel?.emit("lobby-startgame");
+		console.log("start game");
+	}, []);
 
 	return (
 		<main className="flex flex-col items-center w-screen">
@@ -115,16 +127,25 @@ function Lobby() {
 					<div className="bg-[rgba(255,255,255,0.05)] p-4 h-full">
 						<div className="bg-slate-200 bg-opacity-10 h-72"></div>
 					</div>
-					<button
-						className={`w-full h-20 text-3xl ${
-							player.ready
-								? "bg-red-400 bg-opacity-20"
-								: "bg-green-400 bg-opacity-50"
-						}`}
-						onClick={() => toggleReady()}
-					>
-						{player.ready ? "not ready" : "ready"}
-					</button>
+					{player.host && players?.every((p) => p.ready) ? (
+						<button
+							className={`w-full h-20 text-3xl bg-green-400 bg-opacity-50`}
+							onClick={() => startGame()}
+						>
+							Start game
+						</button>
+					) : (
+						<button
+							className={`w-full h-20 text-3xl ${
+								player.ready
+									? "bg-red-400 bg-opacity-20"
+									: "bg-green-400 bg-opacity-50"
+							}`}
+							onClick={() => toggleReady()}
+						>
+							{player.ready ? "not ready" : "ready"}
+						</button>
+					)}
 				</div>
 			</div>
 		</main>

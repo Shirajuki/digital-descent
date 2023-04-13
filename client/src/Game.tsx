@@ -20,56 +20,69 @@ function Game() {
 			nengine.init();
 			nengine.render();
 			setEngine(nengine);
+			window.engine = nengine;
 		}
 	}, [setEngine]);
 
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
 		if (!engine || !setRoomId) return;
-		const channel = geckos({ port: 3000 });
-		window.channel = channel;
+
+		// Do not reinitialize gecko if sent from lobby
+		let channel: any;
+		console.log((window as any).lobbyInitialized);
+		if ((window as any).lobbyInitialized) {
+			channel = window.channel;
+		} else {
+			// Initialize gecko from scratch, for testing purposes
+			// TODO: at some point remove this when done with dev
+			channel = geckos({ port: 3000 });
+			window.channel = channel;
+			channel.onConnect((error: any) => {});
+		}
 
 		// TODO: Create a module for saving the different channel listeners in one module
-		channel.onConnect((error: any) => {
-			if (error) return console.error(error.message);
-
-			channel.on("lobby-joined", (data: any) => {
-				setRoomId(data);
-				console.log(`You joined the room ${data}`);
-			});
-
-			// Game syncing
-			channel.on("game-update", (data: any) => {
-				if (
-					engine.game.currentScene === "exploration" ||
-					engine.game.currentScene === "digitalworld"
-				) {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
-						data
-					);
-				}
-			});
-
-			// Exploration syncing
-			channel.on("exploration-initialize", (data: any) => {
-				if (engine.game.currentScene === "exploration") {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
-						data
-					);
-				}
-			});
-
-			// Battle syncing
-			channel.on("battle", (data: any) => {
-				if (engine.game.currentScene === "battle") {
-					(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
-						data
-					);
-				}
-			});
-
-			channel.emit("lobby-join", { roomId: "test-room" });
+		// channel.onConnect((error: any) => {
+		// 	if (error) return console.error(error.message);
+		channel.on("lobby-joined", (data: any) => {
+			setRoomId(data);
+			console.log(`You joined the room ${data}`);
 		});
+
+		// Game syncing
+		channel.on("game-update", (data: any) => {
+			if (
+				engine.game.currentScene === "exploration" ||
+				engine.game.currentScene === "digitalworld"
+			) {
+				(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+					data
+				);
+			}
+		});
+
+		// Exploration syncing
+		channel.on("exploration-initialize", (data: any) => {
+			if (engine.game.currentScene === "exploration") {
+				(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+					data
+				);
+			}
+		});
+
+		// Battle syncing
+		channel.on("battle", (data: any) => {
+			if (engine.game.currentScene === "battle") {
+				(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+					data
+				);
+			}
+		});
+
+		if (!(window as any).lobbyInitialized) {
+			channel.emit("lobby-join", { roomId: "test-room" });
+		}
+		// });
 	}, [engine, setRoomId]);
 
 	return (

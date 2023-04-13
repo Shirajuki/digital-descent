@@ -4,7 +4,10 @@ export const removeDuplicatePlayers = (scene: any, serverPlayers: any[]) => {
 	// Remove duplicate players and also remove disconnected
 	for (let i = 0; i < scene.players.length; i++) {
 		const player = scene.players[i];
-		if (!serverPlayers.includes(player.id) && scene.player?.id !== player.id) {
+		if (
+			(!serverPlayers.includes(player.id) && scene.player?.id !== player.id) ||
+			(scene.player?.id == player.id && scene.player != player)
+		) {
 			const p = scene.players.splice(i, 1)[0];
 			p.destroy();
 		}

@@ -17,13 +17,16 @@ io.onConnection((channel) => {
 	console.log(`${channel.id} connected`);
 	io.emit(
 		"lobby-listing",
-		Object.keys(rooms).map((roomId) => {
-			return {
-				id: roomId,
-				name: rooms[roomId].name,
-				joined: rooms[roomId].joined,
-			};
-		})
+		Object.keys(rooms)
+			.map((roomId) => {
+				return {
+					id: roomId,
+					name: rooms[roomId].name,
+					joined: rooms[roomId].joined,
+					status: rooms[roomId].status,
+				};
+			})
+			.filter((room) => room.status === "lobby")
 	);
 
 	channel.onDisconnect(() => {
@@ -39,6 +42,15 @@ io.onConnection((channel) => {
 			rooms[roomId].joined = rooms[roomId].joined.filter(
 				(id) => id === channel.id
 			);
+			// Emit disconnection to all clients
+			io.room(roomId).emit(
+				"lobby-update",
+				Object.values(rooms[roomId].players)
+			);
+			io.room(roomId).emit("message-update", {
+				sender: "[system]",
+				message: "A player left the lobby.",
+			});
 			// Delete room if all players have left
 			if (rooms[roomId]?.joined.length === 0) {
 				delete rooms[roomId];
@@ -49,7 +61,7 @@ io.onConnection((channel) => {
 	channel.on("message-send", (data) => {
 		if (data?.message)
 			io.room(channel.roomId).emit("message-update", {
-				sender: channel.id,
+				sender: data?.sender ?? channel.id,
 				message: data.message,
 			});
 	});
@@ -65,7 +77,8 @@ io.onConnection((channel) => {
 				exploration: {},
 				name: data.name ?? "An open room",
 				joined: [channel.id],
-				status: "started",
+				status: "lobby",
+				host: channel.id,
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -76,18 +89,20 @@ io.onConnection((channel) => {
 			io.room(roomId).emit("lobby-joined", roomId);
 			io.emit(
 				"lobby-listing",
-				Object.keys(rooms).map((roomId) => {
-					return {
-						id: roomId,
-						name: rooms[roomId].name,
-						joined: rooms[roomId].joined,
-					};
-				})
+				Object.keys(rooms)
+					.map((roomId) => {
+						return {
+							id: roomId,
+							name: rooms[roomId].name,
+							joined: rooms[roomId].joined,
+							status: rooms[roomId].status,
+						};
+					})
+					.filter((room) => room.status === "lobby")
 			);
 			console.log(`${channel.id} created room ${channel.roomId}`);
 		}
 	});
-
 	channel.on("lobby-join", (data) => {
 		const roomId = data.roomId;
 		if (!roomId) return;
@@ -105,6 +120,10 @@ io.onConnection((channel) => {
 			};
 			rooms[roomId].joined.push(channel.id);
 			io.room(roomId).emit("lobby-joined", roomId);
+			io.room(roomId).emit("message-update", {
+				sender: "[system]",
+				message: "A player joined the lobby.",
+			});
 		} else {
 			// Else create a new room
 			channel.join(roomId);
@@ -114,7 +133,8 @@ io.onConnection((channel) => {
 				exploration: {},
 				name: "An open room",
 				joined: [channel.id],
-				status: "started",
+				status: "lobby",
+				host: channel.id,
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -126,13 +146,16 @@ io.onConnection((channel) => {
 		}
 		io.emit(
 			"lobby-listing",
-			Object.keys(rooms).map((roomId) => {
-				return {
-					id: roomId,
-					name: rooms[roomId].name,
-					joined: rooms[roomId].joined,
-				};
-			})
+			Object.keys(rooms)
+				.map((roomId) => {
+					return {
+						id: roomId,
+						name: rooms[roomId].name,
+						joined: rooms[roomId].joined,
+						status: rooms[roomId].status,
+					};
+				})
+				.filter((room) => room.status === "lobby")
 		);
 		console.log(`${channel.id} joined room ${channel.roomId}`);
 	});
@@ -140,10 +163,8 @@ io.onConnection((channel) => {
 		const roomId = channel.roomId;
 		if (!roomId) return;
 		if (rooms[roomId]) {
-			console.log(123);
 			if (data?.player) {
 				rooms[roomId].players[channel.id] = data?.player;
-				console.log(data?.player);
 			}
 			io.room(roomId).emit(
 				"lobby-update",
@@ -151,12 +172,30 @@ io.onConnection((channel) => {
 			);
 		}
 	});
+	channel.on("lobby-startgame", () => {
+		const roomId = channel.roomId;
+		if (!roomId) return;
+
+		// Check if player is host
+		if (rooms[roomId] && rooms[roomId].host === channel.id) {
+			// If everyone in the lobby is ready, send start signal to all clients
+			if (Object.values(rooms[roomId].players).every((p) => p.ready)) {
+				rooms[roomId].lobbyPlayers = rooms[roomId].players;
+				rooms[roomId].players = {};
+				rooms[roomId].status = "game";
+				io.room(roomId).emit("lobby-startgame");
+			}
+		}
+	});
 
 	channel.on("game-update", (data) => {
-		if (rooms[channel.roomId]) {
-			rooms[channel.roomId].players[channel.id] = data.player;
-			io.room(channel.roomId).emit("game-update", {
-				players: rooms[channel.roomId].players,
+		const roomId = channel.roomId;
+		if (!roomId) return;
+
+		if (rooms[roomId]) {
+			rooms[roomId].players[channel.id] = data.player;
+			io.room(roomId).emit("game-update", {
+				players: rooms[roomId].players,
 				type: "game-update",
 			});
 		}

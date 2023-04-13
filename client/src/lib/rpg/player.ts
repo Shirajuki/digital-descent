@@ -42,6 +42,7 @@ export const initializePlayer = (
 	if (oldPlayer) {
 		player.stats = oldPlayer.stats;
 		player.battleStats = oldPlayer.battleStats;
+		oldPlayer.destroy();
 	}
 
 	player.getData = function () {

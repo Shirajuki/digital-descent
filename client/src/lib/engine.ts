@@ -54,7 +54,6 @@ export default class PhaserEngine {
 	}
 
 	init() {
-		window.console.log = () => 0;
 		this.canvas.addEventListener("mousedown", () => {
 			clearFocus();
 		});
