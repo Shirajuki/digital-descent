@@ -1,20 +1,40 @@
 import { randomInt } from "../../utils";
 import { ELEMENT_EFFECTIVENESS_TABLE } from "../../constants";
 
+type StateType = {
+	type:
+		| "skip"
+		| "normal-attack"
+		| "standing-attack"
+		| "special-attack"
+		| "text-update";
+	attacker: any;
+	target: any;
+	text: string;
+	running: boolean;
+	finished: boolean;
+	initialPosition: { x: number; y: number };
+	damage: { damage: number; elementEffectiveness: number };
+	timer?: { current: number; end: number };
+};
+
 export default class BattleSystem {
 	public players: any[];
 	public monsters: any[];
 	public turnQueue: any[];
 	public turns = 0;
-	public state: any = {
+	public state: StateType = {
+		type: "skip",
 		attacker: null,
 		target: null,
-		attacking: false,
-		attacked: false,
+		text: "",
+		running: false,
+		finished: false,
 		initialPosition: { x: 0, y: 0 },
+		damage: { damage: 0, elementEffectiveness: 1 },
+		timer: { current: 0, end: 100 },
 	};
 	public playerTarget: any = null;
-	public damage: any = {};
 	public actionText = "";
 	public actionQueue: any = [];
 
@@ -63,16 +83,17 @@ export default class BattleSystem {
 				const player = this.players.find((p) => p.id === id);
 
 				const state = {
+					type: "normal-attack",
 					attacker: player,
 					target: this.state.target ?? this.monsters[0],
-					attacking: true,
-					attacked: false,
+					text: "dummy attack",
+					running: true,
+					finished: false,
 					initialPosition: { x: player.x, y: player.y },
 				};
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
-						type: "normal",
 						state: {
 							...state,
 							attacker: {
@@ -113,9 +134,14 @@ export default class BattleSystem {
 			else this.state.target = this.playerTarget;
 		}
 	}
-	updateText(text: string) {
-		this.actionText = text;
+	addActionQueue(actionState: StateType) {
+		this.actionQueue.push(actionState);
+	}
+	updateActionQueue() {
+		if (this.actionQueue.length > 0) {
+			const actionState = this.actionQueue.splice(0, 1)[0];
+			console.log("RUNNING", actionState);
+			this.state = actionState;
+		}
 	}
 }
-
-export {};

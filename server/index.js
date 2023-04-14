@@ -274,7 +274,6 @@ io.onConnection((channel) => {
 			const battle = rooms[channel.roomId].battle;
 			// If not player's turn, then skip
 			if (battle.turnQueue[0].id !== channel.id) return;
-
 			// Calculate player's damage and emit updated state to all clients
 			rooms[channel.roomId].battle.state = data.state;
 			const damage = battle.calculateDamage(
@@ -324,10 +323,12 @@ io.onConnection((channel) => {
 					battle: rooms[channel.roomId].battle,
 					damage: damage,
 					state: {
+						type: "normal-attack",
 						attacker: monster.id,
 						target: player.id,
-						attacking: true,
-						attacked: false,
+						running: true,
+						text: "quick attack",
+						finished: false,
 						initialPosition: { x: 0, y: 0 },
 					},
 					type: "battle-turn",

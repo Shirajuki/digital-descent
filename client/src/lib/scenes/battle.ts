@@ -5,9 +5,9 @@ import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
 import { removeDuplicatePlayers } from "../rpg/sync";
+import { animateAttack } from "../rpg/animation";
 
 /*
-engine.game.scene.getScene(engine.game.currentScene).switch("exploration")
 engine.game.scene.getScene(engine.game.currentScene).switch("battle")
 */
 
@@ -15,7 +15,7 @@ export default class BattleScene extends Scene {
 	public text: any; // Damage indicator text
 	public centerPoint: any; // Camera focuspoint
 	public pointerSprite: any;
-	public battle: any; // Battle System
+	public battle = new BattleSystem([], []); // Battle System
 	public monsters: any;
 
 	// Attack animation variables
@@ -152,23 +152,12 @@ export default class BattleScene extends Scene {
 			0xffffff
 		) as any;
 
-		// Set monster to be clickable
-		this.monsters.forEach((monster: any, index: number) => {
-			monster.setInteractive();
-			monster.on("pointerup", () => {
-				if (!this.battle.state.attacking && !monster.battleStats.dead) {
-					this.battle.state.target = this.battle.monsters[index];
-					this.battle.playerTarget = this.battle.monsters[index];
-				}
-			});
-		});
-
 		this.observable.notify();
 	}
 
 	sync(data: any) {
 		if (data.type === "battle-pointer") {
-			this.battle.updatePointer(this.player.id);
+			this.battle.updatePointer();
 		} else if (data.type === "battle-turn") {
 			this.battle.updateTurn();
 			const state = data.state;
@@ -178,14 +167,39 @@ export default class BattleScene extends Scene {
 			const target =
 				this.players.find((p) => p.id === data.state.target) ||
 				this.monsters.find((m: any) => m.id === data.state.target);
-			this.battle.state = {
+
+			this.battle.addActionQueue({
+				type: "text-update",
+				attacker: null,
+				target: target,
+				text: `${attacker.name} used ${state.text} on ${target.name}`,
+				running: true,
+				finished: false,
+				initialPosition: this.battle.state.initialPosition,
+				damage: { damage: 0, elementEffectiveness: 1 },
+				timer: { current: 0, end: 25 },
+			});
+			this.battle.addActionQueue({
 				...state,
 				attacker: attacker,
 				target: target,
 				initialPosition: { x: attacker.x, y: attacker.y },
-			};
-			this.battle.damage = data.damage;
+				damage: data.damage,
+			});
+			this.battle.addActionQueue({
+				type: "text-update",
+				attacker: null,
+				target: target,
+				text: "",
+				running: true,
+				finished: false,
+				initialPosition: this.battle.state.initialPosition,
+				damage: { damage: 0, elementEffectiveness: 1 },
+				timer: { current: 0, end: 50 },
+			});
 			console.log("UPDATE state....", data, this.battle.state, this.battle);
+			console.log(this.battle.actionQueue);
+			if (!this.battle.state.running) this.battle.updateActionQueue();
 		} else if (data.type === "battle-initialize") {
 			// Update monsters
 			for (let i = 0; i < this?.monsters?.length; i++) {
@@ -230,7 +244,7 @@ export default class BattleScene extends Scene {
 			this.monsters.forEach((monster: any, index: number) => {
 				monster.setInteractive();
 				monster.on("pointerup", () => {
-					if (!this.battle.state.attacking && !monster.battleStats.dead)
+					if (!this.battle.state.running && !monster.battleStats.dead)
 						this.battle.state.target = this.battle.monsters[index];
 				});
 			});
@@ -309,119 +323,42 @@ export default class BattleScene extends Scene {
 
 	update(_time: any, _delta: any) {
 		// Animate battle attacking state for player
-		const attacker = this.battle?.state?.attacker;
-		const target = this.battle?.state?.target;
-		if (attacker && target) {
-			if (!this.battle.state.attacked) {
-				this.tweens.add({
-					targets: attacker,
-					x: target.x + 50 * (attacker.x > target.x ? 1 : -1),
-					y: target.y + 1,
-					ease: "Back.easeOut",
-					duration: 2000,
-					delay: 400,
-					repeat: -1,
-				});
-				if (attacker?.animationState === "idle") {
-					attacker.play("jump");
-					attacker.animationState = "jump";
+		if (this.battle?.state.type === "normal-attack") {
+			animateAttack(this);
+		} else if (this.battle?.state.type === "text-update") {
+			this.battle.actionText = this.battle?.state.text;
+			this.observable.notify();
+			if (this.battle.state.timer) {
+				if (this.battle.state.timer.current < this.battle.state.timer.end) {
+					this.battle.state.timer.current++;
+				} else if (!this.battle.state.finished) {
+					this.battle.state.finished = true;
+					this.battle.state.running = false;
 				}
-				if (
-					Math.abs(attacker.x - target.x) < 70 &&
-					Math.abs(attacker.y - target.y) < 70
-				) {
-					if (!this.battle.state.attacked) {
-						this.currentAttackDelay = this.attackDelay;
-						// Attacked
-						if (attacker?.animationState === "jump") {
-							attacker.play("idle");
-							attacker.animationState = "idle";
-						}
-						console.log(this.battle.damage);
-						target.battleStats.HP = Math.max(
-							target.battleStats.HP - this.battle.damage.damage,
-							0
-						);
-						attacker.battleStats.CHARGE = Math.min(
-							attacker.battleStats.CHARGE + 1,
-							attacker.battleStats.MAXCHARGE
-						);
-						// Display hitIndicator
-						const dmg = "" + Math.floor(this.battle.damage.damage * 100) / 100;
-						this.text.setText(dmg);
-						this.text.x = target.x;
-						this.text.y = target.y + 20;
-						this.text.setScale(1);
-						this.text.setAlpha(1);
-						this.text.target = {
-							x: target.x + 150 * (attacker.type === "monster" ? 1 : -1),
-							y: target.y - 50,
-						};
-					}
-					this.battle.state.attacked = true;
-					this.tweens.add({
-						targets: target,
-						alpha: 0,
-						ease: "Cubic.easeOut",
-						delay: 140,
-						duration: 100,
-						repeat: 1,
-						yoyo: true,
-					});
-				}
-			} else {
-				this.currentAttackDelay--;
-				if (this.currentAttackDelay < 0) {
-					this.tweens.add({
-						targets: attacker,
-						x: this.battle.state.initialPosition.x,
-						y: this.battle.state.initialPosition.y,
-						ease: "Back.easeOut",
-						duration: 2000,
-						delay: 500,
-						repeat: -1,
-					});
-					if (attacker?.animationState === "idle") {
-						attacker.play("jump");
-						attacker.animationState = "jump";
-						attacker.flipX = !attacker.flipX;
-					}
-				}
-				if (
-					Math.abs(attacker.x - this.battle.state.initialPosition.x) < 10 &&
-					Math.abs(attacker.y - this.battle.state.initialPosition.y) < 10
-				) {
-					// Reset attacker movement
-					if (attacker?.animationState === "jump") {
-						attacker.play("idle");
-						attacker.animationState = "idle";
-						attacker.flipX = !attacker.flipX;
-					}
-					this.battle.state.attacking = false;
-					this.battle.state.attacked = false;
-					this.battle.state.attacker = null;
-					// Turn finished
-					const channel = window.channel;
-					if (channel)
-						channel.emit("battle-turn-finished", {
-							turns: this.battle.turns,
-						});
-					this.observable.notify();
-				}
+			}
+			if (this.battle.state.finished) {
+				this.battle.state.finished = false;
+				this.battle.state.running = false;
+				this.battle.updateActionQueue();
 			}
 		}
 
 		// Move pointer to player's target monster
-		this.tweens.add({
-			targets: this.pointerSprite,
-			x: this.battle?.state?.target?.x ?? -2000,
-			y: (this.battle?.state?.target?.y ?? -2000) - 50,
-			depth: (this.battle?.state?.target?.y ?? this.monsterLocations[0].y) + 1,
-			ease: "Linear",
-			duration: 100,
-			delay: 0,
-			repeat: -1,
-		});
+		if (
+			!(this.battle?.state.type === "text-update" && this.battle?.state.running)
+		) {
+			this.tweens.add({
+				targets: this.pointerSprite,
+				x: this.battle?.state?.target?.x ?? -2000,
+				y: (this.battle?.state?.target?.y ?? -2000) - 50,
+				depth:
+					(this.battle?.state?.target?.y ?? this.monsterLocations[0].y) + 1,
+				ease: "Linear",
+				duration: 100,
+				delay: 0,
+				repeat: -1,
+			});
+		}
 
 		// Fade hitIndicator
 		this.text.scale = Phaser.Math.Linear(this.text.scale, 1.5, 0.01);
