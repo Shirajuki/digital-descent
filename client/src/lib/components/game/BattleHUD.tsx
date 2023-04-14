@@ -18,6 +18,7 @@ const BattleHUD = () => {
 	const [scaling, setScaling] = useState(1);
 	const [turnIndicator] = useAutoAnimate();
 	const [chargeIndicator] = useAutoAnimate();
+	const [textPopup] = useAutoAnimate();
 
 	useEffect(() => {
 		setScaling((document.querySelector("canvas")?.clientWidth ?? 1157) / 1157);
@@ -188,7 +189,20 @@ const BattleHUD = () => {
 			</div>
 
 			{/* Battle text popups */}
-			<div></div>
+			<div
+				ref={textPopup}
+				className={`absolute left-1/2 -translate-x-1/2 top-5 overflow-hidden bg-slate-800 px-8 py-2 text-sm rounded-xl transition-all duration-300 ${
+					battle.actionText === "" ? "opacity-0 max-w-0" : ""
+				}`}
+			>
+				<p
+					className={`opacity-1 transition-all w-auto h-5 duration-300 overflow-hidden ${
+						battle.actionText === "" ? "max-w-0" : ""
+					}`}
+				>
+					<span>{battle.actionText}</span>
+				</p>
+			</div>
 		</div>
 	);
 };

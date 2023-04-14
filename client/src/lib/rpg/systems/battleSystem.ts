@@ -15,6 +15,8 @@ export default class BattleSystem {
 	};
 	public playerTarget: any = null;
 	public damage: any = {};
+	public actionText = "";
+	public actionQueue: any = [];
 
 	constructor(players: any[], monsters: any[]) {
 		this.players = players;
@@ -23,7 +25,7 @@ export default class BattleSystem {
 		this.initializeQueue();
 		console.log("INITIALIZE BATTLE", players, monsters);
 		console.log(this.turnQueue);
-		// (window as any).battle = this;
+		(window as any).battle = this;
 		setTimeout(() => (this.state.target = monsters[0]), 300);
 	}
 
@@ -110,6 +112,9 @@ export default class BattleSystem {
 				this.state.target = this.monsters.find((e) => !e.battleStats.dead);
 			else this.state.target = this.playerTarget;
 		}
+	}
+	updateText(text: string) {
+		this.actionText = text;
 	}
 }
 

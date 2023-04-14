@@ -64,9 +64,9 @@ export default class BattleScene extends Scene {
 			frameRate: 4,
 			repeat: -1,
 		});
-		// Monster animations
-		// TODO: remove this, too lazy to fix animation for monsters
-		// Maybe do this for the last boss / customer at each milestone tho :thinking:
+
+		// Monster idle animations
+		// TODO: add correct animation for all the monster types
 		this.anims.create({
 			key: "idle",
 			frames: this.anims.generateFrameNumbers("monster", {
@@ -84,7 +84,7 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
-		// Setup texts
+		// Setup hit indicator text
 		this.text = this.add.text(0, 0, "", {
 			fontFamily: "Arial",
 			fontSize: "32px",
@@ -124,37 +124,6 @@ export default class BattleScene extends Scene {
 		// Generate monsters
 		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
 		this.monsters = [];
-		for (let index = 0; index < monsters.length; index++) {
-			const monster = monsters[index];
-			// TODO: update sprite with actual sprite image
-			// Create monster sprite
-			const monsterSprite = this.add.sprite(
-				this.monsterLocations[index].x,
-				this.monsterLocations[index].y,
-				"monster"
-			) as any;
-			monsterSprite.setScale(SCALE);
-			monsterSprite.play("idle");
-			monsterSprite.setDepth(monsterSprite.y);
-			monsterSprite.flipX = false;
-			monsterSprite.animationState = "idle";
-			monsterSprite.name = monster.name + " " + index;
-			monsterSprite.stats = monster.stats;
-			monsterSprite.battleStats = monster.battleStats;
-			monsterSprite.type = monster.type;
-
-			// Create hp bar on top of sprite
-			const monsterSpriteHp = this.add.rectangle(
-				monsterSprite.x,
-				monsterSprite.y - 30,
-				80,
-				5,
-				0x22c55e
-			);
-			monsterSpriteHp.setDepth(1000);
-			monsterSprite.hp = monsterSpriteHp;
-			this.monsters.push(monsterSprite);
-		}
 
 		// Initialize battle
 		this.battle = new BattleSystem(this.players, this.monsters);
@@ -162,7 +131,7 @@ export default class BattleScene extends Scene {
 		if (channel) {
 			channel.emit("battle-initialize", {
 				players: this.players.map((p) => p.id),
-				monsters: this.monsters.map((m: any, i: number) => {
+				monsters: monsters.map((m: any, i: number) => {
 					return {
 						id: "monster" + i,
 						name: m.name,
@@ -176,8 +145,8 @@ export default class BattleScene extends Scene {
 
 		// Create pointer on top of first monster
 		this.pointerSprite = this.add.rectangle(
-			this.monsters[0].x,
-			this.monsters[0].y - 50,
+			this.monsterLocations[0].x,
+			this.monsterLocations[0].y - 50,
 			25,
 			15,
 			0xffffff
@@ -447,7 +416,7 @@ export default class BattleScene extends Scene {
 			targets: this.pointerSprite,
 			x: this.battle?.state?.target?.x ?? -2000,
 			y: (this.battle?.state?.target?.y ?? -2000) - 50,
-			depth: (this.battle?.state?.target?.y ?? this.monsters[0].y) + 1,
+			depth: (this.battle?.state?.target?.y ?? this.monsterLocations[0].y) + 1,
 			ease: "Linear",
 			duration: 100,
 			delay: 0,
