@@ -53,6 +53,10 @@ const BattleHUD = () => {
 		console.log("stamina potion");
 	}, [battle]);
 
+	const attackInfo = useCallback(() => {
+		console.log("attack info");
+	}, [battle]);
+
 	if (!player || !player?.stats || !player?.battleStats || !battle)
 		return <></>;
 
@@ -174,16 +178,39 @@ const BattleHUD = () => {
 					></button>
 
 					<button
-						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"
+						className="flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"
 						onClick={() => specialAttack()}
-					></button>
+					>
+						<img
+							className="-rotate-45 w-10/12"
+							src={`http://localhost:5173/${player?.skills?.special?.icon}`}
+							alt="special attack icon"
+						/>
+					</button>
 					<button
-						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]"
+						className="flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]"
 						onClick={() => chargeAttack()}
-					></button>
+					>
+						<img
+							className="-rotate-45 w-10/12"
+							src={`http://localhost:5173/${player?.skills?.charge?.icon}`}
+							alt="charge attack icon"
+						/>
+					</button>
 					<button
-						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]"
+						className="flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]"
 						onClick={() => normalAttack()}
+					>
+						<img
+							className="-rotate-45 w-10/12"
+							src={`http://localhost:5173/${player?.skills?.normal?.icon}`}
+							alt="normal attack icon"
+						/>
+					</button>
+
+					<button
+						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[0rem]"
+						onClick={() => attackInfo()}
 					></button>
 				</div>
 			</div>

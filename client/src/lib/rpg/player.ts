@@ -1,4 +1,5 @@
 import { ELEMENT, SCALE, SPEED } from "../constants";
+import { getSkills } from "./class";
 
 export const initializePlayer = (
 	scene: any,
@@ -17,6 +18,8 @@ export const initializePlayer = (
 		down: false,
 	};
 	player.animationState = "idle";
+	player.battleClass = "healer";
+	player.skills = getSkills(player);
 
 	// Exploration
 	player.onTeleportingPad = { standingTime: 0, teleporter: 0 };

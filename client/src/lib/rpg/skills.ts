@@ -1,14 +1,13 @@
 import { randomInt } from "../utils";
 
 // Skill system
-type TargetType = "all" | "single" | "self";
 // Healer
 export const inspire = () => {
 	return {
 		name: "Inspire",
 		description:
 			"A powerful and inspirational attack are launched against the targeted enemy, dealing moderate damage. In addition, this attack has a chance to boost a team member's morale and attack, as well as recovering a part of their HP",
-		icon: "inspire",
+		icon: "sprites/skills/inspire.png",
 		icons: ["dps", "support"],
 		type: "normal",
 		targets: {
@@ -27,7 +26,7 @@ export const delegate = () => {
 		name: "Delegate",
 		description:
 			"The user takes a moment to delegate tasks to their team members, boosting their efficiency and morale. This charge skill restores a moderate amount of the team members HP and grants a temporary boost to the entire team's attack and defense. Additionally, the user unleashes a damaging attack that hits all enemies.",
-		icon: "delegate",
+		icon: "sprites/skills/delegate.png",
 		icons: ["support", "disrupt"],
 		type: "charge",
 		targets: {
@@ -45,7 +44,7 @@ export const systemRestore = () => {
 		name: "System Restore",
 		description:
 			"This skill allows the player to initiate a restart and restore on a team member's system, fully recovering their health and removing any negative status effects. In addition, the sudden jolt of energy from the restart overloads nearby enemies' systems, dealing moderate damage to all enemies making them leak memory. This skill is especially useful when a team member is critically injured or under the influence of a debilitating status effect.",
-		icon: "restart",
+		icon: "sprites/skills/systemRestore.png",
 		icons: ["support", "disrupt"],
 		type: "special",
 		targets: {
