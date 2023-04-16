@@ -53,8 +53,8 @@ const BattleHUD = () => {
 		console.log("stamina potion");
 	}, [battle]);
 
-	const attackInfo = useCallback(() => {
-		console.log("attack info");
+	const toggleAttackInfo = useCallback(() => {
+		console.log("toggle attack info");
 	}, [battle]);
 
 	if (!player || !player?.stats || !player?.battleStats || !battle)
@@ -210,7 +210,7 @@ const BattleHUD = () => {
 
 					<button
 						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[0rem]"
-						onClick={() => attackInfo()}
+						onClick={() => toggleAttackInfo()}
 					></button>
 				</div>
 			</div>

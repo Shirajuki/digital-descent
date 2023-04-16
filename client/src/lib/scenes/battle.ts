@@ -5,14 +5,14 @@ import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
 import { removeDuplicatePlayers } from "../rpg/sync";
-import { animateAttack } from "../rpg/animation";
+import { animateSingleAttack, animateStandingAttack } from "../rpg/animation";
 
 /*
 engine.game.scene.getScene(engine.game.currentScene).switch("battle")
 */
 
 export default class BattleScene extends Scene {
-	public text: any; // Damage indicator text
+	public texts: any[] = [];
 	public centerPoint: any; // Camera focuspoint
 	public pointerSprite: any;
 	public battle = new BattleSystem([], []); // Battle System
@@ -21,6 +21,10 @@ export default class BattleScene extends Scene {
 	// Attack animation variables
 	public currentAttackDelay = 0;
 	public attackDelay = 50;
+	public currentBuffDelay = 0;
+	public buffDelay = 40;
+	public currentWaitDelay = 0;
+	public waitDelay = 90;
 
 	// Player starting location
 	public playerLocations = [
@@ -84,20 +88,6 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 
-		// Setup hit indicator text
-		this.text = this.add.text(0, 0, "", {
-			fontFamily: "Arial",
-			fontSize: "32px",
-			color: "#ffffff",
-			stroke: "#000000",
-			strokeThickness: 6,
-		});
-		this.text.setAlpha(0);
-		this.text.setScale(0);
-		this.text.setDepth(1000);
-		this.text.setText("9001");
-		this.text.setOrigin(0.5, 0.5);
-
 		this.preloaded = true;
 		this.initialize();
 	}
@@ -159,7 +149,6 @@ export default class BattleScene extends Scene {
 		if (data.type === "battle-pointer") {
 			this.battle.updatePointer();
 		} else if (data.type === "battle-turn") {
-			this.battle.updateTurn();
 			const state = data.state;
 			const attacker =
 				this.players.find((p) => p.id === data.state.attacker) ||
@@ -176,7 +165,7 @@ export default class BattleScene extends Scene {
 				running: true,
 				finished: false,
 				initialPosition: this.battle.state.initialPosition,
-				damage: { damage: 0, elementEffectiveness: 1 },
+				attack: { effects: {}, damage: { damage: 0, elementEffectiveness: 1 } },
 				timer: { current: 0, end: 25 },
 			});
 			this.battle.addActionQueue({
@@ -184,7 +173,7 @@ export default class BattleScene extends Scene {
 				attacker: attacker,
 				target: target,
 				initialPosition: { x: attacker.x, y: attacker.y },
-				damage: data.damage,
+				attack: data.attack,
 			});
 			this.battle.addActionQueue({
 				type: "text-update",
@@ -194,7 +183,7 @@ export default class BattleScene extends Scene {
 				running: true,
 				finished: false,
 				initialPosition: this.battle.state.initialPosition,
-				damage: { damage: 0, elementEffectiveness: 1 },
+				attack: { effects: {}, damage: { damage: 0, elementEffectiveness: 1 } },
 				timer: { current: 0, end: 50 },
 			});
 			console.log("UPDATE state....", data, this.battle.state, this.battle);
@@ -323,8 +312,11 @@ export default class BattleScene extends Scene {
 
 	update(_time: any, _delta: any) {
 		// Animate battle attacking state for player
-		if (this.battle?.state.type === "normal-attack") {
-			animateAttack(this);
+		if (this.battle?.state.type === "single-attack") {
+			animateSingleAttack(this);
+		} else if (this.battle?.state.type === "standing-attack") {
+			animateStandingAttack(this);
+		} else if (this.battle?.state.type === "special-attack") {
 		} else if (this.battle?.state.type === "text-update") {
 			this.battle.actionText = this.battle?.state.text;
 			this.observable.notify();
@@ -361,18 +353,17 @@ export default class BattleScene extends Scene {
 		}
 
 		// Fade hitIndicator
-		this.text.scale = Phaser.Math.Linear(this.text.scale, 1.5, 0.01);
-		this.text.alpha = Phaser.Math.Linear(this.text.alpha, 0, 0.06);
-		this.text.x = Phaser.Math.Linear(
-			this.text.x,
-			this.text?.target?.x ?? 0,
-			0.015
-		);
-		this.text.y = Phaser.Math.Linear(
-			this.text.y,
-			this.text?.target?.y ?? 0,
-			0.01
-		);
+		for (let i = 0; i < this.texts.length; i++) {
+			const text = this.texts[i];
+			text.scale = Phaser.Math.Linear(text.scale, 1.5, 0.01);
+			text.alpha = Phaser.Math.Linear(text.alpha, 0, 0.06);
+			text.x = Phaser.Math.Linear(text.x, text?.target?.x ?? 0, 0.015);
+			text.y = Phaser.Math.Linear(text.y, text?.target?.y ?? 0, 0.01);
+			if (text.alpha < 0.01) {
+				this.texts.splice(i, 1);
+				text.destroy();
+			}
+		}
 
 		// Update monster HP using lerp
 		for (let i = 0; i < this.monsters.length; i++) {

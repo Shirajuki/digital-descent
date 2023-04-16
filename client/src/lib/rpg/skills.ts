@@ -128,7 +128,7 @@ export const patch = () => {
 		},
 		power: 2,
 		effects: {
-			target: ["nervous"],
+			target: ["single-nervous"],
 			targetAccuracy: 30,
 		},
 	};

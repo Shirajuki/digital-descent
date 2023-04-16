@@ -291,7 +291,13 @@ io.onConnection((channel) => {
 			io.room(channel.roomId).emit("battle", {
 				players: rooms[channel.roomId].players,
 				battle: rooms[channel.roomId].battle,
-				damage: damage,
+				attack: {
+					effects: {
+						attacker: ["all-smallHeal", "all-attackBoost"],
+						attackerAccuracy: 30,
+					},
+					damage,
+				},
 				state: {
 					...data.state,
 					attacker: data.state.attacker.id,
@@ -321,9 +327,9 @@ io.onConnection((channel) => {
 				io.room(channel.roomId).emit("battle", {
 					players: rooms[channel.roomId].players,
 					battle: rooms[channel.roomId].battle,
-					damage: damage,
+					attack: { effects: {}, damage },
 					state: {
-						type: "normal-attack",
+						type: "single-attack",
 						attacker: monster.id,
 						target: player.id,
 						running: true,

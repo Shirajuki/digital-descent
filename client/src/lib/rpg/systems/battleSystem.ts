@@ -4,7 +4,7 @@ import { ELEMENT_EFFECTIVENESS_TABLE } from "../../constants";
 type StateType = {
 	type:
 		| "skip"
-		| "normal-attack"
+		| "single-attack"
 		| "standing-attack"
 		| "special-attack"
 		| "text-update";
@@ -14,7 +14,15 @@ type StateType = {
 	running: boolean;
 	finished: boolean;
 	initialPosition: { x: number; y: number };
-	damage: { damage: number; elementEffectiveness: number };
+	attack: {
+		effects: {
+			attacker?: string[];
+			attackerAccuracy?: number;
+			target?: string[];
+			targetAccuracy?: number;
+		};
+		damage: { damage: number; elementEffectiveness: number };
+	};
 	timer?: { current: number; end: number };
 };
 
@@ -31,7 +39,10 @@ export default class BattleSystem {
 		running: false,
 		finished: false,
 		initialPosition: { x: 0, y: 0 },
-		damage: { damage: 0, elementEffectiveness: 1 },
+		attack: {
+			effects: {},
+			damage: { damage: 0, elementEffectiveness: 1 },
+		},
 		timer: { current: 0, end: 100 },
 	};
 	public playerTarget: any = null;
@@ -78,15 +89,15 @@ export default class BattleSystem {
 	doAttack(type: "normal" | "charge" | "special", id: string) {
 		if (type === "normal") {
 			console.log("normal");
-			// TODO: pick correct player at certain position and index
 			if (!this.state.attacker) {
 				const player = this.players.find((p) => p.id === id);
+				const attack = player.skills.normal;
 
 				const state = {
-					type: "normal-attack",
+					type: "single-attack",
 					attacker: player,
 					target: this.state.target ?? this.monsters[0],
-					text: "dummy attack",
+					text: attack.name,
 					running: true,
 					finished: false,
 					initialPosition: { x: player.x, y: player.y },
@@ -114,6 +125,40 @@ export default class BattleSystem {
 			}
 		} else if (type === "charge") {
 			console.log("charge");
+			if (!this.state.attacker) {
+				const player = this.players.find((p) => p.id === id);
+				const attack = player.skills.normal;
+
+				const state = {
+					type: "standing-attack",
+					attacker: player,
+					target: this.state.target ?? this.monsters[0],
+					text: attack.name,
+					running: true,
+					finished: false,
+					initialPosition: { x: player.x, y: player.y },
+				};
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("battle-turn", {
+						state: {
+							...state,
+							attacker: {
+								id: player.id,
+								stats: player.stats,
+								battleStats: player.battleStats,
+							},
+							target: {
+								id: state.target.id,
+								stats: state.target.stats,
+								battleStats: state.target.battleStats,
+							},
+						},
+					});
+				}
+				this.playerTarget = state.target;
+				console.log(this.state.target);
+			}
 		} else if (type === "special") {
 			console.log("special");
 		}
