@@ -178,7 +178,7 @@ export const refactoring = () => {
 		icons: ["dps", "disrupt"],
 		type: "charge",
 		animationType: "standing-attack",
-		chargeCost: 1,
+		chargeCost: 5,
 		targets: {
 			type: "player",
 			amount: "self",
@@ -186,7 +186,7 @@ export const refactoring = () => {
 		power: 5,
 		effects: {
 			attacker: ["all-attackBoost", "all-defenceBoost", "self-smallHeal"],
-			target: ["all-lag"],
+			target: ["all-lag", "all-nervous"],
 		},
 	};
 };

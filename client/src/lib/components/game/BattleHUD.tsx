@@ -169,12 +169,24 @@ const BattleHUD = () => {
 			<div className="absolute right-5 bottom-5 w-4/12 h-2/6 text-right">
 				<div className="relative w-full h-full">
 					<button
-						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]"
+						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]
+						${
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
 						onClick={() => healthPotion()}
+						title="Health Potion"
 					></button>
 					<button
-						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]"
+						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]
+						${
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
 						onClick={() => staminaPotion()}
+						title="Stamina Potion"
 					></button>
 
 					<button
@@ -182,24 +194,25 @@ const BattleHUD = () => {
 						${
 							player?.skills?.special?.targets?.type === "monster" &&
 							battle?.state?.target?.type !== "monster"
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						${
 							player?.skills?.special?.targets?.type === "player" &&
 							battle?.state?.target?.type === "monster" &&
 							player?.skills?.special?.targets?.amount === "single"
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						${
 							player.battleStats.CHARGE < player?.skills?.special?.chargeCost ||
 							battle.turnQueue[0]?.id !== player.id
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						`}
 						onClick={() => specialAttack()}
+						title={`${player?.skills?.special?.name} (${player?.skills?.special?.chargeCost} energy)`}
 					>
 						<img
 							className="-rotate-45 w-10/12"
@@ -212,23 +225,24 @@ const BattleHUD = () => {
 						${
 							player?.skills?.charge?.targets?.type === "monster" &&
 							battle?.state?.target?.type !== "monster"
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						${
 							player?.skills?.charge?.targets?.type === "player" &&
 							battle?.state?.target?.type === "monster" &&
 							player?.skills?.charge?.targets?.amount === "single"
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						${
 							player.battleStats.CHARGE < player?.skills?.charge?.chargeCost ||
 							battle.turnQueue[0]?.id !== player.id
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}`}
 						onClick={() => chargeAttack()}
+						title={`${player?.skills?.charge?.name} (${player?.skills?.charge?.chargeCost} energy)`}
 					>
 						<img
 							className="-rotate-45 w-10/12"
@@ -241,23 +255,24 @@ const BattleHUD = () => {
 						${
 							player?.skills?.normal?.targets?.type === "monster" &&
 							battle?.state?.target?.type !== "monster"
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						${
 							player?.skills?.normal?.targets?.type === "player" &&
 							battle?.state?.target?.type === "monster" &&
 							player?.skills?.normal?.targets?.amount === "single"
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}
 						${
 							player.battleStats.CHARGE < player?.skills?.normal?.chargeCost ||
 							battle.turnQueue[0]?.id !== player.id
-								? "opacity-50 cursor-not-allowed pointer-events-none"
+								? "opacity-50 cursor-not-allowed"
 								: ""
 						}`}
 						onClick={() => normalAttack()}
+						title={`${player?.skills?.normal?.name} (${player?.skills?.normal?.chargeCost} energy)`}
 					>
 						<img
 							className="-rotate-45 w-10/12"
