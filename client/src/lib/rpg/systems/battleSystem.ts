@@ -70,6 +70,44 @@ export default class BattleSystem {
 		this.turnQueue = this.turnQueue.filter((e) => e != entity);
 	}
 
+	applyEffect(entity: any, effect: string) {
+		// Set effects on entity
+		if (!entity.effects) entity.effects = [];
+		// Remove any existing effects of the same type
+		entity.effects = entity.effects.filter((e: any) => e.type !== effect);
+		// Apply new effect
+		if (effect === "smallHeal") {
+			entity.battleStats.HP = Math.min(
+				entity.battleStats.HP + 5,
+				entity.stats.HP
+			);
+		} else if (effect === "mediumHeal") {
+			entity.battleStats.HP = Math.min(
+				entity.battleStats.HP + 20,
+				entity.stats.HP
+			);
+		} else if (effect === "bigHeal") {
+			entity.battleStats.HP = entity.battleStats.HP;
+		} else if (effect === "lag") {
+			entity.effects.push({ type: "lag", duration: 2 });
+		} else if (effect === "nervous") {
+			entity.effects.push({ type: "nervous", duration: 2 });
+		} else if (effect === "memoryLeak") {
+			entity.effects.push({ type: "memoryLeak", duration: 2 });
+		} else if (effect === "burn") {
+			entity.effects.push({ type: "burn", duration: 1 });
+		} else if (effect === "fire") {
+			entity.effects.push({ type: "fire", duration: 2 });
+		} else if (effect === "attackBoost") {
+			entity.effects.push({ type: "attackBoost", duration: 2 });
+		} else if (effect === "defenceBoost") {
+			entity.effects.push({ type: "defenceBoost", duration: 2 });
+		} else if (effect === "taunt") {
+			entity.effects.push({ type: "taunt", duration: 4 });
+		}
+		console.log("APPLY EFFECT", effect, entity.effects);
+	}
+
 	doAttack(type: "normal" | "charge" | "special", id: string) {
 		if (type === "normal") {
 			console.log("normal");
@@ -180,6 +218,14 @@ export default class BattleSystem {
 					stats: state.target.stats,
 					battleStats: state.target.battleStats,
 				};
+				if (attacker.battleStats.CHARGE >= attack.chargeCost) {
+					attacker.battleStats.CHARGE = Math.max(
+						attacker.battleStats.CHARGE - attack.chargeCost,
+						0
+					);
+				} else {
+					return console.log("Nope");
+				}
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {

@@ -74,6 +74,7 @@ const slime = () => {
 			HP: 10,
 			dead: false,
 		},
+		effects: [],
 		itemDrop: [],
 	};
 };
@@ -105,11 +106,35 @@ export const generateMonstersByPreset = (preset: string[]) => {
 	return monsters;
 };
 
-export const MONSTER_PRESET_BY_DIFFICULTY = {
-	1: ["easy", "easy", "easy"],
-	2: ["easy", "easy", "easy"],
-	3: ["easy", "easy", "easy"],
-	4: ["easy", "easy", "easy"],
-	5: ["easy", "easy", "easy"],
-	6: ["easy", "easy", "easy"],
+export const MONSTER_PRESET_BY_RISKLEVEL = {
+	1: [["easy", "easy", "easy"], ["easy", "easy"], ["easy"]],
+	2: [
+		["easy", "easy", "easy"],
+		["easy", "easy"],
+	],
+	3: [
+		["medium", "easy", "easy"],
+		["easy", "easy", "easy", "easy"],
+		["easy", "easy", "easy"],
+	],
+	4: [
+		["medium", "easy", "easy"],
+		["medium", "medium"],
+		["easy", "easy", "easy"],
+	],
+	5: [
+		["medium", "medium", "easy"],
+		["medium", "easy", "easy", "easy"],
+		["easy", "easy", "easy", "easy", "easy"],
+	],
+	6: [
+		["hard", "easy", "easy"],
+		["hard", "medium"],
+		["medium", "easy", "easy", "easy", "easy"],
+	],
+	7: [
+		["hard", "medium", "medium"],
+		["hard", "medium", "easy", "easy"],
+		["hard", "easy", "easy", "easy", "easy"],
+	],
 };

@@ -143,6 +143,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 							const effect = attack.effects.attacker[i];
 							const buff = effect.split("-");
 							if (buff[0] === "single") {
+								scene.battle.applyEffect(attacker, buff[1]);
 								spawnTextAtEntity(
 									scene,
 									buff[1],
@@ -157,6 +158,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 								const attackerEntities =
 									attacker.type === "monster" ? scene.monsters : scene.players;
 								for (const entity of attackerEntities) {
+									scene.battle.applyEffect(attacker, buff[1]);
 									spawnTextAtEntity(
 										scene,
 										buff[1],
@@ -175,6 +177,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 							const effect = attack.effects.target[i];
 							const buff = effect.split("-");
 							if (buff[0] === "single") {
+								scene.battle.applyEffect(target, buff[1]);
 								spawnTextAtEntity(
 									scene,
 									buff[1],
@@ -188,6 +191,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 								const targetEntities =
 									attacker.type === "monster" ? scene.players : scene.monsters;
 								for (const entity of targetEntities) {
+									scene.battle.applyEffect(entity, buff[1]);
 									spawnTextAtEntity(
 										scene,
 										buff[1],
@@ -263,6 +267,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 							const effect = attack.effects.attacker[i];
 							const buff = effect.split("-");
 							if (buff[0] === "single") {
+								scene.battle.applyEffect(attacker, buff[1]);
 								spawnTextAtEntity(
 									scene,
 									buff[1],
@@ -277,6 +282,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 								const attackerEntities =
 									attacker.type === "monster" ? scene.monsters : scene.players;
 								for (const entity of attackerEntities) {
+									scene.battle.applyEffect(entity, buff[1]);
 									spawnTextAtEntity(
 										scene,
 										buff[1],
@@ -295,6 +301,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 							const effect = attack.effects.target[i];
 							const buff = effect.split("-");
 							if (buff[0] === "single") {
+								scene.battle.applyEffect(target, buff[1]);
 								spawnTextAtEntity(
 									scene,
 									buff[1],
@@ -308,21 +315,19 @@ export const animateStandingAttack = (scene: BattleScene) => {
 								const targetEntities =
 									attacker.type === "monster" ? scene.players : scene.monsters;
 								for (const entity of targetEntities) {
-									setTimeout(
-										() =>
-											spawnTextAtEntity(
-												scene,
-												buff[1],
-												{ x: entity.x, y: entity.y + 20 + 20 * i },
-												{
-													x:
-														entity.x +
-														150 * (entity.type === "monster" ? -1 : 1),
-													y: entity.y - 50,
-												}
-											),
-										1200
-									);
+									setTimeout(() => {
+										scene.battle.applyEffect(entity, buff[1]);
+										spawnTextAtEntity(
+											scene,
+											buff[1],
+											{ x: entity.x, y: entity.y + 20 + 20 * i },
+											{
+												x:
+													entity.x + 150 * (entity.type === "monster" ? -1 : 1),
+												y: entity.y - 50,
+											}
+										);
+									}, 1200);
 								}
 							}
 						}

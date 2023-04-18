@@ -122,13 +122,7 @@ export default class BattleScene extends Scene {
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		// Generate monsters
-		let monsters = generateMonstersByPreset([
-			"easy",
-			"easy",
-			"easy",
-			"easy",
-			"easy",
-		]);
+		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
 		this.monsters = [];
 
 		// Initialize battle
@@ -239,6 +233,7 @@ export default class BattleScene extends Scene {
 				monsterSprite.stats = monster.stats;
 				monsterSprite.battleStats = monster.battleStats;
 				monsterSprite.type = monster.type;
+				monsterSprite.effects = monster.effects;
 				monsterSprite.id = "monster" + index;
 
 				// Create hp bar on top of sprite
@@ -292,6 +287,9 @@ export default class BattleScene extends Scene {
 							this.observable.notify();
 						}
 					});
+					setTimeout(() => {
+						this.observable.notify();
+					}, 1000);
 				}
 			}
 
@@ -403,6 +401,7 @@ export default class BattleScene extends Scene {
 		}
 
 		// Update monster HP using lerp
+		let monsterHasEffects = false;
 		for (let i = 0; i < this.monsters.length; i++) {
 			const monster = this.monsters[i];
 			if (monster.battleStats.dead) {
@@ -438,8 +437,11 @@ export default class BattleScene extends Scene {
 				monster.battleStats.dead = true;
 				this.battle.queueRemove(monster);
 			}
+
+			// Check and see if any monster has effect, if so, update Effect HUD
+			if (!monsterHasEffects) monsterHasEffects = monster?.effects?.length;
 		}
-		this.observable.notify("effect");
+		if (monsterHasEffects) this.observable.notify("effect");
 		// Render depth of player
 		this.player.setDepth(this.player.y);
 

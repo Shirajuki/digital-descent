@@ -1,10 +1,9 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
-import autoAnimate from "@formkit/auto-animate";
+import { useEffect, useReducer, useState } from "react";
 import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
-import { ELEMENT } from "../../constants";
+import EffectIcon from "./EffectIcon";
 
 const monsterOffset = [
 	{ x: 21, y: 10 },
@@ -58,54 +57,13 @@ const EffectHUD = () => {
 					key={monster.id}
 				>
 					<div className="flex gap-1">
-						<div
-							className="w-5 h-5 !bg-pink-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Lag (bad)"
-						>
-							💫
-						</div>
-						<div
-							className="w-5 h-5 !bg-pink-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Nervous (bad)"
-						>
-							💦
-						</div>
-						<div
-							className="w-5 h-5 !bg-pink-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Memory Leak (bad)"
-						>
-							🩸
-						</div>
-						<div
-							className="w-5 h-5 !bg-pink-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Burn (bad)"
-						>
-							🔥
-						</div>
-						<div
-							className="w-5 h-5 !bg-teal-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Hot (good)"
-						>
-							🌶️
-						</div>
-						<div
-							className="w-5 h-5 !bg-teal-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Attack boost (good)"
-						>
-							⚔️
-						</div>
-						<div
-							className="w-5 h-5 !bg-teal-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Defence boost (good)"
-						>
-							🛡️
-						</div>
-						<div
-							className="w-5 h-5 !bg-fuchsia-900 !bg-opacity-90 rounded-sm text-[0.7rem] flex justify-center items-center"
-							title="Taunting (good)"
-						>
-							💪
-						</div>
+						{monster?.effects?.map((effect: any) => (
+							<EffectIcon
+								effect={effect.type}
+								dark={true}
+								key={monster.id + effect.type}
+							/>
+						))}
 					</div>
 				</div>
 			))}

@@ -1,10 +1,11 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
 import { ELEMENT } from "../../constants";
+import EffectIcon from "./EffectIcon";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -96,54 +97,12 @@ const BattleHUD = () => {
 							<div className="flex items-center gap-3">
 								<div className="flex gap-2 items-center">
 									<div className="flex gap-1">
-										<div
-											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Lag (bad)"
-										>
-											💫
-										</div>
-										<div
-											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Nervous (bad)"
-										>
-											💦
-										</div>
-										<div
-											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Memory Leak (bad)"
-										>
-											🩸
-										</div>
-										<div
-											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Burn (bad)"
-										>
-											🔥
-										</div>
-										<div
-											className="w-5 h-5 !bg-teal-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Hot (good)"
-										>
-											🌶️
-										</div>
-										<div
-											className="w-5 h-5 !bg-teal-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Attack boost (good)"
-										>
-											⚔️
-										</div>
-										<div
-											className="w-5 h-5 !bg-teal-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Defence boost (good)"
-										>
-											🛡️
-										</div>
-										<div
-											className="w-5 h-5 !bg-fuchsia-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
-											title="Taunting (good)"
-										>
-											💪
-										</div>
+										{player?.effects?.map((effect: any, i: number) => (
+											<EffectIcon
+												effect={effect.type}
+												key={`${effect.type}-${i}`}
+											/>
+										))}
 									</div>
 									<p className="text-xs">LV.{player.stats.LEVEL}</p>
 									<p>{player.name}</p>
