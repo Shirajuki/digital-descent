@@ -150,7 +150,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 									{
 										x:
 											attacker.x + 150 * (attacker.type === "monster" ? -1 : 1),
-										y: attacker.y - 50,
+										y: attacker.y - 50 - 20 * i,
 									}
 								);
 							} else if (buff[0] === "all") {
@@ -163,7 +163,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 										{ x: entity.x, y: entity.y + 20 + 20 * i },
 										{
 											x: entity.x + 150 * (entity.type === "monster" ? -1 : 1),
-											y: entity.y - 50,
+											y: entity.y - 50 - 20 * i,
 										}
 									);
 								}
@@ -270,7 +270,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 									{
 										x:
 											attacker.x + 150 * (attacker.type === "monster" ? -1 : 1),
-										y: attacker.y - 50,
+										y: attacker.y - 50 - 20 * i,
 									}
 								);
 							} else if (buff[0] === "all") {
@@ -283,7 +283,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 										{ x: entity.x, y: entity.y + 20 + 20 * i },
 										{
 											x: entity.x + 150 * (entity.type === "monster" ? -1 : 1),
-											y: entity.y - 50,
+											y: entity.y - 50 - 20 * i,
 										}
 									);
 								}

@@ -299,10 +299,14 @@ io.onConnection((channel) => {
 				let damage = { damage: 0, elementEffectiveness: 1 };
 				if (
 					attack.targets.type === "monster" &&
-					monster.id === data.state.target.id
+					monster.id === data.state.target.id &&
+					monster.battleStats.HP > 0
 				) {
 					damage = battle.calculateDamage(data.state.attacker, monster);
-				} else if (attack.targets.type === "player") {
+				} else if (
+					attack.targets.type === "player" &&
+					monster.battleStats.HP > 0
+				) {
 					damage = battle.calculateDamage(data.state.attacker, monster);
 				}
 				damages.push(damage);
@@ -316,10 +320,10 @@ io.onConnection((channel) => {
 				const buff = effect.split("-");
 				const players =
 					buff[0] === "single"
-						? rooms[channel.roomId].players.filter(
-								(p) => p.id === data.state.target.id
+						? Object.values(rooms[channel.roomId].players).filter(
+								(p) => p.id === data.state.attacker.id
 						  )
-						: rooms[channel.roomId].players;
+						: Object.values(rooms[channel.roomId].players).filter((p) => p.id);
 
 				for (let i = 0; i < players.length; i++) {
 					battle.applyEffects(players[i], buff[1]);

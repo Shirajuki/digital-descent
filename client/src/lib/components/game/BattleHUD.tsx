@@ -191,7 +191,14 @@ const BattleHUD = () => {
 							player?.skills?.special?.targets?.amount === "single"
 								? "opacity-50 cursor-not-allowed pointer-events-none"
 								: ""
-						}`}
+						}
+						${
+							player.battleStats.CHARGE < player?.skills?.special?.chargeCost ||
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}
+						`}
 						onClick={() => specialAttack()}
 					>
 						<img
@@ -212,6 +219,12 @@ const BattleHUD = () => {
 							player?.skills?.charge?.targets?.type === "player" &&
 							battle?.state?.target?.type === "monster" &&
 							player?.skills?.charge?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}
+						${
+							player.battleStats.CHARGE < player?.skills?.charge?.chargeCost ||
+							battle.turnQueue[0]?.id !== player.id
 								? "opacity-50 cursor-not-allowed pointer-events-none"
 								: ""
 						}`}
@@ -235,6 +248,12 @@ const BattleHUD = () => {
 							player?.skills?.normal?.targets?.type === "player" &&
 							battle?.state?.target?.type === "monster" &&
 							player?.skills?.normal?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}
+						${
+							player.battleStats.CHARGE < player?.skills?.normal?.chargeCost ||
+							battle.turnQueue[0]?.id !== player.id
 								? "opacity-50 cursor-not-allowed pointer-events-none"
 								: ""
 						}`}

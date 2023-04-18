@@ -70,22 +70,6 @@ export default class BattleSystem {
 		this.turnQueue = this.turnQueue.filter((e) => e != entity);
 	}
 
-	queueAdd(entity: any) {
-		this.turnQueue.push(entity);
-	}
-
-	calculateDamage(player: any, monster: any) {
-		const elementEffectiveness =
-			ELEMENT_EFFECTIVENESS_TABLE[player.stats.ELEMENT][monster.stats.ELEMENT];
-		const damage =
-			(((((2 * player.stats.LEVEL) / 5 + 2) * player.stats.ATK) /
-				monster.stats.DEF) *
-				elementEffectiveness *
-				randomInt(217, 255)) /
-			255;
-		return { damage: Math.max(damage, 1), elementEffectiveness };
-	}
-
 	doAttack(type: "normal" | "charge" | "special", id: string) {
 		if (type === "normal") {
 			console.log("normal");
@@ -149,6 +133,14 @@ export default class BattleSystem {
 					stats: state.target.stats,
 					battleStats: state.target.battleStats,
 				};
+				if (attacker.battleStats.CHARGE >= attack.chargeCost) {
+					attacker.battleStats.CHARGE = Math.max(
+						attacker.battleStats.CHARGE - attack.chargeCost,
+						0
+					);
+				} else {
+					return console.log("Nope");
+				}
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {

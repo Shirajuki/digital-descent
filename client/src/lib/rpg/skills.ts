@@ -1,5 +1,3 @@
-import { randomInt } from "../utils";
-
 // Skill system
 // Healer
 export const inspire = () => {
@@ -11,6 +9,7 @@ export const inspire = () => {
 		icons: ["dps", "support"],
 		type: "normal",
 		animationType: "single-attack",
+		chargeCost: 0,
 		targets: {
 			type: "monster",
 			amount: "single",
@@ -31,13 +30,14 @@ export const delegate = () => {
 		icons: ["support", "disrupt"],
 		type: "charge",
 		animationType: "standing-attack",
+		chargeCost: 3,
 		targets: {
 			type: "player",
 			amount: "self",
 		},
 		power: 2,
 		effects: {
-			attacker: ["all-attackBoost", "all-defenceBoost", "all-mediumHeal"],
+			attacker: ["all-attackBoost", "all-defenceBoost", "all-smallHeal"],
 		},
 	};
 };
@@ -50,6 +50,7 @@ export const systemRestore = () => {
 		icons: ["support", "disrupt"],
 		type: "special",
 		animationType: "standing-attack",
+		chargeCost: 5,
 		targets: {
 			type: "player",
 			amount: "single",
@@ -68,10 +69,11 @@ export const debugging = () => {
 		name: "Debugging",
 		description:
 			"This skill allows the player to launch a basic attack against the enemy, dealing minor damage. The attack targets the enemy's debugging process, causing them to waste resources and time. However, the attack's limited complexity also limits its potential damage output. This skill is useful in situations where the player needs to conserve resources or deal with weaker enemies.",
-		icon: "debugging",
+		icon: "sprites/skills/debugging.png",
 		icons: ["dps"],
 		type: "normal",
 		animationType: "single-attack",
+		chargeCost: 0,
 		targets: {
 			type: "monster",
 			amount: "single",
@@ -84,10 +86,11 @@ export const firewall = () => {
 		name: "Firewall",
 		description:
 			"This skill allows the player to taunt enemies by creating a protective firewall around themselves. The firewall draws the attention of enemies and makes them more likely to target the player. In addition to taunting enemies, the firewall provides the player with temporary damage reduction while it's active, allowing them to absorb more damage. This skill can be useful in situations where the player needs to protect themselves or their team members from incoming attacks while still dealing damage to enemies.",
-		icon: "inspire",
+		icon: "sprites/skills/firewall.png",
 		icons: ["support"],
 		type: "charge",
 		animationType: "standing-attack",
+		chargeCost: 2,
 		targets: {
 			type: "player",
 			amount: "self",
@@ -103,10 +106,11 @@ export const codeReview = () => {
 		name: "Code Review",
 		description:
 			"This skill allows the player to identify and eliminate bugs in the team's code, boosting all team members' defense for a set number of turns. In addition, the player gains insights into the enemy, exposing vulnerabilities and dealing moderate damage.",
-		icon: "codeReview",
+		icon: "sprites/skills/codeReview.png",
 		icons: ["support"],
 		type: "special",
 		animationType: "standing-attack",
+		chargeCost: 5,
 		targets: {
 			type: "player",
 			amount: "self",
@@ -125,10 +129,11 @@ export const patch = () => {
 		name: "Patch",
 		description:
 			"Releases a patch to fix bugs in their code, dealing moderate damage to an enemy and also healing a portion of the DPS class's own health. Has a small chance to make enemy nervous.",
-		icon: "patch",
+		icon: "sprites/skills/patch.png",
 		icons: ["dps", "disrupt"],
 		type: "normal",
 		animationType: "single-attack",
+		chargeCost: 0,
 		targets: {
 			type: "monster",
 			amount: "single",
@@ -142,24 +147,25 @@ export const patch = () => {
 };
 export const testSuite = () => {
 	const randomStatus = ["single-lag", "single-nervous", "single-memoryLeak"][
-		randomInt(0, 2)
+		Math.floor(Math.random() * 3)
 	];
 	return {
 		name: "Test Suite",
 		description:
-			"The character runs a comprehensive test suite, analyzing every aspect of the enemy and finding vulnerabilities to exploit. Deals moderate damage and has a chance to apply a random debuff of either lag, nervous or memory-leak",
-		icon: "refactoring",
+			"The character runs a comprehensive test suite, analyzing every aspect of the enemy and finding vulnerabilities to exploit. Deals moderate damage and applies a random debuff of either lag, nervous or memory-leak",
+		icon: "sprites/skills/testSuite.png",
 		icons: ["dps", "disrupt"],
 		type: "charge",
 		animationType: "single-attack",
+		chargeCost: 2,
 		targets: {
 			type: "monster",
 			amount: "single",
 		},
-		power: 3,
+		power: 4,
 		effects: {
 			target: [randomStatus],
-			targetAccuracy: 30,
+			targetAccuracy: 100,
 		},
 	};
 };
@@ -168,10 +174,11 @@ export const refactoring = () => {
 		name: "Refactoring",
 		description:
 			"This skill allows the player to take a moment to refactor and optimize their own code, boosting their and the team members' attack power for a set number of turns. Additionally, the player leverages their knowledge of code optimization to target the enemy's weaknesses, dealing massive damage to all enemies. The enemy's code is temporarily disrupted for one turn.",
-		icon: "refactoring",
+		icon: "sprites/skills/refactoring.png",
 		icons: ["dps", "disrupt"],
 		type: "charge",
 		animationType: "standing-attack",
+		chargeCost: 1,
 		targets: {
 			type: "player",
 			amount: "self",
