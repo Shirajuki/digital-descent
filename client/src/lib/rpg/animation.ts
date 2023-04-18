@@ -1,4 +1,27 @@
-export const animateSingleAttack = (scene: any) => {
+import BattleScene from "../scenes/battle";
+
+export const spawnTextAtEntity = (
+	scene: BattleScene,
+	text: string,
+	pos: { x: number; y: number },
+	target: { x: number; y: number }
+) => {
+	const textEntity = scene.add.text(pos.x, pos.y, text, {
+		fontFamily: "Arial",
+		fontSize: "24px",
+		color: "#ffffff",
+		stroke: "#000000",
+		strokeThickness: 6,
+	}) as any;
+	textEntity.setScale(1);
+	textEntity.setAlpha(1);
+	textEntity.setDepth(1000);
+	textEntity.setOrigin(0.5, 0.5);
+	textEntity.target = { x: target.x, y: target.y };
+	scene.texts.push(textEntity);
+};
+
+export const animateSingleAttack = (scene: BattleScene) => {
 	const attacker = scene.battle?.state?.attacker;
 	const target = scene.battle?.state?.target;
 	if (attacker && target) {
@@ -25,47 +48,47 @@ export const animateSingleAttack = (scene: any) => {
 				Math.abs(attacker.y - target.y) < 70
 			) {
 				if (!scene.battle.state.finished) {
-					scene.currentAttackDelay = scene.attackDelay;
-					if (Object.keys(attack.effects).length > 0) {
-						scene.currentWaitDelay = scene.waitDelay;
-						scene.currentBuffDelay = scene.buffDelay;
-					} else {
-						scene.currentWaitDelay = 0;
-						scene.currentBuffDelay = 0;
-					}
 					// Animate player to stop jumping
 					if (attacker?.animationState === "jump") {
 						attacker.play("idle");
 						attacker.animationState = "idle";
+						scene.currentAttackDelay = scene.attackDelay;
+						if (Object.keys(attack.effects).length > 0) {
+							scene.currentWaitDelay = scene.waitDelay;
+							scene.currentBuffDelay = scene.buffDelay;
+						} else {
+							scene.currentWaitDelay = 0;
+							scene.currentBuffDelay = 0;
+						}
 					}
 					// Do damage to target
 					console.log(attack);
-					target.battleStats.HP = Math.max(
-						target.battleStats.HP - attack.damage.damage,
-						0
-					);
+					const targetEntities =
+						attacker.type === "monster" ? scene.players : scene.monsters;
+					for (let i = 0; i < targetEntities.length; i++) {
+						const target = targetEntities[i];
+						target.battleStats.HP = Math.max(
+							target.battleStats.HP - attack.damage[i].damage,
+							0
+						);
+						// Display hit indicator
+						const dmg = "" + Math.floor(attack.damage[i].damage * 100) / 100;
+						if (dmg !== "0") {
+							spawnTextAtEntity(
+								scene,
+								dmg,
+								{ x: target.x, y: target.y + 20 },
+								{
+									x: target.x + 150 * (attacker.type === "monster" ? 1 : -1),
+									y: target.y - 50,
+								}
+							);
+						}
+					}
 					attacker.battleStats.CHARGE = Math.min(
 						attacker.battleStats.CHARGE + 1,
 						attacker.battleStats.MAXCHARGE
 					);
-					// Display hit indicator
-					const dmg = "" + Math.floor(attack.damage.damage * 100) / 100;
-					const text = scene.add.text(target.x, target.y + 20, dmg, {
-						fontFamily: "Arial",
-						fontSize: "32px",
-						color: "#ffffff",
-						stroke: "#000000",
-						strokeThickness: 6,
-					});
-					text.setScale(1);
-					text.setAlpha(1);
-					text.setDepth(1000);
-					text.setOrigin(0.5, 0.5);
-					text.target = {
-						x: target.x + 150 * (attacker.type === "monster" ? 1 : -1),
-						y: target.y - 50,
-					};
-					scene.texts.push(text);
 				}
 				// Update attack state to finished
 				scene.battle.state.finished = true;
@@ -119,34 +142,64 @@ export const animateSingleAttack = (scene: any) => {
 						for (let i = 0; i < attack.effects.attacker.length; i++) {
 							const effect = attack.effects.attacker[i];
 							const buff = effect.split("-");
-							if (buff[0] === "self") {
-							} else if (buff[0] === "single") {
-							} else if (buff[0] === "all") {
-								const text = scene.add.text(
-									attacker.x,
-									attacker.y + 20 + 20 * i,
+							if (buff[0] === "single") {
+								spawnTextAtEntity(
+									scene,
 									buff[1],
+									{ x: attacker.x, y: attacker.y + 20 + 20 * i },
 									{
-										fontFamily: "Arial",
-										fontSize: "24px",
-										color: "#ffffff",
-										stroke: "#000000",
-										strokeThickness: 6,
+										x:
+											attacker.x + 150 * (attacker.type === "monster" ? -1 : 1),
+										y: attacker.y - 50,
 									}
 								);
-								text.setScale(1);
-								text.setAlpha(1);
-								text.setDepth(1000);
-								text.setOrigin(0.5, 0.5);
-								text.target = {
-									x: attacker.x + 150 * (attacker.type === "monster" ? -1 : 1),
-									y: attacker.y - 50,
-								};
-								scene.texts.push(text);
+							} else if (buff[0] === "all") {
+								const attackerEntities =
+									attacker.type === "monster" ? scene.monsters : scene.players;
+								for (const entity of attackerEntities) {
+									spawnTextAtEntity(
+										scene,
+										buff[1],
+										{ x: entity.x, y: entity.y + 20 + 20 * i },
+										{
+											x: entity.x + 150 * (entity.type === "monster" ? -1 : 1),
+											y: entity.y - 50,
+										}
+									);
+								}
 							}
 						}
 					}
 					if (attack.effects.target) {
+						for (let i = 0; i < attack.effects.target.length; i++) {
+							const effect = attack.effects.target[i];
+							const buff = effect.split("-");
+							if (buff[0] === "single") {
+								spawnTextAtEntity(
+									scene,
+									buff[1],
+									{ x: target.x, y: target.y + 20 + 20 * i },
+									{
+										x: target.x + 150 * (target.type === "monster" ? -1 : 1),
+										y: target.y - 50,
+									}
+								);
+							} else if (buff[0] === "all") {
+								const targetEntities =
+									attacker.type === "monster" ? scene.players : scene.monsters;
+								for (const entity of targetEntities) {
+									spawnTextAtEntity(
+										scene,
+										buff[1],
+										{ x: entity.x, y: entity.y + 20 + 20 * i },
+										{
+											x: entity.x + 150 * (entity.type === "monster" ? -1 : 1),
+											y: entity.y - 50,
+										}
+									);
+								}
+							}
+						}
 					}
 				} else if (scene.currentBuffDelay < 0) {
 					scene.currentWaitDelay--;
@@ -170,11 +223,12 @@ export const animateSingleAttack = (scene: any) => {
 	}
 };
 
-export const animateStandingAttack = (scene: any) => {
+export const animateStandingAttack = (scene: BattleScene) => {
 	const attacker = scene.battle?.state?.attacker;
 	const target = scene.battle?.state?.target;
 	const camera = scene.centerPoint;
 	if (attacker && target && camera) {
+		const attack = scene.battle.state.attack;
 		if (!scene.battle.state.finished) {
 			scene.tweens.add({
 				targets: camera,
@@ -193,34 +247,92 @@ export const animateStandingAttack = (scene: any) => {
 					if (attacker?.animationState === "jump") {
 						attacker.play("idle");
 						attacker.animationState = "idle";
+						scene.currentAttackDelay = scene.attackDelay;
+						if (Object.keys(attack.effects).length > 0) {
+							scene.currentWaitDelay = scene.waitDelay;
+							scene.currentBuffDelay = scene.buffDelay;
+						} else {
+							scene.currentWaitDelay = 0;
+							scene.currentBuffDelay = 0;
+						}
 					}
-					scene.currentAttackDelay = scene.attackDelay;
-					// Display hitIndicator
-					const dmg =
-						"" +
-						Math.floor(scene.battle.state.attack.damage.damage * 100) / 100;
-					const text = scene.add.text(target.x, target.y + 20, dmg, {
-						fontFamily: "Arial",
-						fontSize: "32px",
-						color: "#ffffff",
-						stroke: "#000000",
-						strokeThickness: 6,
-					});
-					text.setScale(1);
-					text.setAlpha(1);
-					text.setDepth(1000);
-					text.setOrigin(0.5, 0.5);
-					text.target = {
-						x: target.x + 150 * (attacker.type === "monster" ? 1 : -1),
-						y: target.y - 50,
-					};
-					scene.texts.push(text);
+
+					// Apply attack effects
+					if (attack.effects.attacker) {
+						for (let i = 0; i < attack.effects.attacker.length; i++) {
+							const effect = attack.effects.attacker[i];
+							const buff = effect.split("-");
+							if (buff[0] === "single") {
+								spawnTextAtEntity(
+									scene,
+									buff[1],
+									{ x: attacker.x, y: attacker.y + 20 + 20 * i },
+									{
+										x:
+											attacker.x + 150 * (attacker.type === "monster" ? -1 : 1),
+										y: attacker.y - 50,
+									}
+								);
+							} else if (buff[0] === "all") {
+								const attackerEntities =
+									attacker.type === "monster" ? scene.monsters : scene.players;
+								for (const entity of attackerEntities) {
+									spawnTextAtEntity(
+										scene,
+										buff[1],
+										{ x: entity.x, y: entity.y + 20 + 20 * i },
+										{
+											x: entity.x + 150 * (entity.type === "monster" ? -1 : 1),
+											y: entity.y - 50,
+										}
+									);
+								}
+							}
+						}
+					}
+					if (attack.effects.target) {
+						for (let i = 0; i < attack.effects.target.length; i++) {
+							const effect = attack.effects.target[i];
+							const buff = effect.split("-");
+							if (buff[0] === "single") {
+								spawnTextAtEntity(
+									scene,
+									buff[1],
+									{ x: target.x, y: target.y + 20 + 20 * i },
+									{
+										x: target.x + 150 * (target.type === "monster" ? -1 : 1),
+										y: target.y - 50,
+									}
+								);
+							} else if (buff[0] === "all") {
+								const targetEntities =
+									attacker.type === "monster" ? scene.players : scene.monsters;
+								for (const entity of targetEntities) {
+									setTimeout(
+										() =>
+											spawnTextAtEntity(
+												scene,
+												buff[1],
+												{ x: entity.x, y: entity.y + 20 + 20 * i },
+												{
+													x:
+														entity.x +
+														150 * (entity.type === "monster" ? -1 : 1),
+													y: entity.y - 50,
+												}
+											),
+										1200
+									);
+								}
+							}
+						}
+					}
 				}
 				scene.battle.state.finished = true;
 			}
 		} else {
-			scene.currentAttackDelay--;
-			if (scene.currentAttackDelay < 0) {
+			scene.currentBuffDelay--;
+			if (scene.currentBuffDelay < 0 && camera.x !== 0) {
 				scene.tweens.add({
 					targets: camera,
 					x: 0,
@@ -232,18 +344,51 @@ export const animateStandingAttack = (scene: any) => {
 			}
 			if (Math.abs(camera.x) < 1) {
 				camera.x = 0;
-				scene.battle.state.running = false;
-				scene.battle.state.finished = false;
-				scene.battle.state.attacker = null;
-				scene.battle.updateActionQueue();
-				scene.battle.updateTurn();
-				scene.observable.notify();
-				// Turn finished
-				const channel = window.channel;
-				if (channel)
-					channel.emit("battle-turn-finished", {
-						turns: scene.battle.turns,
-					});
+				scene.currentAttackDelay--;
+				if (scene.currentAttackDelay == -1) {
+					// Display hitIndicator
+					const targetEntities =
+						attacker.type === "monster" ? scene.players : scene.monsters;
+					for (let i = 0; i < targetEntities.length; i++) {
+						const target = targetEntities[i];
+						target.battleStats.HP = Math.max(
+							target.battleStats.HP -
+								scene.battle.state.attack.damage[i].damage,
+							0
+						);
+						const dmg =
+							"" +
+							Math.floor(scene.battle.state.attack.damage[i].damage * 100) /
+								100;
+						if (dmg !== "0") {
+							spawnTextAtEntity(
+								scene,
+								dmg,
+								{ x: target.x, y: target.y + 20 },
+								{
+									x: target.x + 150 * (attacker.type === "monster" ? 1 : -1),
+									y: target.y - 50,
+								}
+							);
+						}
+					}
+				} else if (scene.currentAttackDelay < 0) {
+					scene.currentWaitDelay--;
+				}
+				if (scene.currentWaitDelay < 0 && scene.battle.state.finished) {
+					scene.battle.state.running = false;
+					scene.battle.state.finished = false;
+					scene.battle.state.attacker = null;
+					scene.battle.updateActionQueue();
+					scene.battle.updateTurn();
+					scene.observable.notify();
+					// Turn finished
+					const channel = window.channel;
+					if (channel)
+						channel.emit("battle-turn-finished", {
+							turns: scene.battle.turns,
+						});
+				}
 			}
 		}
 	}

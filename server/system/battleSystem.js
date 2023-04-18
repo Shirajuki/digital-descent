@@ -45,6 +45,10 @@ export default class BattleSystem {
 		return { damage: Math.max(damage, 1), elementEffectiveness };
 	}
 
+	applyEffects(entity, effectType) {
+		console.log("[...] Applying", effectType, "on", entity.name);
+	}
+
 	updateTurn() {
 		const attacker = this.turnQueue.splice(0, 1)[0]; // Take first element from queue
 		this.turnQueue.push(attacker); // Put attacker as last element in queue

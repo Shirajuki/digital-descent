@@ -10,6 +10,7 @@ export const inspire = () => {
 		icon: "sprites/skills/inspire.png",
 		icons: ["dps", "support"],
 		type: "normal",
+		animationType: "single-attack",
 		targets: {
 			type: "monster",
 			amount: "single",
@@ -29,6 +30,7 @@ export const delegate = () => {
 		icon: "sprites/skills/delegate.png",
 		icons: ["support", "disrupt"],
 		type: "charge",
+		animationType: "standing-attack",
 		targets: {
 			type: "player",
 			amount: "self",
@@ -47,6 +49,7 @@ export const systemRestore = () => {
 		icon: "sprites/skills/systemRestore.png",
 		icons: ["support", "disrupt"],
 		type: "special",
+		animationType: "standing-attack",
 		targets: {
 			type: "player",
 			amount: "single",
@@ -68,6 +71,7 @@ export const debugging = () => {
 		icon: "debugging",
 		icons: ["dps"],
 		type: "normal",
+		animationType: "single-attack",
 		targets: {
 			type: "monster",
 			amount: "single",
@@ -83,6 +87,7 @@ export const firewall = () => {
 		icon: "inspire",
 		icons: ["support"],
 		type: "charge",
+		animationType: "standing-attack",
 		targets: {
 			type: "player",
 			amount: "self",
@@ -101,6 +106,7 @@ export const codeReview = () => {
 		icon: "codeReview",
 		icons: ["support"],
 		type: "special",
+		animationType: "standing-attack",
 		targets: {
 			type: "player",
 			amount: "self",
@@ -122,6 +128,7 @@ export const patch = () => {
 		icon: "patch",
 		icons: ["dps", "disrupt"],
 		type: "normal",
+		animationType: "single-attack",
 		targets: {
 			type: "monster",
 			amount: "single",
@@ -144,9 +151,10 @@ export const testSuite = () => {
 		icon: "refactoring",
 		icons: ["dps", "disrupt"],
 		type: "charge",
+		animationType: "single-attack",
 		targets: {
-			type: "player",
-			amount: "one",
+			type: "monster",
+			amount: "single",
 		},
 		power: 3,
 		effects: {
@@ -163,6 +171,7 @@ export const refactoring = () => {
 		icon: "refactoring",
 		icons: ["dps", "disrupt"],
 		type: "charge",
+		animationType: "standing-attack",
 		targets: {
 			type: "player",
 			amount: "self",

@@ -107,6 +107,16 @@ export default class BattleScene extends Scene {
 			...this.players.filter((p) => p.id !== oldPlayer?.id),
 			this.player,
 		];
+		// Set own player to be clickable
+		this.player.setInteractive();
+		this.player.on("pointerup", () => {
+			if (!this.battle.state.running && !this.player.battleStats.dead) {
+				this.battle.state.target = this.battle.players.find(
+					(p) => p.id === this.player.id
+				);
+				this.observable.notify();
+			}
+		});
 
 		// Setup camera to follow centerpoint
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
@@ -134,6 +144,7 @@ export default class BattleScene extends Scene {
 		}
 
 		// Create pointer on top of first monster
+		this.battle.state.target = this.battle.monsters[0];
 		this.pointerSprite = this.add.rectangle(
 			this.monsterLocations[0].x,
 			this.monsterLocations[0].y - 50,
@@ -143,6 +154,9 @@ export default class BattleScene extends Scene {
 		) as any;
 
 		this.observable.notify();
+		setTimeout(() => {
+			this.observable.notify();
+		}, 1000);
 	}
 
 	sync(data: any) {
@@ -165,7 +179,10 @@ export default class BattleScene extends Scene {
 				running: true,
 				finished: false,
 				initialPosition: this.battle.state.initialPosition,
-				attack: { effects: {}, damage: { damage: 0, elementEffectiveness: 1 } },
+				attack: {
+					effects: {},
+					damage: [{ damage: 0, elementEffectiveness: 1 }],
+				},
 				timer: { current: 0, end: 25 },
 			});
 			this.battle.addActionQueue({
@@ -183,7 +200,10 @@ export default class BattleScene extends Scene {
 				running: true,
 				finished: false,
 				initialPosition: this.battle.state.initialPosition,
-				attack: { effects: {}, damage: { damage: 0, elementEffectiveness: 1 } },
+				attack: {
+					effects: {},
+					damage: [{ damage: 0, elementEffectiveness: 1 }],
+				},
 				timer: { current: 0, end: 50 },
 			});
 			console.log("UPDATE state....", data, this.battle.state, this.battle);
@@ -233,8 +253,10 @@ export default class BattleScene extends Scene {
 			this.monsters.forEach((monster: any, index: number) => {
 				monster.setInteractive();
 				monster.on("pointerup", () => {
-					if (!this.battle.state.running && !monster.battleStats.dead)
+					if (!this.battle.state.running && !monster.battleStats.dead) {
 						this.battle.state.target = this.battle.monsters[index];
+						this.observable.notify();
+					}
 				});
 			});
 
@@ -255,6 +277,15 @@ export default class BattleScene extends Scene {
 					player.id = serverPlayersData[i].id;
 					player.name = serverPlayersData[i].id;
 					this.players.push(player);
+
+					// Set players to be clickable
+					player.setInteractive();
+					player.on("pointerup", () => {
+						if (!this.battle.state.running && !player.battleStats.dead) {
+							this.battle.state.target = this.battle.players[i];
+							this.observable.notify();
+						}
+					});
 				}
 			}
 

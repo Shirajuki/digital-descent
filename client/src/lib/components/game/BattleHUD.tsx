@@ -178,7 +178,20 @@ const BattleHUD = () => {
 					></button>
 
 					<button
-						className="flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"
+						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]
+						${
+							player?.skills?.special?.targets?.type === "monster" &&
+							battle?.state?.target?.type !== "monster"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}
+						${
+							player?.skills?.special?.targets?.type === "player" &&
+							battle?.state?.target?.type === "monster" &&
+							player?.skills?.special?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}`}
 						onClick={() => specialAttack()}
 					>
 						<img
@@ -188,7 +201,20 @@ const BattleHUD = () => {
 						/>
 					</button>
 					<button
-						className="flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]"
+						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]
+						${
+							player?.skills?.charge?.targets?.type === "monster" &&
+							battle?.state?.target?.type !== "monster"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}
+						${
+							player?.skills?.charge?.targets?.type === "player" &&
+							battle?.state?.target?.type === "monster" &&
+							player?.skills?.charge?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}`}
 						onClick={() => chargeAttack()}
 					>
 						<img
@@ -198,7 +224,20 @@ const BattleHUD = () => {
 						/>
 					</button>
 					<button
-						className="flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]"
+						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]
+						${
+							player?.skills?.normal?.targets?.type === "monster" &&
+							battle?.state?.target?.type !== "monster"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}
+						${
+							player?.skills?.normal?.targets?.type === "player" &&
+							battle?.state?.target?.type === "monster" &&
+							player?.skills?.normal?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed pointer-events-none"
+								: ""
+						}`}
 						onClick={() => normalAttack()}
 					>
 						<img

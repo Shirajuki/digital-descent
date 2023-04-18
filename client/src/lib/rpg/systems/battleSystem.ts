@@ -21,7 +21,7 @@ type StateType = {
 			target?: string[];
 			targetAccuracy?: number;
 		};
-		damage: { damage: number; elementEffectiveness: number };
+		damage: { damage: number; elementEffectiveness: number }[];
 	};
 	timer?: { current: number; end: number };
 };
@@ -41,7 +41,7 @@ export default class BattleSystem {
 		initialPosition: { x: 0, y: 0 },
 		attack: {
 			effects: {},
-			damage: { damage: 0, elementEffectiveness: 1 },
+			damage: [{ damage: 0, elementEffectiveness: 1 }],
 		},
 		timer: { current: 0, end: 100 },
 	};
@@ -94,7 +94,7 @@ export default class BattleSystem {
 				const attack = player.skills.normal;
 
 				const state = {
-					type: "single-attack",
+					type: attack.animationType,
 					attacker: player,
 					target: this.state.target ?? this.monsters[0],
 					text: attack.name,
@@ -105,6 +105,7 @@ export default class BattleSystem {
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
+						attack: attack,
 						state: {
 							...state,
 							attacker: {
@@ -127,10 +128,10 @@ export default class BattleSystem {
 			console.log("charge");
 			if (!this.state.attacker) {
 				const player = this.players.find((p) => p.id === id);
-				const attack = player.skills.normal;
+				const attack = player.skills.charge;
 
 				const state = {
-					type: "standing-attack",
+					type: attack.animationType,
 					attacker: player,
 					target: this.state.target ?? this.monsters[0],
 					text: attack.name,
@@ -138,21 +139,24 @@ export default class BattleSystem {
 					finished: false,
 					initialPosition: { x: player.x, y: player.y },
 				};
+				const attacker = {
+					id: player.id,
+					stats: player.stats,
+					battleStats: player.battleStats,
+				};
+				const target = {
+					id: state.target.id,
+					stats: state.target.stats,
+					battleStats: state.target.battleStats,
+				};
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
+						attack: attack,
 						state: {
 							...state,
-							attacker: {
-								id: player.id,
-								stats: player.stats,
-								battleStats: player.battleStats,
-							},
-							target: {
-								id: state.target.id,
-								stats: state.target.stats,
-								battleStats: state.target.battleStats,
-							},
+							attacker: attacker,
+							target: attack.targets.amount === "self" ? attacker : target,
 						},
 					});
 				}
@@ -161,6 +165,43 @@ export default class BattleSystem {
 			}
 		} else if (type === "special") {
 			console.log("special");
+			if (!this.state.attacker) {
+				const player = this.players.find((p) => p.id === id);
+				const attack = player.skills.special;
+
+				const state = {
+					type: attack.animationType,
+					attacker: player,
+					target: this.state.target ?? this.monsters[0],
+					text: attack.name,
+					running: true,
+					finished: false,
+					initialPosition: { x: player.x, y: player.y },
+				};
+				const attacker = {
+					id: player.id,
+					stats: player.stats,
+					battleStats: player.battleStats,
+				};
+				const target = {
+					id: state.target.id,
+					stats: state.target.stats,
+					battleStats: state.target.battleStats,
+				};
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("battle-turn", {
+						attack: attack,
+						state: {
+							...state,
+							attacker: attacker,
+							target: attack.targets.amount === "self" ? attacker : target,
+						},
+					});
+				}
+				this.playerTarget = state.target;
+				console.log(this.state.target);
+			}
 		}
 	}
 
