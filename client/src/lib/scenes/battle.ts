@@ -122,7 +122,13 @@ export default class BattleScene extends Scene {
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		// Generate monsters
-		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
+		let monsters = generateMonstersByPreset([
+			"easy",
+			"easy",
+			"easy",
+			"easy",
+			"easy",
+		]);
 		this.monsters = [];
 
 		// Initialize battle
@@ -433,6 +439,7 @@ export default class BattleScene extends Scene {
 				this.battle.queueRemove(monster);
 			}
 		}
+		this.observable.notify("effect");
 		// Render depth of player
 		this.player.setDepth(this.player.y);
 

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useReducer, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
+import { ELEMENT } from "../../constants";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -94,11 +95,69 @@ const BattleHUD = () => {
 						>
 							<div className="flex items-center gap-3">
 								<div className="flex gap-2 items-center">
+									<div className="flex gap-1">
+										<div
+											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Lag (bad)"
+										>
+											💫
+										</div>
+										<div
+											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Nervous (bad)"
+										>
+											💦
+										</div>
+										<div
+											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Memory Leak (bad)"
+										>
+											🩸
+										</div>
+										<div
+											className="w-5 h-5 !bg-pink-500 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Burn (bad)"
+										>
+											🔥
+										</div>
+										<div
+											className="w-5 h-5 !bg-teal-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Hot (good)"
+										>
+											🌶️
+										</div>
+										<div
+											className="w-5 h-5 !bg-teal-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Attack boost (good)"
+										>
+											⚔️
+										</div>
+										<div
+											className="w-5 h-5 !bg-teal-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Defence boost (good)"
+										>
+											🛡️
+										</div>
+										<div
+											className="w-5 h-5 !bg-fuchsia-400 !bg-opacity-40 rounded-sm text-[0.7rem] flex justify-center items-center"
+											title="Taunting (good)"
+										>
+											💪
+										</div>
+									</div>
 									<p className="text-xs">LV.{player.stats.LEVEL}</p>
 									<p>{player.name}</p>
 									<span className="px-1">•</span>
 								</div>
-								<div className="w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm">
+								<div
+									className={`w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm
+									${player.stats.ELEMENT === ELEMENT.FIRE && "!bg-red-400"}
+									${player.stats.ELEMENT === ELEMENT.WATER && "!bg-blue-400"}
+									${player.stats.ELEMENT === ELEMENT.WOOD && "!bg-green-400"}
+									${player.stats.ELEMENT === ELEMENT.LIGHT && "!bg-yellow-200"}
+									${player.stats.ELEMENT === ELEMENT.DARK && "!bg-indigo-500"}
+									}`}
+								>
 									{player.stats.ELEMENT}
 								</div>
 							</div>
