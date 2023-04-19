@@ -16,6 +16,7 @@ export default class BattleSystem {
 		this.turnQueue = [];
 		this.turns = 0;
 		this.ready = 0;
+		this.levelReady = 0;
 		this.initializeQueue();
 	}
 
@@ -39,6 +40,34 @@ export default class BattleSystem {
 				randomInt(217, 255)) /
 			255;
 		return { damage: Math.max(damage, 1), elementEffectiveness };
+	}
+
+	calculateExperience(monsters) {
+		let experience = 0;
+		for (const monster of monsters) {
+			const baseExperience = monster.stats.LEVEL * 2.5 + monster.stats.HP / 10;
+			experience += Math.floor(baseExperience);
+		}
+		return experience;
+	}
+
+	calculateLevelUp(player) {
+		const experienceToNextLevel = Math.floor(
+			(4 * Math.pow(player.stats.LEVEL, 3)) / 5
+		);
+		if (player.stats.EXP >= experienceToNextLevel) {
+			player.stats.LEVEL++;
+			player.stats.EXP -= experienceToNextLevel;
+			player.stats.HP += 10;
+			player.stats.SP += 10;
+			player.battleStats.HP += player.stats.HP;
+			player.battleStats.SP += player.stats.SP;
+			player.stats.ATK += 1;
+			player.stats.DEF += 1;
+			player.stats.SPEED += 1;
+			return true;
+		}
+		return false;
 	}
 
 	applyEffects(entity, effectType) {

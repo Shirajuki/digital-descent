@@ -122,7 +122,7 @@ export default class BattleScene extends Scene {
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		// Generate monsters
-		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
+		let monsters = generateMonstersByPreset(["easy"]);
 		this.monsters = [];
 
 		// Initialize battle
@@ -160,7 +160,44 @@ export default class BattleScene extends Scene {
 	}
 
 	sync(data: any) {
-		if (data.type === "battle-pointer") {
+		if (data.type === "leveling-update") {
+			const players = data.players;
+			this.players.forEach((p) => {
+				const player = players.find((pl: any) => pl.id === p.id);
+				if (player) {
+					p.stats = player.stats;
+				}
+			});
+		} else if (data.type === "leveling-end") {
+			this.switch("exploration");
+		} else if (data.type === "battle-end") {
+			console.log("Battle ended");
+			const leveling = data.leveling;
+			const players = data.players;
+			this.battle.leveling.ready = leveling.ready;
+			this.battle.leveling.display = leveling.display;
+
+			const player = players.find((pl: any) => pl.id === this.player.id);
+			this.player.stats = player.stats;
+			this.battle.leveling.exp = player.exp;
+			this.battle.leveling.levelUp = player.levelUp;
+
+			this.battle.addActionQueue({
+				type: "text-update",
+				attacker: null,
+				target: null,
+				text: `Battle ended`,
+				running: true,
+				finished: false,
+				initialPosition: this.battle.state.initialPosition,
+				attack: {
+					effects: {},
+					damage: [{ damage: 0, elementEffectiveness: 1 }],
+				},
+				timer: { current: 0, end: 100 },
+			});
+			if (!this.battle.state.running) this.battle.updateActionQueue();
+		} else if (data.type === "battle-pointer") {
 			this.battle.updatePointer();
 		} else if (data.type === "battle-turn") {
 			const state = data.state;

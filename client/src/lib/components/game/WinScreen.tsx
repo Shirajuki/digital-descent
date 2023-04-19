@@ -6,6 +6,7 @@ import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
 import { ELEMENT } from "../../constants";
 import EffectIcon from "./EffectIcon";
+import { calculateExpToNextLevel } from "../../utils";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -84,7 +85,7 @@ const WinScreen = () => {
 		engine?.game.scene.getScene(engine.game.currentScene) as BattleScene
 	)?.player;
 
-	const levelUp = useCallback(() => {
+	const levelUp = () => {
 		if (levelSelect === "") return;
 		const stats = calculateLevelUp(levelSelect);
 		const channel = window.channel;
@@ -105,9 +106,9 @@ const WinScreen = () => {
 			battle.leveling.levelUp = false;
 			forceUpdate();
 		}
-	}, [battle, player]);
+	};
 
-	const toggleReady = useCallback(() => {
+	const toggleReady = () => {
 		const channel = window.channel;
 		if (channel) {
 			channel.emit("leveling-ready", {
@@ -116,14 +117,18 @@ const WinScreen = () => {
 			battle.leveling.ready = true;
 			forceUpdate();
 		}
-	}, [battle, player]);
+	};
 
 	if (!player || !player?.stats || !player?.battleStats || !battle)
 		return <></>;
 
 	return (
 		<div
-			className="absolute top-0 left-0 z-30 w-full h-full [font-family:var(--font-hud)] bg-[rgba(0,0,0,0.7)] rounded-md overflow-hidden [backdrop-filter:blur(3px)] flex justify-center items-center"
+			className={`absolute top-0 left-0 z-30 w-full h-full [font-family:var(--font-hud)] bg-[rgba(0,0,0,0.7)] rounded-md overflow-hidden [backdrop-filter:blur(3px)] flex justify-center items-center transition-all ${
+				battle?.leveling?.display
+					? "opacity-1"
+					: "pointer-events-none opacity-0"
+			}`}
 			style={{ zoom: scaling }}
 		>
 			{/* Info modal */}
@@ -212,16 +217,18 @@ const WinScreen = () => {
 											<p className="-my-[1px] text-xs">
 												<span>
 													<span className="text-xs">XP</span>{" "}
-													{Math.ceil(player.stats.HP)}
+													{Math.ceil(player.stats.EXP)}
 												</span>{" "}
-												/ {player.stats.HP}
+												/ {calculateExpToNextLevel(player)}
 											</p>
 											<div className="bg-slate-700 h-[0.35rem] w-full transition-all">
 												<div
 													className="bg-amber-300 h-full w-full transition-all"
 													style={{
 														width: `${Math.floor(
-															(player.battleStats.HP / player.stats.HP) * 100
+															(player.stats.EXP /
+																calculateExpToNextLevel(player)) *
+																100
 														)}%`,
 													}}
 												></div>

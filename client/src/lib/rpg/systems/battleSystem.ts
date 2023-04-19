@@ -51,6 +51,7 @@ export default class BattleSystem {
 	public actionQueue: any = [];
 	public leveling = {
 		levelUp: true,
+		exp: 0,
 		ready: false,
 		display: false,
 	};

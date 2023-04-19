@@ -383,6 +383,53 @@ io.onConnection((channel) => {
 				(p) => p.id
 			);
 			if (++battle.ready !== players.length) return;
+
+			// Check if all monsters are dead
+			if (battle.monsters.every((m) => m.battleStats.HP <= 0)) {
+				const players = Object.values(rooms[channel.roomId].players).filter(
+					(p) => p.id
+				);
+				const exp = battle.calculateExperience(battle.monsters);
+				battle.state = {
+					attacker: null,
+					target: null,
+					turn: "player",
+					turnQueue: [],
+				};
+				battle.turns = 0;
+				battle.turnQueue = [];
+				battle.monsters = [];
+				battle.players.forEach((p) => {
+					p.battleStats = {
+						HP: p.stats.HP,
+						MP: p.stats.MP,
+						AP: p.stats.AP,
+					};
+				});
+				battle.initializeQueue();
+
+				io.room(channel.roomId).emit("battle", {
+					battle: rooms[channel.roomId].battle,
+					players: players.map((p) => {
+						p.stats.EXP += exp;
+						const oldLevel = p.stats.LEVEL;
+						battle.calculateLevelUp(p);
+						return {
+							id: p.id,
+							stats: p.stats,
+							exp: exp,
+							levelUp: p.stats.LEVEL - oldLevel,
+						};
+					}),
+					leveling: {
+						ready: false,
+						display: true,
+					},
+					type: "battle-end",
+				});
+				return;
+			}
+
 			if (battle.turnQueue[0].type === "monster") {
 				// Calculate monsters's damage and emit updated state to all clients
 				const monster = battle.turnQueue[0];
@@ -428,6 +475,29 @@ io.onConnection((channel) => {
 				});
 				battle.ready = 0;
 			}
+		}
+	});
+	// Leveling listeners
+	channel.on("leveling-ready", () => {
+		if (rooms[channel.roomId]) {
+			const battle = rooms[channel.roomId].battle;
+			const players = Object.values(rooms[channel.roomId].players).filter(
+				(p) => p.stats
+			);
+			// Check if all players are ready before continueing
+			if (++battle.levelReady !== players.length) return;
+
+			io.room(channel.roomId).emit("leveling", {
+				type: "leveling-end",
+			});
+		}
+	});
+	channel.on("leveling-update", (data) => {
+		if (rooms[channel.roomId] && data) {
+			io.room(channel.roomId).emit("leveling", {
+				type: "leveling-update",
+				players: [data],
+			});
 		}
 	});
 });

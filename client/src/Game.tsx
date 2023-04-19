@@ -75,6 +75,14 @@ function Game() {
 				);
 			}
 		});
+		// Leveling syncing
+		channel.on("leveling", (data: any) => {
+			if (engine.game.currentScene === "battle") {
+				(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+					data
+				);
+			}
+		});
 	}, [engine, setRoomId]);
 
 	return (
