@@ -131,9 +131,9 @@ const BattleHUD = () => {
 								<div
 									className="bg-green-500 h-[0.35rem] w-full transition-all"
 									style={{
-										width: Math.floor(
+										width: `${Math.floor(
 											(player.battleStats.HP / player.stats.HP) * 100
-										),
+										)}%`,
 									}}
 								></div>
 								<p className="-my-[1px] text-xs">
@@ -146,9 +146,9 @@ const BattleHUD = () => {
 								<div
 									className="bg-blue-500 h-[0.35rem] w-full transition-all"
 									style={{
-										width: Math.floor(
+										width: `${Math.floor(
 											(player.battleStats.SP / player.stats.SP) * 100
-										),
+										)}%`,
 									}}
 								></div>
 							</div>

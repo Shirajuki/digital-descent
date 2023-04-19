@@ -79,9 +79,6 @@ export const debugging = () => {
 			amount: "single",
 		},
 		power: 1,
-		effects: {
-			target: ["all-lag"],
-		},
 	};
 };
 export const firewall = () => {
@@ -93,7 +90,7 @@ export const firewall = () => {
 		icons: ["support"],
 		type: "charge",
 		animationType: "standing-attack",
-		chargeCost: 0,
+		chargeCost: 2,
 		targets: {
 			type: "player",
 			amount: "self",
