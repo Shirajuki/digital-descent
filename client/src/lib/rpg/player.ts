@@ -21,6 +21,8 @@ export const initializePlayer = (
 	player.battleClass = "tank";
 	player.skills = getSkills(player);
 
+	player.inventory = [];
+
 	// Exploration
 	player.onTeleportingPad = { standingTime: 0, teleporter: 0 };
 
@@ -33,6 +35,7 @@ export const initializePlayer = (
 		SPEED: 10,
 		ELEMENT: ELEMENT.LIGHT,
 		LEVEL: 1,
+		EXP: 0,
 	};
 	player.battleStats = {
 		HP: 100,

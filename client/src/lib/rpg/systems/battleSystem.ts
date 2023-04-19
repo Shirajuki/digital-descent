@@ -49,6 +49,16 @@ export default class BattleSystem {
 	public playerTarget: any = null;
 	public actionText = "";
 	public actionQueue: any = [];
+	public leveling = {
+		levelUp: true,
+		ready: false,
+		display: false,
+	};
+	public drops = [
+		{ item: "Dummy drop", amount: 1 },
+		{ item: "Code fragment", amount: 1 },
+		{ item: "Cash", amount: 10 },
+	];
 
 	constructor(players: any[], monsters: any[]) {
 		this.players = players;
