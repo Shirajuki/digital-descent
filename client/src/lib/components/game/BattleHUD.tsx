@@ -1,9 +1,11 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
+import { ELEMENT } from "../../constants";
+import EffectIcon from "./EffectIcon";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -18,6 +20,7 @@ const BattleHUD = () => {
 	const [scaling, setScaling] = useState(1);
 	const [turnIndicator] = useAutoAnimate();
 	const [chargeIndicator] = useAutoAnimate();
+	const [textPopup] = useAutoAnimate();
 
 	useEffect(() => {
 		setScaling((document.querySelector("canvas")?.clientWidth ?? 1157) / 1157);
@@ -50,6 +53,10 @@ const BattleHUD = () => {
 	}, [battle]);
 	const staminaPotion = useCallback(() => {
 		console.log("stamina potion");
+	}, [battle]);
+
+	const toggleAttackInfo = useCallback(() => {
+		console.log("toggle attack info");
 	}, [battle]);
 
 	if (!player || !player?.stats || !player?.battleStats || !battle)
@@ -89,11 +96,27 @@ const BattleHUD = () => {
 						>
 							<div className="flex items-center gap-3">
 								<div className="flex gap-2 items-center">
+									<div className="flex gap-1">
+										{player?.effects?.map((effect: any, i: number) => (
+											<EffectIcon
+												effect={effect.type}
+												key={`${effect.type}-${i}`}
+											/>
+										))}
+									</div>
 									<p className="text-xs">LV.{player.stats.LEVEL}</p>
 									<p>{player.name}</p>
 									<span className="px-1">•</span>
 								</div>
-								<div className="w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm">
+								<div
+									className={`w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm
+									${player.stats.ELEMENT === ELEMENT.FIRE && "!bg-red-400"}
+									${player.stats.ELEMENT === ELEMENT.WATER && "!bg-blue-400"}
+									${player.stats.ELEMENT === ELEMENT.WOOD && "!bg-green-400"}
+									${player.stats.ELEMENT === ELEMENT.LIGHT && "!bg-yellow-200"}
+									${player.stats.ELEMENT === ELEMENT.DARK && "!bg-indigo-500"}
+									}`}
+								>
 									{player.stats.ELEMENT}
 								</div>
 							</div>
@@ -108,9 +131,9 @@ const BattleHUD = () => {
 								<div
 									className="bg-green-500 h-[0.35rem] w-full transition-all"
 									style={{
-										width: Math.floor(
+										width: `${Math.floor(
 											(player.battleStats.HP / player.stats.HP) * 100
-										),
+										)}%`,
 									}}
 								></div>
 								<p className="-my-[1px] text-xs">
@@ -123,9 +146,9 @@ const BattleHUD = () => {
 								<div
 									className="bg-blue-500 h-[0.35rem] w-full transition-all"
 									style={{
-										width: Math.floor(
+										width: `${Math.floor(
 											(player.battleStats.SP / player.stats.SP) * 100
-										),
+										)}%`,
 									}}
 								></div>
 							</div>
@@ -164,27 +187,139 @@ const BattleHUD = () => {
 			<div className="absolute right-5 bottom-5 w-4/12 h-2/6 text-right">
 				<div className="relative w-full h-full">
 					<button
-						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]"
+						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]
+						${
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
 						onClick={() => healthPotion()}
+						title="Health Potion"
 					></button>
 					<button
-						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]"
+						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]
+						${
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
 						onClick={() => staminaPotion()}
+						title="Stamina Potion"
 					></button>
 
 					<button
-						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]"
+						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]
+						${
+							player?.skills?.special?.targets?.type === "monster" &&
+							battle?.state?.target?.type !== "monster"
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						${
+							player?.skills?.special?.targets?.type === "player" &&
+							battle?.state?.target?.type === "monster" &&
+							player?.skills?.special?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						${
+							player.battleStats.CHARGE < player?.skills?.special?.chargeCost ||
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						`}
 						onClick={() => specialAttack()}
-					></button>
+						title={`${player?.skills?.special?.name} (${player?.skills?.special?.chargeCost} energy)`}
+					>
+						<img
+							className="-rotate-45 w-10/12"
+							src={`http://localhost:5173/${player?.skills?.special?.icon}`}
+							alt="special attack icon"
+						/>
+					</button>
 					<button
-						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]"
+						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-2 right-[4rem]
+						${
+							player?.skills?.charge?.targets?.type === "monster" &&
+							battle?.state?.target?.type !== "monster"
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						${
+							player?.skills?.charge?.targets?.type === "player" &&
+							battle?.state?.target?.type === "monster" &&
+							player?.skills?.charge?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						${
+							player.battleStats.CHARGE < player?.skills?.charge?.chargeCost ||
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
 						onClick={() => chargeAttack()}
-					></button>
+						title={`${player?.skills?.charge?.name} (${player?.skills?.charge?.chargeCost} energy)`}
+					>
+						<img
+							className="-rotate-45 w-10/12"
+							src={`http://localhost:5173/${player?.skills?.charge?.icon}`}
+							alt="charge attack icon"
+						/>
+					</button>
 					<button
-						className="rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]"
+						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[7.25rem]
+						${
+							player?.skills?.normal?.targets?.type === "monster" &&
+							battle?.state?.target?.type !== "monster"
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						${
+							player?.skills?.normal?.targets?.type === "player" &&
+							battle?.state?.target?.type === "monster" &&
+							player?.skills?.normal?.targets?.amount === "single"
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}
+						${
+							player.battleStats.CHARGE < player?.skills?.normal?.chargeCost ||
+							battle.turnQueue[0]?.id !== player.id
+								? "opacity-50 cursor-not-allowed"
+								: ""
+						}`}
 						onClick={() => normalAttack()}
+						title={`${player?.skills?.normal?.name} (${player?.skills?.normal?.chargeCost} energy)`}
+					>
+						<img
+							className="-rotate-45 w-10/12"
+							src={`http://localhost:5173/${player?.skills?.normal?.icon}`}
+							alt="normal attack icon"
+						/>
+					</button>
+
+					<button
+						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[0rem]"
+						onClick={() => toggleAttackInfo()}
 					></button>
 				</div>
+			</div>
+
+			{/* Battle text popups */}
+			<div
+				ref={textPopup}
+				className={`absolute left-1/2 -translate-x-1/2 top-5 overflow-hidden bg-slate-800 px-8 py-2 text-sm rounded-xl transition-all duration-300 ${
+					battle.actionText === "" ? "opacity-0 max-w-0" : ""
+				}`}
+			>
+				<p
+					className={`opacity-1 transition-all w-auto h-5 duration-300 overflow-hidden ${
+						battle.actionText === "" ? "max-w-0" : ""
+					}`}
+				>
+					<span>{battle.actionText}</span>
+				</p>
 			</div>
 		</div>
 	);

@@ -16,6 +16,7 @@ export default class BattleSystem {
 		this.turnQueue = [];
 		this.turns = 0;
 		this.ready = 0;
+		this.levelReady = 0;
 		this.initializeQueue();
 	}
 
@@ -27,10 +28,6 @@ export default class BattleSystem {
 
 	queueRemove(entity) {
 		this.turnQueue = this.turnQueue.filter((e) => e.id != entity.id);
-	}
-
-	queueAdd(entity) {
-		this.turnQueue.push(entity);
 	}
 
 	calculateDamage(player, monster) {
@@ -45,25 +42,36 @@ export default class BattleSystem {
 		return { damage: Math.max(damage, 1), elementEffectiveness };
 	}
 
-	doAttack(type) {
-		if (type === "normal") {
-			console.log("normal");
-			// TODO: pick correct player at certain position and index
-			if (!this.state.attacker) {
-				this.state = {
-					attacker: this.players[0],
-					target: this.state.target ?? this.monsters[0],
-					attacking: true,
-					attacked: false,
-					initialPosition: { x: this.players[0].x, y: this.players[0].y },
-				};
-				this.playerTarget = this.state.target;
-			}
-		} else if (type === "charge") {
-			console.log("charge");
-		} else if (type === "special") {
-			console.log("special");
+	calculateExperience(monsters) {
+		let experience = 0;
+		for (const monster of monsters) {
+			const baseExperience = monster.stats.LEVEL * 2.5 + monster.stats.HP / 10;
+			experience += Math.floor(baseExperience);
 		}
+		return experience;
+	}
+
+	calculateLevelUp(player) {
+		const experienceToNextLevel = Math.floor(
+			(4 * Math.pow(player.stats.LEVEL, 3)) / 5
+		);
+		if (player.stats.EXP >= experienceToNextLevel) {
+			player.stats.LEVEL++;
+			player.stats.EXP -= experienceToNextLevel;
+			player.stats.HP += 10;
+			player.stats.SP += 10;
+			player.battleStats.HP += player.stats.HP;
+			player.battleStats.SP += player.stats.SP;
+			player.stats.ATK += 1;
+			player.stats.DEF += 1;
+			player.stats.SPEED += 1;
+			return true;
+		}
+		return false;
+	}
+
+	applyEffects(entity, effectType) {
+		console.log("[...] Applying", effectType, "on", entity.name);
 	}
 
 	updateTurn() {

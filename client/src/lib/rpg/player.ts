@@ -1,4 +1,5 @@
 import { ELEMENT, SCALE, SPEED } from "../constants";
+import { getSkills } from "./class";
 
 export const initializePlayer = (
 	scene: any,
@@ -17,6 +18,10 @@ export const initializePlayer = (
 		down: false,
 	};
 	player.animationState = "idle";
+	player.battleClass = "dps";
+	player.skills = getSkills(player);
+
+	player.inventory = [];
 
 	// Exploration
 	player.onTeleportingPad = { standingTime: 0, teleporter: 0 };
@@ -30,13 +35,16 @@ export const initializePlayer = (
 		SPEED: 10,
 		ELEMENT: ELEMENT.LIGHT,
 		LEVEL: 1,
+		EXP: 0,
 	};
 	player.battleStats = {
 		HP: 100,
 		SP: 100,
 		CHARGE: 0,
 		MAXCHARGE: 5,
+		dead: false,
 	};
+	player.effects = [];
 	player.name = name;
 
 	if (oldPlayer) {

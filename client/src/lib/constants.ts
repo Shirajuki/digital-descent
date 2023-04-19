@@ -20,3 +20,4 @@ export const ELEMENT_EFFECTIVENESS_TABLE = [
 	[1, 1, 1, 1, 2], // ELEMENT.LIGHT 3
 	[1, 1, 1, 2, 1], // ELEMENT.DARK  4
 ];
+export const NEGATIVE_STATUS = ["lag", "nervous", "memoryLeak", "burn"];

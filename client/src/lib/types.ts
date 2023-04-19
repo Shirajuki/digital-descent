@@ -33,6 +33,8 @@ export type AreaType =
 	| "SUBQUEST"
 	| "SHOP";
 
+export type SkillTargetType = "all" | "single" | "self";
+
 // Use window object to globally share data between modules and components
 declare global {
 	interface Window {

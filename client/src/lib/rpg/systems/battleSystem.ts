@@ -1,20 +1,65 @@
 import { randomInt } from "../../utils";
 import { ELEMENT_EFFECTIVENESS_TABLE } from "../../constants";
 
+type StateType = {
+	type:
+		| "initial"
+		| "skip"
+		| "single-attack"
+		| "standing-attack"
+		| "special-attack"
+		| "text-update";
+	attacker: any;
+	target: any;
+	text: string;
+	running: boolean;
+	finished: boolean;
+	initialPosition: { x: number; y: number };
+	attack: {
+		effects: {
+			attacker?: string[];
+			attackerAccuracy?: number;
+			target?: string[];
+			targetAccuracy?: number;
+		};
+		damage: { damage: number; elementEffectiveness: number }[];
+	};
+	timer?: { current: number; end: number };
+};
+
 export default class BattleSystem {
 	public players: any[];
 	public monsters: any[];
 	public turnQueue: any[];
 	public turns = 0;
-	public state: any = {
+	public state: StateType = {
+		type: "initial",
 		attacker: null,
 		target: null,
-		attacking: false,
-		attacked: false,
+		text: "",
+		running: false,
+		finished: false,
 		initialPosition: { x: 0, y: 0 },
+		attack: {
+			effects: {},
+			damage: [{ damage: 0, elementEffectiveness: 1 }],
+		},
+		timer: { current: 0, end: 100 },
 	};
 	public playerTarget: any = null;
-	public damage: any = {};
+	public actionText = "";
+	public actionQueue: any = [];
+	public leveling = {
+		levelUp: true,
+		exp: 0,
+		ready: false,
+		display: false,
+	};
+	public drops = [
+		{ item: "Dummy drop", amount: 1 },
+		{ item: "Code fragment", amount: 1 },
+		{ item: "Cash", amount: 10 },
+	];
 
 	constructor(players: any[], monsters: any[]) {
 		this.players = players;
@@ -23,7 +68,7 @@ export default class BattleSystem {
 		this.initializeQueue();
 		console.log("INITIALIZE BATTLE", players, monsters);
 		console.log(this.turnQueue);
-		// (window as any).battle = this;
+		(window as any).battle = this;
 		setTimeout(() => (this.state.target = monsters[0]), 300);
 	}
 
@@ -37,39 +82,99 @@ export default class BattleSystem {
 		this.turnQueue = this.turnQueue.filter((e) => e != entity);
 	}
 
-	queueAdd(entity: any) {
-		this.turnQueue.push(entity);
+	applyEffect(entity: any, effect: string) {
+		// Set effects on entity
+		if (!entity.effects) entity.effects = [];
+		// Apply new effect
+		if (effect === "smallHeal") {
+			entity.battleStats.HP = Math.min(
+				entity.battleStats.HP + 5,
+				entity.stats.HP
+			);
+		} else if (effect === "mediumHeal") {
+			entity.battleStats.HP = Math.min(
+				entity.battleStats.HP + 20,
+				entity.stats.HP
+			);
+		} else if (effect === "bigHeal") {
+			entity.battleStats.HP = entity.battleStats.HP;
+		} else if (effect === "clear") {
+			entity.effects = entity.effects.filter(
+				(e: any) => !["burn", "memoryLeak", "nervous", "lag"].includes(e.type)
+			);
+		} else if (effect === "lag") {
+			entity.effects.push({ type: "lag", duration: 2 });
+		} else if (effect === "nervous") {
+			entity.effects.push({ type: "nervous", duration: 2 });
+		} else if (effect === "memoryLeak") {
+			entity.effects.push({ type: "memoryLeak", duration: 2 });
+		} else if (effect === "burn") {
+			entity.effects.push({ type: "burn", duration: 1 });
+		} else if (effect === "fire") {
+			entity.effects.push({ type: "fire", duration: 2 });
+		} else if (effect === "attackBoost") {
+			entity.effects.push({ type: "attackBoost", duration: 2 });
+		} else if (effect === "defenceBoost") {
+			entity.effects.push({ type: "defenceBoost", duration: 2 });
+		} else if (effect === "taunt") {
+			entity.effects.push({ type: "taunt", duration: 4 });
+		}
+		// Remove duplicate effects and update duration using filter
+		entity.effects = entity.effects.filter((e: any, i: number) => {
+			const index = entity.effects.findIndex((e2: any) => e2.type === e.type);
+			if (index === i) return true;
+			else {
+				entity.effects[index].duration = Math.max(
+					entity.effects[index].duration,
+					e.duration
+				);
+				return false;
+			}
+		});
+
+		console.log("APPLY EFFECT", effect, entity.effects);
 	}
 
-	calculateDamage(player: any, monster: any) {
-		const elementEffectiveness =
-			ELEMENT_EFFECTIVENESS_TABLE[player.stats.ELEMENT][monster.stats.ELEMENT];
-		const damage =
-			(((((2 * player.stats.LEVEL) / 5 + 2) * player.stats.ATK) /
-				monster.stats.DEF) *
-				elementEffectiveness *
-				randomInt(217, 255)) /
-			255;
-		return { damage: Math.max(damage, 1), elementEffectiveness };
+	updateEffects(entity: any) {
+		if (entity.effects) {
+			entity.effects.forEach((e: any) => {
+				if (e.type === "burn") {
+					entity.battleStats.HP = Math.max(
+						entity.battleStats.HP - entity.stats.HP * 0.1,
+						0
+					);
+				} else if (e.type === "memoryLeak") {
+					entity.battleStats.HP = Math.max(
+						entity.battleStats.HP - entity.stats.HP * 0.1,
+						0
+					);
+				}
+				e.duration--;
+			});
+			entity.effects = entity.effects.filter((e: any) => e.duration > 0);
+		}
 	}
 
 	doAttack(type: "normal" | "charge" | "special", id: string) {
 		if (type === "normal") {
 			console.log("normal");
-			// TODO: pick correct player at certain position and index
 			if (!this.state.attacker) {
 				const player = this.players.find((p) => p.id === id);
+				const attack = player.skills.normal;
 
 				const state = {
+					type: attack.animationType,
 					attacker: player,
 					target: this.state.target ?? this.monsters[0],
-					attacking: true,
-					attacked: false,
+					text: attack.name,
+					running: true,
+					finished: false,
 					initialPosition: { x: player.x, y: player.y },
 				};
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
+						attack: attack,
 						state: {
 							...state,
 							attacker: {
@@ -90,8 +195,98 @@ export default class BattleSystem {
 			}
 		} else if (type === "charge") {
 			console.log("charge");
+			if (!this.state.attacker) {
+				const player = this.players.find((p) => p.id === id);
+				const attack = player.skills.charge;
+
+				const state = {
+					type: attack.animationType,
+					attacker: player,
+					target: this.state.target ?? this.monsters[0],
+					text: attack.name,
+					running: true,
+					finished: false,
+					initialPosition: { x: player.x, y: player.y },
+				};
+				const attacker = {
+					id: player.id,
+					stats: player.stats,
+					battleStats: player.battleStats,
+				};
+				const target = {
+					id: state.target.id,
+					stats: state.target.stats,
+					battleStats: state.target.battleStats,
+				};
+				if (attacker.battleStats.CHARGE >= attack.chargeCost) {
+					attacker.battleStats.CHARGE = Math.max(
+						attacker.battleStats.CHARGE - attack.chargeCost,
+						0
+					);
+				} else {
+					return console.log("Nope");
+				}
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("battle-turn", {
+						attack: attack,
+						state: {
+							...state,
+							attacker: attacker,
+							target: attack.targets.amount === "self" ? attacker : target,
+						},
+					});
+				}
+				this.playerTarget = state.target;
+				console.log(this.state.target);
+			}
 		} else if (type === "special") {
 			console.log("special");
+			if (!this.state.attacker) {
+				const player = this.players.find((p) => p.id === id);
+				const attack = player.skills.special;
+
+				const state = {
+					type: attack.animationType,
+					attacker: player,
+					target: this.state.target ?? this.monsters[0],
+					text: attack.name,
+					running: true,
+					finished: false,
+					initialPosition: { x: player.x, y: player.y },
+				};
+				const attacker = {
+					id: player.id,
+					stats: player.stats,
+					battleStats: player.battleStats,
+				};
+				const target = {
+					id: state.target.id,
+					stats: state.target.stats,
+					battleStats: state.target.battleStats,
+				};
+				if (attacker.battleStats.CHARGE >= attack.chargeCost) {
+					attacker.battleStats.CHARGE = Math.max(
+						attacker.battleStats.CHARGE - attack.chargeCost,
+						0
+					);
+				} else {
+					return console.log("Nope");
+				}
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("battle-turn", {
+						attack: attack,
+						state: {
+							...state,
+							attacker: attacker,
+							target: attack.targets.amount === "self" ? attacker : target,
+						},
+					});
+				}
+				this.playerTarget = state.target;
+				console.log(this.state.target);
+			}
 		}
 	}
 
@@ -110,6 +305,14 @@ export default class BattleSystem {
 			else this.state.target = this.playerTarget;
 		}
 	}
+	addActionQueue(actionState: StateType) {
+		this.actionQueue.push(actionState);
+	}
+	updateActionQueue() {
+		if (this.actionQueue.length > 0) {
+			const actionState = this.actionQueue.splice(0, 1)[0];
+			console.log("RUNNING", actionState);
+			this.state = actionState;
+		}
+	}
 }
-
-export {};
