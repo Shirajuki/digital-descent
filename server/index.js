@@ -292,57 +292,63 @@ io.onConnection((channel) => {
 				}
 			}
 
-			// Calculate player's damage on monsters
-			rooms[channel.roomId].battle.state = data.state;
+			let extraInfo = "";
 			const damages = [];
-			for (const monster of battle.monsters) {
-				let damage = { damage: 0, elementEffectiveness: 1 };
-				if (
-					attack.targets.type === "monster" &&
-					monster.id === data.state.target.id &&
-					monster.battleStats.HP > 0
-				) {
-					damage = battle.calculateDamage(data.state.attacker, monster);
-				} else if (
-					attack.targets.type === "player" &&
-					monster.battleStats.HP > 0
-				) {
-					damage = battle.calculateDamage(data.state.attacker, monster);
-				}
-				damages.push(damage);
+			rooms[channel.roomId].battle.state = data.state;
+			if (data.state.attacker?.effects?.some((e) => e.type === "lag")) {
+				extraInfo = `${data.state.attacker.name} is lagging, turn skipped`;
+			} else {
+				// Calculate player's damage on monsters
+				for (const monster of battle.monsters) {
+					let damage = { damage: 0, elementEffectiveness: 1 };
+					if (
+						attack.targets.type === "monster" &&
+						monster.id === data.state.target.id &&
+						monster.battleStats.HP > 0
+					) {
+						damage = battle.calculateDamage(data.state.attacker, monster);
+					} else if (
+						attack.targets.type === "player" &&
+						monster.battleStats.HP > 0
+					) {
+						damage = battle.calculateDamage(data.state.attacker, monster);
+					}
+					damages.push(damage);
 
-				monster.battleStats.HP -= damage.damage;
-				if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
+					monster.battleStats.HP -= damage.damage;
+					if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
+				}
+
+				// Apply effects to attacker
+				attackerEffects.forEach((effect) => {
+					const buff = effect.split("-");
+					const players =
+						buff[0] === "single"
+							? Object.values(rooms[channel.roomId].players).filter(
+									(p) => p.id === data.state.attacker.id
+							  )
+							: Object.values(rooms[channel.roomId].players).filter(
+									(p) => p.id
+							  );
+
+					for (let i = 0; i < players.length; i++) {
+						battle.applyEffects(players[i], buff[1]);
+					}
+				});
+
+				// Apply effects to target
+				targetEffects.forEach((effect) => {
+					const buff = effect.split("-");
+					const monsters =
+						buff[0] === "single"
+							? battle.monsters.filter((m) => m.id === data.state.target.id)
+							: battle.monsters;
+
+					for (let i = 0; i < monsters.length; i++) {
+						battle.applyEffects(monsters[i], buff[1]);
+					}
+				});
 			}
-
-			// Apply effects to attacker
-			attackerEffects.forEach((effect) => {
-				const buff = effect.split("-");
-				const players =
-					buff[0] === "single"
-						? Object.values(rooms[channel.roomId].players).filter(
-								(p) => p.id === data.state.attacker.id
-						  )
-						: Object.values(rooms[channel.roomId].players).filter((p) => p.id);
-
-				for (let i = 0; i < players.length; i++) {
-					battle.applyEffects(players[i], buff[1]);
-				}
-			});
-
-			// Apply effects to target
-			targetEffects.forEach((effect) => {
-				const buff = effect.split("-");
-				const monsters =
-					buff[0] === "single"
-						? battle.monsters.filter((m) => m.id === data.state.target.id)
-						: battle.monsters;
-
-				for (let i = 0; i < monsters.length; i++) {
-					battle.applyEffects(monsters[i], buff[1]);
-				}
-			});
-
 			// Emit updated state to all clients and update the turn queue
 			io.room(channel.roomId).emit("battle", {
 				players: rooms[channel.roomId].players,
@@ -361,6 +367,7 @@ io.onConnection((channel) => {
 					attacker: data.state.attacker.id,
 					target: data.state.target.id,
 				},
+				extra: extraInfo,
 				type: "battle-turn",
 			});
 			battle.updateTurn();
@@ -381,14 +388,22 @@ io.onConnection((channel) => {
 				const monster = battle.turnQueue[0];
 				// TODO: pick random player by weighting
 				const player = players[0];
+
+				let extraInfo = "";
 				const damages = [];
-				for (let i = 0; i < players.length; i++) {
-					let damage = { damage: 0, elementEffectiveness: 1 };
-					if (players[i].battleStats.HP > 0 && player.id === players[i].id) {
-						damage = battle.calculateDamage(monster, player);
+				rooms[channel.roomId].battle.state = data.state;
+				if (monster?.effects?.some((e) => e.type === "lag")) {
+					extraInfo = `${monster.name} is lagging, turn skipped`;
+				} else {
+					for (let i = 0; i < players.length; i++) {
+						let damage = { damage: 0, elementEffectiveness: 1 };
+						if (players[i].battleStats.HP > 0 && player.id === players[i].id) {
+							damage = battle.calculateDamage(monster, player);
+						}
+						damages.push(damage);
 					}
-					damages.push(damage);
 				}
+
 				io.room(channel.roomId).emit("battle", {
 					players: rooms[channel.roomId].players,
 					battle: rooms[channel.roomId].battle,
@@ -402,6 +417,7 @@ io.onConnection((channel) => {
 						finished: false,
 						initialPosition: { x: 0, y: 0 },
 					},
+					extra: "",
 					type: "battle-turn",
 				});
 				battle.updateTurn();

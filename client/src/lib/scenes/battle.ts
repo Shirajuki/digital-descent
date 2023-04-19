@@ -170,44 +170,89 @@ export default class BattleScene extends Scene {
 			const target =
 				this.players.find((p) => p.id === data.state.target) ||
 				this.monsters.find((m: any) => m.id === data.state.target);
-
-			this.battle.addActionQueue({
-				type: "text-update",
-				attacker: null,
-				target: target,
-				text: `${attacker.name} used ${state.text} on ${target.name}`,
-				running: true,
-				finished: false,
-				initialPosition: this.battle.state.initialPosition,
-				attack: {
-					effects: {},
-					damage: [{ damage: 0, elementEffectiveness: 1 }],
-				},
-				timer: { current: 0, end: 25 },
-			});
-			this.battle.addActionQueue({
-				...state,
-				attacker: attacker,
-				target: target,
-				initialPosition: { x: attacker.x, y: attacker.y },
-				attack: data.attack,
-			});
-			this.battle.addActionQueue({
-				type: "text-update",
-				attacker: null,
-				target: target,
-				text: "",
-				running: true,
-				finished: false,
-				initialPosition: this.battle.state.initialPosition,
-				attack: {
-					effects: {},
-					damage: [{ damage: 0, elementEffectiveness: 1 }],
-				},
-				timer: { current: 0, end: 50 },
-			});
+			if (attacker?.effects?.some((e: any) => e.type === "lag")) {
+				this.battle.addActionQueue({
+					type: "text-update",
+					attacker: null,
+					target: target,
+					text: `${attacker.name} is lagging, turn skipped`,
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 100 },
+				});
+				this.battle.addActionQueue({
+					type: "skip",
+					attacker: null,
+					target: target,
+					text: "",
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 50 },
+				});
+				this.battle.addActionQueue({
+					type: "text-update",
+					attacker: null,
+					target: target,
+					text: "",
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 50 },
+				});
+			} else {
+				this.battle.addActionQueue({
+					type: "text-update",
+					attacker: null,
+					target: target,
+					text: `${attacker.name} used ${state.text} on ${target.name}`,
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 25 },
+				});
+				this.battle.addActionQueue({
+					...state,
+					attacker: attacker,
+					target: target,
+					initialPosition: { x: attacker.x, y: attacker.y },
+					attack: data.attack,
+				});
+				this.battle.addActionQueue({
+					type: "text-update",
+					attacker: null,
+					target: target,
+					text: "",
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 50 },
+				});
+			}
 			console.log("UPDATE state....", data, this.battle.state, this.battle);
 			console.log(this.battle.actionQueue);
+			this.battle.updateEffects(attacker);
 			if (!this.battle.state.running) this.battle.updateActionQueue();
 		} else if (data.type === "battle-initialize") {
 			// Update monsters
@@ -368,11 +413,29 @@ export default class BattleScene extends Scene {
 				this.battle.state.running = false;
 				this.battle.updateActionQueue();
 			}
+		} else if (this.battle?.state.type === "skip") {
+			if (!this.battle.state.finished) {
+				this.battle.state.finished = true;
+				this.battle.state.running = false;
+				this.battle.updateActionQueue();
+				this.battle.updateTurn();
+				this.observable.notify();
+				// Turn finished
+				const channel = window.channel;
+				if (channel)
+					channel.emit("battle-turn-finished", {
+						turns: this.battle.turns,
+					});
+			}
 		}
 
 		// Move pointer to player's target monster
 		if (
-			!(this.battle?.state.type === "text-update" && this.battle?.state.running)
+			!(
+				(this.battle?.state.type === "text-update" ||
+					this.battle?.state.type === "skip") &&
+				this.battle?.state.running
+			)
 		) {
 			this.tweens.add({
 				targets: this.pointerSprite,

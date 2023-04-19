@@ -102,6 +102,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 					repeat: 1,
 					yoyo: true,
 				});
+				scene.cameras.cameras[0].shake(100, 0.005);
 			}
 		} else {
 			// Do a quick pause
@@ -216,6 +217,10 @@ export const animateSingleAttack = (scene: BattleScene) => {
 					scene.battle.updateActionQueue();
 					scene.battle.updateTurn();
 					scene.observable.notify();
+					scene.tweens.getAllTweens().forEach((tween) => {
+						tween.stop();
+					});
+					scene.tweens.killAll();
 					const channel = window.channel;
 					if (channel)
 						channel.emit("battle-turn-finished", {
@@ -337,7 +342,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 			}
 		} else {
 			scene.currentBuffDelay--;
-			if (scene.currentBuffDelay < 0 && camera.x !== 0) {
+			if (scene.currentBuffDelay < 0 && scene.currentAttackDelay > 0) {
 				scene.tweens.add({
 					targets: camera,
 					x: 0,
@@ -347,7 +352,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 					repeat: -1,
 				});
 			}
-			if (Math.abs(camera.x) < 1) {
+			if (camera.x < 1) {
 				camera.x = 0;
 				scene.currentAttackDelay--;
 				if (scene.currentAttackDelay == -1) {
@@ -381,11 +386,17 @@ export const animateStandingAttack = (scene: BattleScene) => {
 					scene.currentWaitDelay--;
 				}
 				if (scene.currentWaitDelay < 0 && scene.battle.state.finished) {
+					camera.x = 0;
+					scene.cameras.cameras[0].x = 12;
 					scene.battle.state.running = false;
 					scene.battle.state.finished = false;
 					scene.battle.state.attacker = null;
 					scene.battle.updateActionQueue();
 					scene.battle.updateTurn();
+					scene.tweens.getAllTweens().forEach((tween) => {
+						tween.stop();
+					});
+					scene.tweens.killAll();
 					scene.observable.notify();
 					// Turn finished
 					const channel = window.channel;

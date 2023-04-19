@@ -3,6 +3,7 @@ import { ELEMENT_EFFECTIVENESS_TABLE } from "../../constants";
 
 type StateType = {
 	type:
+		| "initial"
 		| "skip"
 		| "single-attack"
 		| "standing-attack"
@@ -32,7 +33,7 @@ export default class BattleSystem {
 	public turnQueue: any[];
 	public turns = 0;
 	public state: StateType = {
-		type: "skip",
+		type: "initial",
 		attacker: null,
 		target: null,
 		text: "",
@@ -73,8 +74,6 @@ export default class BattleSystem {
 	applyEffect(entity: any, effect: string) {
 		// Set effects on entity
 		if (!entity.effects) entity.effects = [];
-		// Remove any existing effects of the same type
-		entity.effects = entity.effects.filter((e: any) => e.type !== effect);
 		// Apply new effect
 		if (effect === "smallHeal") {
 			entity.battleStats.HP = Math.min(
@@ -88,6 +87,10 @@ export default class BattleSystem {
 			);
 		} else if (effect === "bigHeal") {
 			entity.battleStats.HP = entity.battleStats.HP;
+		} else if (effect === "clear") {
+			entity.effects = entity.effects.filter(
+				(e: any) => !["burn", "memoryLeak", "nervous", "lag"].includes(e.type)
+			);
 		} else if (effect === "lag") {
 			entity.effects.push({ type: "lag", duration: 2 });
 		} else if (effect === "nervous") {
@@ -105,7 +108,40 @@ export default class BattleSystem {
 		} else if (effect === "taunt") {
 			entity.effects.push({ type: "taunt", duration: 4 });
 		}
+		// Remove duplicate effects and update duration using filter
+		entity.effects = entity.effects.filter((e: any, i: number) => {
+			const index = entity.effects.findIndex((e2: any) => e2.type === e.type);
+			if (index === i) return true;
+			else {
+				entity.effects[index].duration = Math.max(
+					entity.effects[index].duration,
+					e.duration
+				);
+				return false;
+			}
+		});
+
 		console.log("APPLY EFFECT", effect, entity.effects);
+	}
+
+	updateEffects(entity: any) {
+		if (entity.effects) {
+			entity.effects.forEach((e: any) => {
+				if (e.type === "burn") {
+					entity.battleStats.HP = Math.max(
+						entity.battleStats.HP - entity.stats.HP * 0.1,
+						0
+					);
+				} else if (e.type === "memoryLeak") {
+					entity.battleStats.HP = Math.max(
+						entity.battleStats.HP - entity.stats.HP * 0.1,
+						0
+					);
+				}
+				e.duration--;
+			});
+			entity.effects = entity.effects.filter((e: any) => e.duration > 0);
+		}
 	}
 
 	doAttack(type: "normal" | "charge" | "special", id: string) {

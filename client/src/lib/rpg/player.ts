@@ -18,7 +18,7 @@ export const initializePlayer = (
 		down: false,
 	};
 	player.animationState = "idle";
-	player.battleClass = "heal";
+	player.battleClass = "tank";
 	player.skills = getSkills(player);
 
 	// Exploration

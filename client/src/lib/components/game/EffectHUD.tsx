@@ -37,6 +37,9 @@ const EffectHUD = () => {
 	const player = (
 		engine?.game.scene.getScene(engine.game.currentScene) as BattleScene
 	)?.player;
+	const centerPoint = (
+		engine?.game.scene.getScene(engine.game.currentScene) as BattleScene
+	)?.centerPoint;
 
 	if (!player || !player?.stats || !player?.battleStats || !battle)
 		return <></>;
@@ -51,19 +54,26 @@ const EffectHUD = () => {
 					className={`absolute [user-select:none] z-20`}
 					style={{
 						top: `${1157 / 2 + monster.y * 1.12 - 426 + monsterOffset[i].y}px`,
-						left: `${542 / 2 + monster.x * 1.12 + 285 + monsterOffset[i].x}px`,
+						left: `${
+							542 / 2 +
+							monster.x * 1.12 +
+							285 +
+							monsterOffset[i].x -
+							centerPoint.x
+						}px`,
 						transform: `translate(-50%, -50%)`,
 					}}
 					key={monster.id}
 				>
 					<div className="flex gap-1">
-						{monster?.effects?.map((effect: any) => (
-							<EffectIcon
-								effect={effect.type}
-								dark={true}
-								key={monster.id + effect.type}
-							/>
-						))}
+						{monster.battleStats.HP > 0 &&
+							monster?.effects?.map((effect: any) => (
+								<EffectIcon
+									effect={effect.type}
+									dark={true}
+									key={monster.id + effect.type}
+								/>
+							))}
 					</div>
 				</div>
 			))}
