@@ -14,8 +14,8 @@ export default class OfficeScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
-		// Load player sprite
-		this.load.spritesheet("explorationBg", "sprites/explorationBg.png", {
+		// Load bg sprite
+		this.load.spritesheet("officeBg", "sprites/officeBg.png", {
 			frameWidth: 2400,
 			frameHeight: 1600,
 		});
@@ -30,6 +30,9 @@ export default class OfficeScene extends Scene {
 			...this.players.filter((p) => p.id !== oldPlayer.id),
 			this.player,
 		];
+
+		// Load bg
+		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
 
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);

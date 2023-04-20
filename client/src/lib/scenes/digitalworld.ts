@@ -97,6 +97,6 @@ export default class DigitalWorldScene extends Scene {
 		}
 
 		// this.switch("exploration");
-		// this.switch("office");
+		this.switch("office");
 	}
 }
