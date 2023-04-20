@@ -3,6 +3,8 @@ import { inputInitPlayerMovement } from "../rpg/input";
 import { initializePlayer } from "../rpg/player";
 import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
 import Scene from "./scene";
+import collisions from "../collisions/digitalWorldCollisions.json";
+import { DEBUG } from "../constants";
 
 export default class DigitalWorldScene extends Scene {
 	public text: any;
@@ -19,6 +21,27 @@ export default class DigitalWorldScene extends Scene {
 			frameWidth: 3500,
 			frameHeight: 2400,
 		});
+		// Load overlay sprites
+		this.load.spritesheet("tree", "sprites/tree.png", {
+			frameWidth: 750,
+			frameHeight: 750,
+		});
+		this.load.spritesheet("rock1", "sprites/rock1.png", {
+			frameWidth: 200,
+			frameHeight: 200,
+		});
+		this.load.spritesheet("rock2", "sprites/rock2.png", {
+			frameWidth: 200,
+			frameHeight: 250,
+		});
+		this.load.spritesheet(
+			"digitalWorldOverlay",
+			"sprites/digitalWorldOverlay.png",
+			{
+				frameWidth: 3500,
+				frameHeight: 2400,
+			}
+		);
 		// Load player sprite
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
 			frameWidth: 72,
@@ -57,9 +80,48 @@ export default class DigitalWorldScene extends Scene {
 		];
 
 		// Load bg
-		const bg = this.add.sprite(600, -300, "digitalWorldBg");
-		bg.setDepth(-10000);
-		bg.setScale(0.5);
+		this.add.sprite(0, 0, "digitalWorldBg").setDepth(-10000).setScale(0.5);
+		this.add
+			.sprite(0, 0, "digitalWorldOverlay")
+			.setDepth(10000)
+			.setScale(0.5)
+			.setAlpha(0.9);
+		this.add.sprite(-27, 59, "tree").setDepth(140).setScale(0.5).setAlpha(0.9);
+		this.add
+			.sprite(-247, -118, "rock1")
+			.setDepth(-115)
+			.setScale(0.5)
+			.setAlpha(0.9);
+		this.add
+			.sprite(65, -130, "rock2")
+			.setDepth(-125)
+			.setScale(0.5)
+			.setAlpha(0.9);
+		// Move player to starting position
+		this.player.setPosition(-600, 300);
+		this.player.flipX = false;
+		// Setup collisions
+		const objects = collisions?.layers.find(
+			(l) => l.type === "objectgroup"
+		)?.objects;
+		if (objects) {
+			for (let i = 0; i < objects.length; i++) {
+				const collision = this.add
+					.rectangle(
+						objects[i].x * 0.5,
+						objects[i].y * 0.5,
+						objects[i].width * 0.5,
+						objects[i].height * 0.5,
+						0x000000
+					)
+					.setDepth(10000)
+					.setOrigin(0, 0)
+					.setStrokeStyle(3, 0xff0000);
+				if (!DEBUG) collision.setAlpha(0);
+				collision.isFilled = false;
+				this.collisions.push(collision);
+			}
+		}
 
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
@@ -87,7 +149,7 @@ export default class DigitalWorldScene extends Scene {
 
 	update(_time: any, _delta: any) {
 		// Update player
-		this.player.updatePlayer();
+		this.player.updatePlayer(this.collisions);
 
 		// Send player data to server
 		const channel = window.channel;
@@ -97,6 +159,6 @@ export default class DigitalWorldScene extends Scene {
 		}
 
 		// this.switch("exploration");
-		this.switch("office");
+		// this.switch("office");
 	}
 }

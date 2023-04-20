@@ -8,6 +8,8 @@ import {
 } from "../rpg/systems/explorationSystem";
 import { AreaType } from "../types";
 import Scene from "./scene";
+import collisions from "../collisions/explorationCollisions.json";
+import { DEBUG } from "../constants";
 
 export default class ExplorationScene extends Scene {
 	public teleportingPads: any[] = [];
@@ -80,13 +82,6 @@ export default class ExplorationScene extends Scene {
 		super.create();
 		inputInitPlayerMovement(this);
 
-		// Setup text
-		this.text = this.add.text(15, 15, "", {
-			fontFamily: "Arial",
-			fontSize: "32px",
-			color: "#fff",
-		});
-
 		this.preloaded = true;
 		this.initialize();
 	}
@@ -120,14 +115,40 @@ export default class ExplorationScene extends Scene {
 			...this.players.filter((p) => p.id !== oldPlayer?.id),
 			this.player,
 		];
+		// Create background
+		this.add.sprite(0, 0, "explorationBg").setDepth(-10000);
+		this.add.sprite(150, -110, "signPost").setDepth(-110 + 62);
+		// Set player to starting position
+		this.player.setPosition(0, 0);
+		this.player.flipX = false;
+		// Setup collisions
+		const objects = collisions?.layers.find(
+			(l) => l.type === "objectgroup"
+		)?.objects;
+		if (objects) {
+			for (let i = 0; i < objects.length; i++) {
+				const collision = this.add
+					.rectangle(
+						objects[i].x,
+						objects[i].y,
+						objects[i].width,
+						objects[i].height,
+						0x000000
+					)
+					.setDepth(10000)
+					.setOrigin(0, 0)
+					.setStrokeStyle(3, 0xff0000);
+				if (!DEBUG) collision.setAlpha(0);
+				collision.isFilled = false;
+				this.collisions.push(collision);
+			}
+		}
+
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
-		// Create background
-		this.add.sprite(0, 0, "explorationBg").setDepth(-10000);
-		this.add.sprite(150, -110, "signPost").setDepth(-110 + 62);
 
 		// Create teleporting pad
 		const distance = 800;
@@ -171,12 +192,7 @@ export default class ExplorationScene extends Scene {
 
 	update(_time: any, _delta: any) {
 		// Update player
-		this.player.updatePlayer();
-
-		// Update text
-		this.text.text = `Pos: ${Math.round(this.player.x)},${Math.round(
-			this.player.y
-		)}`.trim();
+		this.player.updatePlayer(this.collisions);
 
 		// Check player collision
 		let standingOnTeleporter = -1;

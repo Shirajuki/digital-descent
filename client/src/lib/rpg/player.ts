@@ -84,14 +84,50 @@ export const initializePlayer = (
 			this.play("run");
 		}
 	};
-	player.updatePlayer = function () {
+	player.updatePlayer = function (collisions: any[] = []) {
 		let speed = SPEED;
 		const movement = Object.values(this.movement).filter((v) => v).length;
 		if (movement > 1) speed *= 0.71;
-		if (this.movement.left) this.x -= speed;
-		if (this.movement.up) this.y -= speed;
-		if (this.movement.right) this.x += speed;
-		if (this.movement.down) this.y += speed;
+
+		// Move and check collisions
+		const oldX = this.x;
+		const oldY = this.y;
+		const collision = [true, true, true, true];
+		for (let i = 0; i < collisions.length; i++) {
+			if (
+				this.x + speed > collisions[i].x &&
+				this.x + speed < collisions[i].x + collisions[i].width &&
+				this.y > collisions[i].y &&
+				this.y < collisions[i].y + collisions[i].height
+			)
+				collision[0] = false;
+			if (
+				this.x - speed > collisions[i].x &&
+				this.x - speed < collisions[i].x + collisions[i].width &&
+				this.y > collisions[i].y &&
+				this.y < collisions[i].y + collisions[i].height
+			)
+				collision[1] = false;
+			if (
+				this.x > collisions[i].x &&
+				this.x < collisions[i].x + collisions[i].width &&
+				this.y + speed > collisions[i].y &&
+				this.y + speed < collisions[i].y + collisions[i].height
+			)
+				collision[2] = false;
+			if (
+				this.x > collisions[i].x &&
+				this.x < collisions[i].x + collisions[i].width &&
+				this.y - speed > collisions[i].y &&
+				this.y - speed < collisions[i].y + collisions[i].height
+			)
+				collision[3] = false;
+		}
+		if (this.movement.left && collision[1]) this.x -= speed;
+		if (this.movement.up && collision[3]) this.y -= speed;
+		if (this.movement.right && collision[0]) this.x += speed;
+		if (this.movement.down && collision[2]) this.y += speed;
+
 		this.updatePlayerAnimation();
 
 		this.setDepth(this.y);

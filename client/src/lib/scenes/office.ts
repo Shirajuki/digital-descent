@@ -3,6 +3,8 @@ import { inputInitPlayerMovement } from "../rpg/input";
 import { initializePlayer } from "../rpg/player";
 import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
 import Scene from "./scene";
+import collisions from "../collisions/officeCollisions.json";
+import { DEBUG } from "../constants";
 
 export default class OfficeScene extends Scene {
 	public text: any;
@@ -16,8 +18,8 @@ export default class OfficeScene extends Scene {
 	preload() {
 		// Load bg sprite
 		this.load.spritesheet("officeBg", "sprites/officeBg.png", {
-			frameWidth: 2400,
-			frameHeight: 1600,
+			frameWidth: 1600,
+			frameHeight: 1100,
 		});
 	}
 	create() {
@@ -30,9 +32,33 @@ export default class OfficeScene extends Scene {
 			...this.players.filter((p) => p.id !== oldPlayer.id),
 			this.player,
 		];
-
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
+		// Move player to starting position
+		this.player.setPosition(-250, 150);
+		this.player.flipX = false;
+		// Setup collisions
+		const objects = collisions?.layers.find(
+			(l) => l.type === "objectgroup"
+		)?.objects;
+		if (objects) {
+			for (let i = 0; i < objects.length; i++) {
+				const collision = this.add
+					.rectangle(
+						objects[i].x * 0.5,
+						objects[i].y * 0.5,
+						objects[i].width * 0.5,
+						objects[i].height * 0.5,
+						0x000000
+					)
+					.setDepth(10000)
+					.setOrigin(0, 0)
+					.setStrokeStyle(3, 0xff0000);
+				if (!DEBUG) collision.setAlpha(0);
+				collision.isFilled = false;
+				this.collisions.push(collision);
+			}
+		}
 
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
@@ -60,7 +86,7 @@ export default class OfficeScene extends Scene {
 
 	update(_time: any, _delta: any) {
 		// Update player
-		this.player.updatePlayer();
+		this.player.updatePlayer(this.collisions);
 
 		// Send player data to server
 		const channel = window.channel;
