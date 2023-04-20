@@ -14,6 +14,11 @@ export default class DigitalWorldScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
+		// Load bg sprite
+		this.load.spritesheet("digitalWorldBg", "sprites/digitalWorldBg.png", {
+			frameWidth: 3500,
+			frameHeight: 2400,
+		});
 		// Load player sprite
 		this.load.spritesheet("player", "sprites/spritesheet.png", {
 			frameWidth: 72,
@@ -51,12 +56,10 @@ export default class DigitalWorldScene extends Scene {
 			this.player,
 		];
 
-		// Setup text
-		this.text = this.add.text(15, 15, this.getSpriteInfo(), {
-			fontFamily: "Arial",
-			fontSize: "32px",
-			color: "#fff",
-		});
+		// Load bg
+		const bg = this.add.sprite(600, -300, "digitalWorldBg");
+		bg.setDepth(-10000);
+		bg.setScale(0.5);
 
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
@@ -70,17 +73,6 @@ export default class DigitalWorldScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
-	}
-
-	getSpriteInfo() {
-		return `
-State: ${this.player.animationState}
-Frame: ${
-			this.player.animationState === "idle"
-				? this.player.anims.currentFrame.index
-				: this.player.anims.currentFrame.index + 10
-		}
-Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 	}
 
 	sync(data: any) {
@@ -97,9 +89,6 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 		// Update player
 		this.player.updatePlayer();
 
-		// Update text
-		this.text.text = this.getSpriteInfo();
-
 		// Send player data to server
 		const channel = window.channel;
 		if (channel) {
@@ -107,6 +96,7 @@ Pos: ${Math.round(this.player.x)},${Math.round(this.player.y)}`.trim();
 			channel.emit("game-update", { player: this.player.getData() });
 		}
 
-		this.switch("exploration");
+		// this.switch("exploration");
+		// this.switch("office");
 	}
 }

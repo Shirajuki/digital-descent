@@ -5,6 +5,7 @@ import { clearFocus } from "./utils";
 import ExplorationScene from "./scenes/exploration";
 import BattleScene from "./scenes/battle";
 import Observable from "./observable";
+import OfficeScene from "./scenes/office";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -46,6 +47,7 @@ export default class PhaserEngine {
 				new DigitalWorldScene({ key: "digitalworld" }, this.observable),
 				new ExplorationScene({ key: "exploration" }, this.observable),
 				new BattleScene({ key: "battle" }, this.observable),
+				new OfficeScene({ key: "office" }, this.observable),
 			],
 			render: { pixelArt: true, antialias: true },
 		};

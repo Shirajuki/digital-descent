@@ -67,6 +67,14 @@ export default class ExplorationScene extends Scene {
 			frameWidth: 400,
 			frameHeight: 400,
 		});
+		this.load.spritesheet("explorationBg", "sprites/explorationBg.png", {
+			frameWidth: 2400,
+			frameHeight: 1600,
+		});
+		this.load.spritesheet("signPost", "sprites/signPost.png", {
+			frameWidth: 200,
+			frameHeight: 250,
+		});
 	}
 	create() {
 		super.create();
@@ -117,13 +125,17 @@ export default class ExplorationScene extends Scene {
 
 		this.currentArea = AREAS.STARTING.area();
 		this.areas = generateAvailableAreas();
+		// Create background
+		this.add.sprite(0, 0, "explorationBg").setDepth(-10000);
+		this.add.sprite(150, -110, "signPost").setDepth(-110 + 62);
+
 		// Create teleporting pad
-		const distance = 600;
+		const distance = 800;
 		this.teleportingPads = [
 			this.add.sprite(-distance, 0, "teleportingPad"),
-			this.add.sprite(0, -distance, "teleportingPad"),
+			this.add.sprite(0, -distance + 200, "teleportingPad"),
 			this.add.sprite(distance, 0, "teleportingPad"),
-			this.add.sprite(0, distance, "teleportingPad"),
+			this.add.sprite(0, distance - 200, "teleportingPad"),
 		];
 		this.teleportingPads.forEach((pad: Phaser.GameObjects.Sprite) => {
 			pad.setDepth(-10000);
