@@ -122,7 +122,7 @@ export default class BattleScene extends Scene {
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		// Generate monsters
-		let monsters = generateMonstersByPreset(["easy"]);
+		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
 		this.monsters = [];
 
 		// Initialize battle
