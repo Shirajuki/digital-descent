@@ -7,6 +7,7 @@ import DialogueScreen from "./DialogueScreen";
 import TaskBoardScreen from "./TaskBoardScreen";
 import ShopScreen from "./ShopScreen";
 import PortalScreen from "./PortalScreen";
+import RoleScreen from "./RoleScreen";
 
 function HUD({ engine }: { engine: PhaserEngine | null }) {
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -23,8 +24,15 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 			{engine?.game.currentScene === "battle" ? <BattleHUD /> : <></>}
 			{engine?.game.currentScene === "battle" ? <WinScreen /> : <></>}
 			{/* {engine?.game.currentScene === "exploration" ? <ExplorationHUD /> : <></>} */}
+			{engine?.game.currentScene === "office" ||
+			engine?.game.currentScene === "home" ? (
+				<RoleScreen />
+			) : (
+				<></>
+			)}
 			{/* {engine?.game.currentScene === "digitalworld" ? <DigitalWorldHUD /> : <></>} */}
-			{engine?.game.currentScene === "digitalworld" ? (
+			{engine?.game.currentScene === "digitalworld" ||
+			engine?.game.currentScene === "home" ? (
 				<>
 					<TaskBoardScreen />
 					<ShopScreen />

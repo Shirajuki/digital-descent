@@ -17,7 +17,7 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"collision",
          "objects":[
                 {
                  "height":1012.86391333785,
@@ -167,9 +167,31 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":4,
+         "name":"events",
+         "objects":[
+                {
+                 "height":505.077860528098,
+                 "id":14,
+                 "name":"meeting-room",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":652.674339878131,
+                 "x":78.5375761679079,
+                 "y":-368.314150304672
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":4,
- "nextobjectid":14,
+ "nextlayerid":5,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",

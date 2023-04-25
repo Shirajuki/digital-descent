@@ -41,6 +41,7 @@ declare global {
 		channel: any;
 		exploration: any;
 		engine: any; // For testing and debugging purposes
+		playerBattleClass: string;
 	}
 }
 declare module "phaser" {

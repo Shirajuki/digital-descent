@@ -17,7 +17,7 @@
         {
          "draworder":"topdown",
          "id":3,
-         "name":"Object Layer 1",
+         "name":"collision",
          "objects":[
                 {
                  "height":1760.64441887227,

@@ -18,10 +18,15 @@ export const initializePlayer = (
 		down: false,
 	};
 	player.animationState = "idle";
-	player.battleClass = ["tank", "dps", "healer"][Math.floor(Math.random() * 3)];
+	player.battleClass =
+		window.playerBattleClass ??
+		["tank", "dps", "healer"][Math.floor(Math.random() * 3)];
 	player.skills = getSkills(player);
 
 	player.inventory = [];
+
+	// Event collisions
+	player.eventCollision = "";
 
 	// Exploration
 	player.onTeleportingPad = { standingTime: 0, teleporter: 0 };
@@ -63,6 +68,7 @@ export const initializePlayer = (
 			stats: this.stats,
 			battleStats: this.battleStats,
 			onTeleportingPad: this.onTeleportingPad,
+			eventCollision: this.eventCollision,
 		};
 	};
 	player.updatePlayerAnimation = function () {
@@ -90,8 +96,6 @@ export const initializePlayer = (
 		if (movement > 1) speed *= 0.71;
 
 		// Move and check collisions
-		const oldX = this.x;
-		const oldY = this.y;
 		const collision = [true, true, true, true];
 		for (let i = 0; i < collisions.length; i++) {
 			if (

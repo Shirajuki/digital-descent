@@ -8,6 +8,10 @@ import { DEBUG } from "../constants";
 
 export default class OfficeScene extends Scene {
 	public text: any;
+	public role = {
+		display: false,
+		ready: false,
+	};
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -61,7 +65,7 @@ export default class OfficeScene extends Scene {
 		this.player.flipX = false;
 		// Setup collisions
 		const objects = collisions?.layers.find(
-			(l) => l.type === "objectgroup"
+			(l) => l.type === "objectgroup" && l.name === "collision"
 		)?.objects;
 		if (objects) {
 			for (let i = 0; i < objects.length; i++) {
@@ -79,6 +83,30 @@ export default class OfficeScene extends Scene {
 				if (!DEBUG) collision.setAlpha(0);
 				collision.isFilled = false;
 				this.collisions.push(collision);
+			}
+		}
+
+		// Setup event collisions
+		const events = collisions?.layers.find(
+			(l) => l.type === "objectgroup" && l.name === "events"
+		)?.objects;
+		if (events) {
+			for (let i = 0; i < events.length; i++) {
+				const collision = this.add
+					.rectangle(
+						events[i].x * 0.5,
+						events[i].y * 0.5,
+						events[i].width * 0.5,
+						events[i].height * 0.5,
+						0x000000
+					)
+					.setDepth(10000)
+					.setOrigin(0, 0)
+					.setStrokeStyle(3, 0x00ff00);
+				if (!DEBUG) collision.setAlpha(0);
+				collision.isFilled = false;
+				collision.name = events[i].name;
+				this.eventCollisions.push(collision);
 			}
 		}
 
@@ -100,7 +128,7 @@ export default class OfficeScene extends Scene {
 			if (channel) {
 				channel.emit("dialogue", { scenario: "GAME_INTRO" });
 			}
-		}, 1000);
+		}, 500);
 	}
 
 	sync(data: any) {
@@ -112,10 +140,79 @@ export default class OfficeScene extends Scene {
 		addPlayers(this, serverPlayers, serverPlayersData);
 		updatePlayers(this, data.players);
 	}
-
+	triggerAction(action: string): void {
+		console.log(action);
+		if (action === "START_ROLE_SELECTION") {
+			this.role.display = true;
+			this.observable.notify();
+		} else if (action === "END_ROLE_SELECTION") {
+			this.role.display = false;
+			this.observable.notify();
+			// Trigger new dialogue for roles
+			const channel = window.channel;
+			if (channel) {
+				channel.emit("dialogue", {
+					scenario: "ROLES",
+				});
+			}
+		} else if (action === "TELEPORT_TO_DIGITALWORLD") {
+			this.switch("digitalworld");
+			// Trigger new dialogue for first time in digital world intro
+			setTimeout(() => {
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("dialogue", {
+						scenario: "DIGITALWORLD_INTRO",
+					});
+				}
+			}, 1000);
+		}
+	}
 	update(_time: any, _delta: any) {
 		// Update player
 		this.player.updatePlayer(this.collisions);
+
+		// Event collisions
+		let eventCollided = false;
+		for (let i = 0; i < this.eventCollisions.length; i++) {
+			if (
+				this.player.x > this.eventCollisions[i].x &&
+				this.player.x <
+					this.eventCollisions[i].x + this.eventCollisions[i].width &&
+				this.player.y > this.eventCollisions[i].y &&
+				this.player.y <
+					this.eventCollisions[i].y + this.eventCollisions[i].height
+			) {
+				if (DEBUG) this.eventCollisions[i].setStrokeStyle(3, 0x00ff00);
+				eventCollided = true;
+				if (this.player.eventCollision !== this.eventCollisions[i].name) {
+					this.player.eventCollision = this.eventCollisions[i].name;
+
+					// Emit meeting event if all players are in the event collision
+					if (
+						this.players.filter(
+							(p) => p.eventCollision === this.eventCollisions[i].name
+						).length === this.players.length
+					) {
+						setTimeout(() => {
+							const channel = window.channel;
+							if (channel) {
+								channel.emit("dialogue", {
+									scenario: "CUSTOMER_INTRO",
+									forceall: true,
+								});
+							}
+						}, 1000);
+					}
+				}
+			} else {
+				if (DEBUG) {
+					this.eventCollisions[i].setStrokeStyle(3, 0x0000ff);
+				}
+			}
+		}
+		if (!eventCollided && this.player.eventCollision !== "")
+			this.player.eventCollision = "";
 
 		// Send player data to server
 		const channel = window.channel;

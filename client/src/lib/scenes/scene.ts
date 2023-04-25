@@ -6,6 +6,7 @@ type DialogueType = {
 	ended: string[];
 	display: boolean;
 	scenario: string;
+	action: string;
 };
 export default class Scene extends Phaser.Scene {
 	public players: any[] = [];
@@ -14,11 +15,13 @@ export default class Scene extends Phaser.Scene {
 	public observable: Observable;
 	public preloaded: boolean = false;
 	public collisions: any[] = [];
+	public eventCollisions: any[] = [];
 	public dialogue: DialogueType = {
 		texts: [],
 		ended: [],
 		display: false,
-		scenario: "GAME_INTRO",
+		scenario: "",
+		action: "",
 	};
 
 	constructor(
@@ -49,6 +52,7 @@ export default class Scene extends Phaser.Scene {
 		}
 		this.observable.notify();
 	}
+	triggerAction(action: string) {}
 	togglePopup(data: any) {}
 	sync(data: any) {}
 	switch(scene: string) {

@@ -141,7 +141,7 @@ export default class DigitalWorldScene extends Scene {
 		this.player.flipX = false;
 		// Setup collisions
 		const objects = collisions?.layers.find(
-			(l) => l.type === "objectgroup"
+			(l) => l.type === "objectgroup" && l.name === "collision"
 		)?.objects;
 		if (objects) {
 			for (let i = 0; i < objects.length; i++) {
@@ -159,6 +159,30 @@ export default class DigitalWorldScene extends Scene {
 				if (!DEBUG) collision.setAlpha(0);
 				collision.isFilled = false;
 				this.collisions.push(collision);
+			}
+		}
+
+		// Setup event collisions
+		const events = collisions?.layers.find(
+			(l) => l.type === "objectgroup" && l.name === "events"
+		)?.objects;
+		if (events) {
+			for (let i = 0; i < events.length; i++) {
+				const collision = this.add
+					.rectangle(
+						events[i].x * 0.5,
+						events[i].y * 0.5,
+						events[i].width * 0.5,
+						events[i].height * 0.5,
+						0x000000
+					)
+					.setDepth(10000)
+					.setOrigin(0, 0)
+					.setStrokeStyle(3, 0x00ff00);
+				if (!DEBUG) collision.setAlpha(0);
+				collision.isFilled = false;
+				collision.name = events[i].name;
+				this.eventCollisions.push(collision);
 			}
 		}
 
@@ -186,9 +210,125 @@ export default class DigitalWorldScene extends Scene {
 		updatePlayers(this, data.players);
 	}
 
+	triggerAction(action: string): void {
+		console.log(action);
+		const channel = window.channel;
+
+		if (action === "OPEN_TASKBOARD") {
+			this.togglePopup("taskboard");
+			if (channel) {
+				channel.emit("dialogue", {
+					scenario: "TASKBOARD_INTRO",
+				});
+			}
+		} else if (action === "OPEN_PORTAL") {
+			this.togglePopup("portal");
+			if (channel) {
+				channel.emit("dialogue", {
+					scenario: "PORTAL_INTRO",
+				});
+			}
+		} else if (action === "OPEN_SHOP") {
+			this.togglePopup("shop");
+			if (channel) {
+				channel.emit("dialogue", {
+					scenario: "SHOP_INTRO",
+				});
+			}
+		} else if (action === "CLEAR_TASKBOARD_QUEST") {
+			this.dialogue.ended.push("TASKBOARD_INTRO");
+			if (
+				this.dialogue.ended.filter((d) =>
+					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
+				).length === 3
+			) {
+				setTimeout(() => {
+					channel.emit("dialogue", {
+						scenario: "BEGIN_GAME",
+					});
+				}, 500);
+			}
+		} else if (action === "CLEAR_PORTAL_QUEST") {
+			this.dialogue.ended.push("PORTAL_INTRO");
+			if (
+				this.dialogue.ended.filter((d) =>
+					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
+				).length === 3
+			) {
+				setTimeout(() => {
+					channel.emit("dialogue", {
+						scenario: "BEGIN_GAME",
+					});
+				}, 500);
+			}
+		} else if (action === "CLEAR_SHOP_QUEST") {
+			this.dialogue.ended.push("SHOP_INTRO");
+			if (
+				this.dialogue.ended.filter((d) =>
+					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
+				).length === 3
+			) {
+				setTimeout(() => {
+					channel.emit("dialogue", {
+						scenario: "BEGIN_GAME",
+					});
+				}, 500);
+			}
+		}
+	}
+
 	update(_time: any, _delta: any) {
 		// Update player
 		this.player.updatePlayer(this.collisions);
+
+		// Event collisions
+		let eventCollided = false;
+		for (let i = 0; i < this.eventCollisions.length; i++) {
+			if (
+				this.player.x > this.eventCollisions[i].x &&
+				this.player.x <
+					this.eventCollisions[i].x + this.eventCollisions[i].width &&
+				this.player.y > this.eventCollisions[i].y &&
+				this.player.y <
+					this.eventCollisions[i].y + this.eventCollisions[i].height
+			) {
+				if (DEBUG) this.eventCollisions[i].setStrokeStyle(3, 0x00ff00);
+				eventCollided = true;
+				if (this.player.eventCollision !== this.eventCollisions[i].name) {
+					this.player.eventCollision = this.eventCollisions[i].name;
+
+					// Emit meeting event if all players are in the event collision
+					if (
+						this.players.filter(
+							(p) => p.eventCollision === this.eventCollisions[i].name
+						).length === this.players.length
+					) {
+						setTimeout(() => {
+							let scenario = "";
+							if (this.eventCollisions[i].name === "taskboard")
+								scenario = "OPEN_TASKBOARD";
+							else if (this.eventCollisions[i].name === "portal")
+								scenario = "OPEN_PORTAL";
+							else if (this.eventCollisions[i].name === "shop")
+								scenario = "OPEN_SHOP";
+							const channel = window.channel;
+							if (channel) {
+								channel.emit("action", {
+									scenario: scenario,
+									forceall: true,
+								});
+							}
+						}, 1000);
+					}
+				}
+			} else {
+				if (DEBUG) {
+					this.eventCollisions[i].setStrokeStyle(3, 0x0000ff);
+				}
+			}
+		}
+		if (!eventCollided && this.player.eventCollision !== "")
+			this.player.eventCollision = "";
 
 		// Send player data to server
 		const channel = window.channel;

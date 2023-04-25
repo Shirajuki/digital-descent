@@ -41,6 +41,7 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.y = playerData[player.id].y;
 		player.movement = playerData[player.id].movement;
 		player.onTeleportingPad = playerData[player.id].onTeleportingPad;
+		player.eventCollision = playerData[player.id].eventCollision;
 		player.updatePlayerAnimation();
 		player.setDepth(player.y);
 	}

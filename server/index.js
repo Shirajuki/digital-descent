@@ -81,10 +81,17 @@ io.onConnection((channel) => {
 		).length;
 		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
 		if (rooms[roomId] && count !== players.length) {
-			channel.emit("dialogue", {
-				texts: DIALOGUES[data.scenario] ?? [],
-				scenario: data.scenario,
-			});
+			if (data?.forceall) {
+				io.room(roomId).emit("dialogue", {
+					texts: DIALOGUES[data.scenario] ?? [],
+					scenario: data.scenario,
+				});
+			} else {
+				channel.emit("dialogue", {
+					texts: DIALOGUES[data.scenario] ?? [],
+					scenario: data.scenario,
+				});
+			}
 		}
 	});
 	channel.on("dialogue-end", (data) => {
@@ -120,6 +127,53 @@ io.onConnection((channel) => {
 			scenario: data.scenario,
 		});
 	});
+	channel.on("action", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId || !data?.scenario) return;
+
+		if (rooms[roomId]) {
+			if (data?.forceall) {
+				io.room(roomId).emit("action", {
+					scenario: data.scenario,
+				});
+			} else {
+				channel.emit("action", {
+					scenario: data.scenario,
+				});
+			}
+		}
+	});
+	channel.on("action-ready", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId || !data?.scenario || !data?.ready) return;
+
+		// Check if action is done
+		const room = rooms[roomId];
+		if (!rooms[roomId]) return;
+
+		if (room.actions[data.scenario]) {
+			room.actions[data.scenario][channel.id] = data.ready;
+		} else {
+			room.actions[data.scenario] = {};
+			room.actions[data.scenario][channel.id] = data.ready;
+		}
+
+		const count = Object.values(room.actions[data.scenario]).filter(
+			(d) => d
+		).length;
+		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
+		if (count !== players.length) return;
+
+		if (rooms[roomId]) {
+			// Reset action count
+			room.actions[data.scenario] = {};
+
+			// Emit action end to all clients
+			io.room(roomId).emit("action", {
+				scenario: data.scenario,
+			});
+		}
+	});
 
 	channel.on("lobby-create", (data) => {
 		const roomId = data.roomId;
@@ -135,6 +189,7 @@ io.onConnection((channel) => {
 				status: "lobby",
 				host: channel.id,
 				dialogues: [],
+				actions: {},
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -193,6 +248,7 @@ io.onConnection((channel) => {
 				status: "lobby",
 				host: channel.id,
 				dialogues: [],
+				actions: {},
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,

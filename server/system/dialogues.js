@@ -2,7 +2,7 @@ export const DIALOGUES = {
 	// 0 - Introduction to the game
 	GAME_INTRO: [
 		{
-			text: "Welcome, everyone! I'm glad you could join us today. My name is Tom and will be your team lead in this project. I know this is your first project, but I will tell you everything you need to know.",
+			text: "Welcome, everyone! I'm glad you could join us today. I will be your team lead in this project. I know this is your first project, but I will tell you everything you need to know.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -64,6 +64,7 @@ export const DIALOGUES = {
 			text: "1",
 			speaker: "Team lead",
 			side: "right",
+			action: "START_ROLE_SELECTION",
 		},
 	],
 
@@ -73,6 +74,7 @@ export const DIALOGUES = {
 			text: "2",
 			speaker: "Team lead",
 			side: "right",
+			action: "TELEPORT_TO_DIGITALWORLD",
 		},
 	],
 
@@ -82,6 +84,7 @@ export const DIALOGUES = {
 			text: "3",
 			speaker: "Team lead",
 			side: "right",
+			action: "INITIALIZE_DIGITALWORLD_HUD",
 		},
 	],
 
@@ -91,6 +94,7 @@ export const DIALOGUES = {
 			text: "4",
 			speaker: "Team lead",
 			side: "right",
+			action: "CLEAR_TASKBOARD_QUEST",
 		},
 	],
 
@@ -100,6 +104,7 @@ export const DIALOGUES = {
 			text: "5",
 			speaker: "Team lead",
 			side: "right",
+			action: "CLEAR_PORTAL_QUEST",
 		},
 	],
 
@@ -109,6 +114,7 @@ export const DIALOGUES = {
 			text: "6",
 			speaker: "Team lead",
 			side: "right",
+			action: "CLEAR_SHOP_QUEST",
 		},
 	],
 

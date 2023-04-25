@@ -6,6 +6,7 @@ import ExplorationScene from "./scenes/exploration";
 import BattleScene from "./scenes/battle";
 import Observable from "./observable";
 import OfficeScene from "./scenes/office";
+import HomeScene from "./scenes/home";
 
 export default class PhaserEngine {
 	public canvas: HTMLCanvasElement;
@@ -44,7 +45,7 @@ export default class PhaserEngine {
 			} as Phaser.Types.Core.InputConfig,
 			backgroundColor: "#1a1a1a",
 			scene: [
-				new OfficeScene({ key: "home" }, this.observable),
+				new HomeScene({ key: "home" }, this.observable),
 
 				new DigitalWorldScene({ key: "digitalworld" }, this.observable),
 				new ExplorationScene({ key: "exploration" }, this.observable),

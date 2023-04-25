@@ -37,10 +37,11 @@ const DialogueScreen = () => {
 
 	const nextDialogue = () => {
 		if (scene.dialogue.texts.length > 0) {
-			scene.dialogue.texts.shift();
+			const lastDialogue = scene.dialogue.texts.shift();
+			scene.dialogue.action = lastDialogue?.action || "";
 
+			// Toggle dialogue end
 			if (scene.dialogue.texts.length === 0) {
-				// Toggle ready
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("dialogue-end", {
@@ -68,7 +69,50 @@ const DialogueScreen = () => {
 				ref={infoPopup}
 			>
 				<div className="bg-slate-800 w-full flex flex-col">
-					<p className="absolute -top-4 left-10 px-6 py-2 rounded-lg bg-slate-900 text-center w-auto text-3xl pb-2 [font-family:var(--font-normal)]">
+					{scene.dialogue.texts[0]?.speaker !== "Player" &&
+					scene.dialogue.texts.length > 0 ? (
+						<div
+							className={`absolute rounded-lg px-2 w-48 h-80 -top-72 bg-slate-900 ${
+								scene.dialogue.texts[0]?.side === "left"
+									? "left-12"
+									: "right-12"
+							}`}
+						>
+							{scene.dialogue.texts[0]?.speaker === "Customer" ? (
+								<img
+									className={
+										scene.dialogue.texts[0]?.side === "left"
+											? "[transform:scale(-1,1)]"
+											: ""
+									}
+									src="/sprites/customerPortrait.png"
+									alt="customer portrait"
+								/>
+							) : (
+								<></>
+							)}
+							{scene.dialogue.texts[0]?.speaker === "Team lead" ? (
+								<img
+									className={
+										scene.dialogue.texts[0]?.side === "left"
+											? "[transform:scale(-1,1)]"
+											: ""
+									}
+									src="/sprites/teamleadPortrait.png"
+									alt="customer portrait"
+								/>
+							) : (
+								<></>
+							)}
+						</div>
+					) : (
+						<></>
+					)}
+					<p
+						className={`absolute min-w-[13rem] -top-4 px-6 py-2 rounded-lg bg-slate-900 text-center w-auto text-3xl pb-2 [font-family:var(--font-normal)] ${
+							scene.dialogue.texts[0]?.side === "left" ? "left-10" : "right-10"
+						} ${scene.dialogue.texts.length === 0 ? "hidden" : ""}`}
+					>
 						{scene.dialogue.texts[0]?.speaker || ""}
 					</p>
 					<div className="flex flex-col gap-3 px-6 text-center text-lg pl-2 h-full items-center justify-center">

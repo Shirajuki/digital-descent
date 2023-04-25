@@ -57,8 +57,16 @@ function Game() {
 			const scene = engine.game.scene.getScene(
 				engine.game.currentScene
 			) as Scene;
-			scene.dialogue.scenario = data.scenario;
-			scene.dialogue.texts = [...scene.dialogue.texts, ...data.texts];
+			if (scene.dialogue.scenario !== data.scenarion) {
+				scene.dialogue.scenario = data.scenario;
+				scene.dialogue.texts = [...scene.dialogue.texts, ...data.texts];
+				scene.player.movement = {
+					left: false,
+					up: false,
+					right: false,
+					down: false,
+				};
+			}
 			scene.dialogueSync();
 		});
 		channel.on("dialogue-end", () => {
@@ -68,6 +76,20 @@ function Game() {
 			scene.dialogue.display = false;
 			scene.dialogue.texts = [];
 			scene.dialogueSync();
+
+			// Do dialogue action if exists
+			if (scene.dialogue.action !== "") {
+				scene.triggerAction(scene.dialogue.action);
+			}
+		});
+		channel.on("action", (data: any) => {
+			const scene = engine.game.scene.getScene(
+				engine.game.currentScene
+			) as Scene;
+			console.log(data);
+			if (data?.scenario) {
+				scene.triggerAction(data.scenario);
+			}
 		});
 
 		// Exploration syncing

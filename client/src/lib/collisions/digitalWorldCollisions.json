@@ -17,7 +17,7 @@
         {
          "draworder":"topdown",
          "id":4,
-         "name":"Object Layer 1",
+         "name":"collision",
          "objects":[
                 {
                  "height":85.9617220967458,
@@ -256,9 +256,53 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":6,
+         "name":"events",
+         "objects":[
+                {
+                 "height":290.872617853561,
+                 "id":27,
+                 "name":"taskboard",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":595.787362086259,
+                 "x":-1552.65797392177,
+                 "y":-286.860581745236
+                }, 
+                {
+                 "height":232.698094282849,
+                 "id":28,
+                 "name":"portal",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":505.516549648947,
+                 "x":-445.336008024072,
+                 "y":-437.311935807422
+                }, 
+                {
+                 "height":339.01705115346,
+                 "id":29,
+                 "name":"shop",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":455.366098294885,
+                 "x":497.492477432297,
+                 "y":-310.932798395186
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":27,
+ "nextlayerid":7,
+ "nextobjectid":30,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",

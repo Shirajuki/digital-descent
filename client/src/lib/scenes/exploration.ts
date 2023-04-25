@@ -123,7 +123,7 @@ export default class ExplorationScene extends Scene {
 		this.player.flipX = false;
 		// Setup collisions
 		const objects = collisions?.layers.find(
-			(l) => l.type === "objectgroup"
+			(l) => l.type === "objectgroup" && l.name === "collision"
 		)?.objects;
 		if (objects) {
 			for (let i = 0; i < objects.length; i++) {
