@@ -104,7 +104,7 @@ export default class BattleScene extends Scene {
 		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1", oldPlayer);
 		this.players = [
-			...this.players.filter((p) => p.id !== oldPlayer?.id),
+			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
 		];
 		// Set own player to be clickable
@@ -122,7 +122,7 @@ export default class BattleScene extends Scene {
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		// Generate monsters
-		let monsters = generateMonstersByPreset(["easy", "easy", "easy"]);
+		let monsters = generateMonstersByPreset(["easy", "easy"]);
 		this.monsters = [];
 
 		// Initialize battle

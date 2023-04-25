@@ -4,6 +4,7 @@ import express from "express";
 import api from "./routes/api.js";
 import BattleSystem from "./system/battleSystem.js";
 import ExplorationSystem from "./system/explorationSystem.js";
+import { DIALOGUES } from "./system/dialogues.js";
 
 const rooms = {};
 
@@ -70,6 +71,56 @@ io.onConnection((channel) => {
 			});
 	});
 
+	channel.on("dialogue", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId || !data?.scenario) return;
+
+		// Check if dialogue is done
+		const count = rooms[roomId].dialogues.filter(
+			(d) => d == data.scenario
+		).length;
+		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
+		if (rooms[roomId] && count !== players.length) {
+			channel.emit("dialogue", {
+				texts: DIALOGUES[data.scenario] ?? [],
+				scenario: data.scenario,
+			});
+		}
+	});
+	channel.on("dialogue-end", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId || !data?.scenario) return;
+
+		// Update dialogue ended on some dialogue types
+		if (
+			[
+				"GAME_INTRO",
+				"CUSTOMER_INTRO",
+				"ROLES",
+				"DIGITALWORLD_INTRO",
+				"TASKBOARD_INTRO",
+				"PORTAL_INTRO",
+				"SHOP_INTRO",
+				"BEGIN_GAME",
+			].includes(data.scenario)
+		) {
+			rooms[roomId].dialogues.push(data.scenario);
+		}
+
+		// Check if all players have ended the dialogue as well
+		const count = rooms[roomId].dialogues.filter(
+			(d) => d == data.scenario
+		).length;
+		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
+		console.log(count, players.length);
+		if (count !== players.length) return;
+
+		// Sync dialogue end to all players
+		io.room(channel.roomId).emit("dialogue-end", {
+			scenario: data.scenario,
+		});
+	});
+
 	channel.on("lobby-create", (data) => {
 		const roomId = data.roomId;
 		if (!roomId) return;
@@ -83,6 +134,7 @@ io.onConnection((channel) => {
 				joined: [channel.id],
 				status: "lobby",
 				host: channel.id,
+				dialogues: [],
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -140,6 +192,7 @@ io.onConnection((channel) => {
 				joined: [channel.id],
 				status: "lobby",
 				host: channel.id,
+				dialogues: [],
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,

@@ -48,14 +48,26 @@ function Game() {
 
 		// Game syncing
 		channel.on("game-update", (data: any) => {
-			if (
-				engine.game.currentScene === "exploration" ||
-				engine.game.currentScene === "digitalworld"
-			) {
-				(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
-					data
-				);
-			}
+			(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+				data
+			);
+		});
+		// Leveling syncing
+		channel.on("dialogue", (data: any) => {
+			const scene = engine.game.scene.getScene(
+				engine.game.currentScene
+			) as Scene;
+			scene.dialogue.scenario = data.scenario;
+			scene.dialogue.texts = [...scene.dialogue.texts, ...data.texts];
+			scene.dialogueSync();
+		});
+		channel.on("dialogue-end", () => {
+			const scene = engine.game.scene.getScene(
+				engine.game.currentScene
+			) as Scene;
+			scene.dialogue.display = false;
+			scene.dialogue.texts = [];
+			scene.dialogueSync();
 		});
 
 		// Exploration syncing

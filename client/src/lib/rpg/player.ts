@@ -18,7 +18,7 @@ export const initializePlayer = (
 		down: false,
 	};
 	player.animationState = "idle";
-	player.battleClass = "tank";
+	player.battleClass = ["tank", "dps", "healer"][Math.floor(Math.random() * 3)];
 	player.skills = getSkills(player);
 
 	player.inventory = [];

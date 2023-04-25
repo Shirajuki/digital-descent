@@ -8,12 +8,51 @@ import { DEBUG } from "../constants";
 
 export default class DigitalWorldScene extends Scene {
 	public text: any;
+	public taskboard = {
+		tasks: [
+			{
+				name: "Task 1",
+				description: "Catch 4 bugs",
+				complete: false,
+			},
+			{
+				name: "Task 2",
+				description: "Defeat 3 enemies",
+				complete: false,
+			},
+			{
+				name: "Task 3",
+				description: "Complete 2 puzzles",
+				complete: false,
+			},
+		],
+		display: false,
+		ready: false,
+	};
+	public portal = {
+		display: false,
+		ready: false,
+	};
+	public shop = {
+		display: false,
+		ready: false,
+	};
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
 		observable: Observable
 	) {
 		super(config, observable);
+	}
+	togglePopup(data: any): void {
+		if (data === "taskboard") {
+			this.taskboard.display = !this.taskboard.display;
+		} else if (data === "portal") {
+			this.portal.display = !this.portal.display;
+		} else if (data === "shop") {
+			this.shop.display = !this.shop.display;
+		}
+		this.observable.notify();
 	}
 	preload() {
 		// Load bg sprite
@@ -75,7 +114,7 @@ export default class DigitalWorldScene extends Scene {
 		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1");
 		this.players = [
-			...this.players.filter((p) => p.id !== oldPlayer.id),
+			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
 		];
 
@@ -141,10 +180,10 @@ export default class DigitalWorldScene extends Scene {
 		const serverPlayers = Object.keys(data.players).filter(
 			(p: any) => p != "undefined"
 		);
-		const serverPlayersData = serverPlayers.map((p) => data[p]);
+		const serverPlayersData = serverPlayers.map((p) => data.players[p]);
 		removeDuplicatePlayers(this, serverPlayers);
 		addPlayers(this, serverPlayers, serverPlayersData);
-		updatePlayers(this, data);
+		updatePlayers(this, data.players);
 	}
 
 	update(_time: any, _delta: any) {

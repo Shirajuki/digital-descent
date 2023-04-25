@@ -1,6 +1,12 @@
 import * as Phaser from "phaser";
 import Observable from "../observable";
 
+type DialogueType = {
+	texts: any[];
+	ended: string[];
+	display: boolean;
+	scenario: string;
+};
 export default class Scene extends Phaser.Scene {
 	public players: any[] = [];
 	public player: any;
@@ -8,6 +14,12 @@ export default class Scene extends Phaser.Scene {
 	public observable: Observable;
 	public preloaded: boolean = false;
 	public collisions: any[] = [];
+	public dialogue: DialogueType = {
+		texts: [],
+		ended: [],
+		display: false,
+		scenario: "GAME_INTRO",
+	};
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -31,6 +43,13 @@ export default class Scene extends Phaser.Scene {
 		console.log("DESTROY SCENE " + this);
 		this.children.removeAll();
 	}
+	dialogueSync() {
+		if (this.dialogue.texts.length > 0) {
+			this.dialogue.display = true;
+		}
+		this.observable.notify();
+	}
+	togglePopup(data: any) {}
 	sync(data: any) {}
 	switch(scene: string) {
 		console.log(this.game.currentScene, "->", scene);

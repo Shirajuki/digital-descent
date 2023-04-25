@@ -21,6 +21,7 @@ export const addPlayers = (
 ) => {
 	// Add new players if found
 	const clientPlayers = scene.players.map((player: any) => player.id);
+	// console.log(clientPlayers, serverPlayers);
 	for (let i = 0; i < serverPlayers.length; i++) {
 		if (!clientPlayers.includes(serverPlayers[i])) {
 			const player: any = initializePlayer(scene, serverPlayersData[i].id);

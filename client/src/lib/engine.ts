@@ -44,6 +44,8 @@ export default class PhaserEngine {
 			} as Phaser.Types.Core.InputConfig,
 			backgroundColor: "#1a1a1a",
 			scene: [
+				new OfficeScene({ key: "home" }, this.observable),
+
 				new DigitalWorldScene({ key: "digitalworld" }, this.observable),
 				new ExplorationScene({ key: "exploration" }, this.observable),
 				new BattleScene({ key: "battle" }, this.observable),
@@ -52,7 +54,7 @@ export default class PhaserEngine {
 			render: { pixelArt: true, antialias: true },
 		};
 		this.game = new Phaser.Game(this.config);
-		this.game.currentScene = "digitalworld";
+		this.game.currentScene = "home";
 	}
 
 	init() {
