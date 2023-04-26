@@ -1,7 +1,12 @@
 import Observable from "../observable";
 import { inputInitPlayerMovement } from "../rpg/input";
 import { initializePlayer } from "../rpg/player";
-import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
+import {
+	addPlayers,
+	removeDuplicatePlayers,
+	reorderPlayers,
+	updatePlayers,
+} from "../rpg/sync";
 import Scene from "./scene";
 import collisions from "../collisions/officeCollisions.json";
 import { DEBUG } from "../constants";
@@ -138,6 +143,7 @@ export default class OfficeScene extends Scene {
 		const serverPlayersData = serverPlayers.map((p) => data.players[p]);
 		removeDuplicatePlayers(this, serverPlayers);
 		addPlayers(this, serverPlayers, serverPlayersData);
+		reorderPlayers(this, serverPlayers);
 		updatePlayers(this, data.players);
 	}
 	triggerAction(action: string): void {

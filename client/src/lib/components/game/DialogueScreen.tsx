@@ -58,7 +58,7 @@ const DialogueScreen = () => {
 
 	return (
 		<div
-			className={`absolute top-0 left-0 z-30 w-full h-full [font-family:var(--font-hud)] bg-[rgba(0,0,0,0.3)] rounded-md overflow-hidden [backdrop-filter:blur(1px)] flex justify-center items-center transition-all ${
+			className={`absolute top-0 left-0 z-30 w-full h-full [font-family:var(--font-hud)] bg-[rgba(0,0,0,0.2)] rounded-md overflow-hidden flex justify-center items-center transition-all ${
 				scene.dialogue?.display ? "opacity-1" : "pointer-events-none opacity-0"
 			}`}
 			style={{ zoom: scaling }}

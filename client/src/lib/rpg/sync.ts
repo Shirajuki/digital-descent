@@ -1,3 +1,4 @@
+import { NAMES } from "../constants";
 import { initializePlayer } from "./player";
 
 export const removeDuplicatePlayers = (scene: any, serverPlayers: any[]) => {
@@ -26,8 +27,38 @@ export const addPlayers = (
 		if (!clientPlayers.includes(serverPlayers[i])) {
 			const player: any = initializePlayer(scene, serverPlayersData[i].id);
 			player.id = serverPlayersData[i].id;
-			player.name = serverPlayersData[i].id;
+			player.name = NAMES[i] ?? serverPlayersData[i].id;
 			scene.players.push(player);
+		}
+		if (serverPlayers[i] === scene.player?.id) {
+			scene.player.name = NAMES[i];
+			window.channel.playerName = NAMES[i] ?? "Player";
+		}
+	}
+};
+
+export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
+	const clientPlayers = scene.players.map((player: any) => player.id);
+	// If clientPlayers and serverPlayers mismatch
+	if (clientPlayers.join() !== serverPlayers.join()) {
+		// Reorder clientPlayers to be like serverPlayers
+		const orderedPlayers = serverPlayers.map((pid: string) =>
+			scene.players.find((p: any) => p.id === pid)
+		);
+		scene.players = orderedPlayers;
+
+		// Fix current player
+		if (!scene.players.find((p: any) => p === scene.player)) {
+			scene.players.find((p: any) => p.id === scene.player?.id)?.destroy();
+			scene.players = scene.players.map((p: any) =>
+				p.id === scene.player?.id ? scene.player : p
+			);
+		}
+
+		// Update name on player
+		for (let i = 0; i < scene.players.length; i++) {
+			const player = scene.players[i];
+			player.name = NAMES[i];
 		}
 	}
 };

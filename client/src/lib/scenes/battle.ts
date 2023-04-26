@@ -4,7 +4,7 @@ import BattleSystem from "../rpg/systems/battleSystem";
 import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
-import { removeDuplicatePlayers } from "../rpg/sync";
+import { removeDuplicatePlayers, reorderPlayers } from "../rpg/sync";
 import { animateSingleAttack, animateStandingAttack } from "../rpg/animation";
 
 /*
@@ -375,20 +375,7 @@ export default class BattleScene extends Scene {
 				}
 			}
 
-			// If clientPlayers and serverPlayers mismatch
-			if (clientPlayers.join() !== serverPlayers.join()) {
-				// Reorder clientPlayers to be like serverPlayers
-				const orderedPlayers = serverPlayers.map((pid: string) =>
-					this.players.find((p) => p.id === pid)
-				);
-				this.players = orderedPlayers;
-				if (!this.players.find((p) => p === this.player)) {
-					this.players.find((p) => p.id === this.player?.id)?.destroy();
-					this.players = this.players.map((p) =>
-						p.id === this.player?.id ? this.player : p
-					);
-				}
-			}
+			reorderPlayers(this, serverPlayers);
 
 			// Update player position
 			for (let i = 0; i < this.players.length; i++) {

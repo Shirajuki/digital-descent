@@ -107,6 +107,7 @@ function Menu() {
 					<form onSubmit={createLobby} className="flex gap-2">
 						<input
 							type="text"
+							autoComplete="off"
 							placeholder="Lobby name..."
 							name="lobbyId"
 							id="lobbyId"

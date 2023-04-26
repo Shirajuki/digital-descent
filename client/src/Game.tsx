@@ -127,6 +127,7 @@ function Game() {
 				<Chat
 					channel={window.channel}
 					wrapperClassName="absolute bottom-2 left-2"
+					scale={true}
 				/>
 			</div>
 		</main>

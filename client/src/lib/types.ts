@@ -6,6 +6,7 @@ export type PropsType = {
 export type ChatPropsType = {
 	channel: any;
 	wrapperClassName?: string;
+	scale?: boolean;
 } & PropsType;
 
 export type PlayerType = {
@@ -47,5 +48,6 @@ declare global {
 declare module "phaser" {
 	interface Game {
 		currentScene: string;
+		data: any;
 	}
 }

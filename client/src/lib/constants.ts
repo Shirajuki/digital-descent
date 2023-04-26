@@ -5,6 +5,17 @@ export const SPEED = 3;
 export const SCALE = 1;
 export const DEBUG = !!true;
 
+export const NAMES = [
+	"Alice",
+	"Bob",
+	"Charlie",
+	"Delta",
+	"Echo",
+	"Foxtrot",
+	"Golf",
+	"Hotel",
+];
+
 // RPG
 // https://static.wikia.nocookie.net/mstrike/images/1/13/Ms_us_guide06_img02.jpg/revision/latest?cb=20160324022429
 export enum ELEMENT {

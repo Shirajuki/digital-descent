@@ -56,6 +56,11 @@ export default class PhaserEngine {
 		};
 		this.game = new Phaser.Game(this.config);
 		this.game.currentScene = "home";
+		this.game.data = {
+			days: 0,
+			currentTasks: [],
+			solvedTasks: [],
+		};
 	}
 
 	init() {

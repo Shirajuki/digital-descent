@@ -62,7 +62,7 @@ export const DIALOGUES = {
 	CUSTOMER_INTRO: [
 		{
 			text: "1",
-			speaker: "Team lead",
+			speaker: "Customer",
 			side: "right",
 			action: "START_ROLE_SELECTION",
 		},
@@ -72,7 +72,7 @@ export const DIALOGUES = {
 	ROLES: [
 		{
 			text: "2",
-			speaker: "Team lead",
+			speaker: "Customer",
 			side: "right",
 			action: "TELEPORT_TO_DIGITALWORLD",
 		},

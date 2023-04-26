@@ -7,10 +7,12 @@ import { clearFocus } from "../../utils";
 function Chat({
 	channel,
 	wrapperClassName = "",
+	scale = false,
 	className = "",
 }: ChatPropsType) {
 	const roomId = useAtomValue(roomIdAtom);
 	const [chat, setChat] = useAtom(chatAtom);
+	const [scaling, setScaling] = useState(1);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatRef = useRef<HTMLDivElement>(null);
 
@@ -26,11 +28,24 @@ function Chat({
 		}
 	}, [channel, setChat, chatRef.current]);
 
+	useEffect(() => {
+		setScaling((document.querySelector("canvas")?.clientWidth ?? 1157) / 1157);
+		window.addEventListener("resize", (event) => {
+			setScaling(
+				(document.querySelector("canvas")?.clientWidth ?? 1157) / 1157
+			);
+		});
+	}, [setScaling]);
+
 	const sendMessage = (event: any, clearFocus = false) => {
 		event.preventDefault();
 		if (inputRef.current) {
 			const message = inputRef.current.value;
-			window.channel.emit("message-send", { roomId, message });
+			window.channel.emit("message-send", {
+				roomId,
+				message,
+				sender: window.channel.playerName ?? window.channel.id,
+			});
 			inputRef.current.value = "";
 			inputRef.current.focus();
 		}
@@ -39,6 +54,7 @@ function Chat({
 	return (
 		<div
 			className={`bg-gray-800 z-20 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${wrapperClassName}`}
+			style={{ zoom: scale ? scaling : 1 }}
 		>
 			<div
 				ref={chatRef}
@@ -57,6 +73,7 @@ function Chat({
 				>
 					<input
 						ref={inputRef}
+						autoComplete="off"
 						className="text-black bg-gray-100 bg-opacity-90 w-full rounded-sm px-2"
 						tabIndex={-1}
 						type="text"

@@ -263,18 +263,18 @@
          "name":"events",
          "objects":[
                 {
-                 "height":290.872617853561,
+                 "height":292.878635907723,
                  "id":27,
                  "name":"taskboard",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":595.787362086259,
+                 "width":527.582748244734,
                  "x":-1552.65797392177,
                  "y":-286.860581745236
                 }, 
                 {
-                 "height":232.698094282849,
+                 "height":210.631895687061,
                  "id":28,
                  "name":"portal",
                  "rotation":0,
@@ -285,15 +285,15 @@
                  "y":-437.311935807422
                 }, 
                 {
-                 "height":339.01705115346,
+                 "height":316.950852557673,
                  "id":29,
                  "name":"shop",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":455.366098294885,
-                 "x":497.492477432297,
-                 "y":-310.932798395186
+                 "width":423.269809428285,
+                 "x":529.588766298897,
+                 "y":-296.890672016048
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -302,7 +302,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":30,
+ "nextobjectid":31,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.1",

@@ -1,7 +1,12 @@
 import Observable from "../observable";
 import { inputInitPlayerMovement } from "../rpg/input";
 import { initializePlayer } from "../rpg/player";
-import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
+import {
+	addPlayers,
+	removeDuplicatePlayers,
+	reorderPlayers,
+	updatePlayers,
+} from "../rpg/sync";
 import Scene from "./scene";
 import collisions from "../collisions/digitalWorldCollisions.json";
 import { DEBUG } from "../constants";
@@ -198,6 +203,9 @@ export default class DigitalWorldScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
+		setTimeout(() => {
+			this.observable.notify();
+		}, 1000);
 	}
 
 	sync(data: any) {
@@ -207,6 +215,7 @@ export default class DigitalWorldScene extends Scene {
 		const serverPlayersData = serverPlayers.map((p) => data.players[p]);
 		removeDuplicatePlayers(this, serverPlayers);
 		addPlayers(this, serverPlayers, serverPlayersData);
+		reorderPlayers(this, serverPlayers);
 		updatePlayers(this, data.players);
 	}
 
@@ -216,65 +225,63 @@ export default class DigitalWorldScene extends Scene {
 
 		if (action === "OPEN_TASKBOARD") {
 			this.togglePopup("taskboard");
-			if (channel) {
+			if (channel)
 				channel.emit("dialogue", {
 					scenario: "TASKBOARD_INTRO",
 				});
-			}
 		} else if (action === "OPEN_PORTAL") {
 			this.togglePopup("portal");
-			if (channel) {
+			if (channel)
 				channel.emit("dialogue", {
 					scenario: "PORTAL_INTRO",
 				});
-			}
 		} else if (action === "OPEN_SHOP") {
 			this.togglePopup("shop");
-			if (channel) {
+			if (channel)
 				channel.emit("dialogue", {
 					scenario: "SHOP_INTRO",
 				});
-			}
 		} else if (action === "CLEAR_TASKBOARD_QUEST") {
 			this.dialogue.ended.push("TASKBOARD_INTRO");
+			this.taskboard.display = false;
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
 				).length === 3
 			) {
-				setTimeout(() => {
+				if (channel)
 					channel.emit("dialogue", {
 						scenario: "BEGIN_GAME",
 					});
-				}, 500);
 			}
 		} else if (action === "CLEAR_PORTAL_QUEST") {
 			this.dialogue.ended.push("PORTAL_INTRO");
+			this.portal.display = false;
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
 				).length === 3
 			) {
-				setTimeout(() => {
+				if (channel)
 					channel.emit("dialogue", {
 						scenario: "BEGIN_GAME",
 					});
-				}, 500);
 			}
 		} else if (action === "CLEAR_SHOP_QUEST") {
 			this.dialogue.ended.push("SHOP_INTRO");
+			this.shop.display = false;
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
 				).length === 3
 			) {
-				setTimeout(() => {
+				if (channel)
 					channel.emit("dialogue", {
 						scenario: "BEGIN_GAME",
 					});
-				}, 500);
 			}
 		}
+		this.observable.notify();
 	}
 
 	update(_time: any, _delta: any) {

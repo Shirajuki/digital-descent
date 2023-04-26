@@ -8,6 +8,8 @@ import TaskBoardScreen from "./TaskBoardScreen";
 import ShopScreen from "./ShopScreen";
 import PortalScreen from "./PortalScreen";
 import RoleScreen from "./RoleScreen";
+import DigitalWorldHUD from "./DigitalWorldHUD";
+import ExplorationHUD from "./ExplorationHUD";
 
 function HUD({ engine }: { engine: PhaserEngine | null }) {
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -16,21 +18,24 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 		if (engine) engine.observable.subscribe(() => forceUpdate(), "battle");
 	}, [engine, forceUpdate]);
 
-	// console.log(engine?.game.currentScene);
-
 	return (
 		<>
 			{engine?.game.currentScene === "battle" ? <EffectHUD /> : <></>}
 			{engine?.game.currentScene === "battle" ? <BattleHUD /> : <></>}
 			{engine?.game.currentScene === "battle" ? <WinScreen /> : <></>}
-			{/* {engine?.game.currentScene === "exploration" ? <ExplorationHUD /> : <></>} */}
+			{engine?.game.currentScene === "exploration" ? <ExplorationHUD /> : <></>}
 			{engine?.game.currentScene === "office" ||
 			engine?.game.currentScene === "home" ? (
 				<RoleScreen />
 			) : (
 				<></>
 			)}
-			{/* {engine?.game.currentScene === "digitalworld" ? <DigitalWorldHUD /> : <></>} */}
+			{engine?.game.currentScene === "digitalworld" ||
+			engine?.game.currentScene === "exploration" ? (
+				<DigitalWorldHUD />
+			) : (
+				<></>
+			)}
 			{engine?.game.currentScene === "digitalworld" ||
 			engine?.game.currentScene === "home" ? (
 				<>

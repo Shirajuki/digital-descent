@@ -59,34 +59,33 @@ const PortalScreen = () => {
 					<h1 className="block w-full text-center text-3xl pb-2 [font-family:var(--font-normal)]">
 						Portal
 					</h1>
+					<div className="absolute right-4 top-4 ">
+						<button
+							className={`bg-gray-900 text-xl py-3 px-5 rounded-t-none rounded-r-none text-center transition-all duration-500`}
+							onClick={() => togglePortal()}
+						>
+							×
+						</button>
+					</div>
 					<div className="flex flex-col gap-3 pl-2 h-full">
 						<button
-							className={`bg-gray-900 [width:calc(100%-1rem)] text-center transition-all duration-500 ${
+							className={`bg-gray-900 h-full text-2xl [width:calc(100%-1rem)] text-center transition-all duration-500 ${
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
 								scene.switch("exploration");
+								scene.observable.notify();
 							}}
 						>
 							work
 						</button>
 						<button
-							className={`bg-gray-900 [width:calc(100%-1rem)] text-center transition-all duration-500 ${
+							className={`bg-gray-900 text-sm [width:calc(100%-1rem)] text-center transition-all duration-500 ${
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => togglePortal()}
 						>
 							delivery
-						</button>
-					</div>
-					<div>
-						<button
-							className={`bg-gray-900 [width:calc(100%-1rem)] text-center transition-all duration-500 ${
-								false ? "!bg-green-700 !bg-opacity-70" : ""
-							}`}
-							onClick={() => togglePortal()}
-						>
-							close
 						</button>
 					</div>
 				</div>

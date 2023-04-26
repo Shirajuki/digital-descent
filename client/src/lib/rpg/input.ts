@@ -4,7 +4,14 @@ export const inputInitPlayerMovement = (scene: Scene) => {
 	// Keyboard input setup
 	scene.input.keyboard.on("keydown", (event: any) => {
 		if (document?.activeElement?.nodeName === "INPUT") return;
-		if (scene.dialogue.display) return;
+		if (
+			scene?.dialogue?.display ||
+			(scene as any)?.shop?.display ||
+			(scene as any)?.taskboard?.display ||
+			(scene as any)?.portal?.display ||
+			(scene as any)?.role?.display
+		)
+			return;
 		const { key } = event;
 		if (key === "ArrowLeft" || key === "a") {
 			scene.player.movement.left = true;
