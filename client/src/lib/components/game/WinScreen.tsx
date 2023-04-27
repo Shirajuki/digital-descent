@@ -41,10 +41,6 @@ const StatsComponent = ({ stats, newStats }: any) => {
 				{newStats.HP != 0 ? `(+${newStats.HP})` : ""}
 			</p>
 			<p>
-				SP: {stats.SP + newStats.SP}{" "}
-				{newStats.SP != 0 ? `(+${newStats.SP})` : ""}
-			</p>
-			<p>
 				ATK: {stats.ATK + newStats.ATK}{" "}
 				{newStats.ATK != 0 ? `(+${newStats.ATK})` : ""}
 			</p>
@@ -196,23 +192,6 @@ const WinScreen = () => {
 												}}
 											></div>
 										</div>
-										<div className="flex flex-col items-start w-32 py-3">
-											<p className="-my-[1px] text-xs">
-												<span>
-													<span className="text-xs">SP</span>{" "}
-													{Math.ceil(player.battleStats.SP)}
-												</span>{" "}
-												/ {player.stats.SP}
-											</p>
-											<div
-												className="bg-blue-500 h-[0.35rem] w-full transition-all"
-												style={{
-													width: `${Math.floor(
-														(player.battleStats.SP / player.stats.SP) * 100
-													)}%`,
-												}}
-											></div>
-										</div>
 										<div className="flex flex-col items-start w-72 py-3">
 											<p className="-my-[1px] text-xs">
 												<span>
@@ -256,31 +235,6 @@ const WinScreen = () => {
 						</button>
 					</div>
 				</div>
-				<div className="bg-slate-800 w-2/6 flex flex-col gap-4 p-4">
-					<h2 className="block w-full text-center text-xl [font-family:var(--font-normal)]">
-						Item drop
-					</h2>
-
-					<div className="flex flex-col justify-between h-full">
-						<div className="flex flex-col [font-family:var(--font-normal)] gap-2">
-							<div className="bg-slate-700 rounded-sm p-2">
-								Item drop <span>(× 1)</span>
-							</div>
-							<div className="bg-slate-700 rounded-sm p-2">
-								Dummy item drop <span>(× 1)</span>
-							</div>
-							<div className="bg-slate-700 rounded-sm p-2">
-								Dummy item droppu <span>(× 1)</span>
-							</div>
-							<div className="bg-slate-700 rounded-sm p-2">
-								Dummy item drop <span>(× 1)</span>
-							</div>
-						</div>
-						<div>
-							<button className="w-full bg-gray-900">loot</button>
-						</div>
-					</div>
-				</div>
 			</div>
 
 			{/* Info modal */}
@@ -305,16 +259,6 @@ const WinScreen = () => {
 								onClick={() => setLevelSelect("HP")}
 							>
 								HP
-							</button>
-							<button
-								className={`bg-gray-900 rounded-sm p-2 w-32 text-center ${
-									levelSelect === "SP"
-										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
-										: ""
-								}`}
-								onClick={() => setLevelSelect("SP")}
-							>
-								SP
 							</button>
 							<button
 								className={`bg-gray-900 rounded-sm p-2 w-32 text-center ${
@@ -350,13 +294,11 @@ const WinScreen = () => {
 						<div className="flex gap-10 justify-center" ref={levelingInfo}>
 							<div className="w-28">
 								<p>HP: {player.stats.HP}</p>
-								<p>SP: {player.stats.SP}</p>
 								<p>ATK: {player.stats.ATK}</p>
 								<p>DEF: {player.stats.DEF}</p>
 								<p>SPEED: {player.stats.SPEED}</p>
 							</div>
 							<div>
-								<p>→</p>
 								<p>→</p>
 								<p>→</p>
 								<p>→</p>

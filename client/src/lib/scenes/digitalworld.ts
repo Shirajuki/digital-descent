@@ -10,6 +10,7 @@ import {
 import Scene from "./scene";
 import collisions from "../collisions/digitalWorldCollisions.json";
 import { DEBUG } from "../constants";
+import { generateTasks } from "../rpg/systems/taskSystem";
 
 export default class DigitalWorldScene extends Scene {
 	public text: any;
@@ -115,6 +116,16 @@ export default class DigitalWorldScene extends Scene {
 			repeat: -1,
 		});
 
+		inputInitPlayerMovement(this);
+
+		this.preloaded = true;
+		this.initialize();
+	}
+
+	initialize(): void {
+		if (!this.preloaded) return;
+		super.initialize();
+
 		// Create player
 		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1");
@@ -194,17 +205,9 @@ export default class DigitalWorldScene extends Scene {
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
-		inputInitPlayerMovement(this);
-
-		this.preloaded = true;
-		this.initialize();
-	}
-
-	initialize(): void {
-		if (!this.preloaded) return;
-		super.initialize();
 		setTimeout(() => {
 			this.observable.notify();
+			this.generateTasks();
 		}, 1000);
 	}
 
@@ -244,6 +247,14 @@ export default class DigitalWorldScene extends Scene {
 		} else if (action === "CLEAR_TASKBOARD_QUEST") {
 			this.dialogue.ended.push("TASKBOARD_INTRO");
 			this.taskboard.display = false;
+			const taskIndex = this.game.data.currentTasks.findIndex(
+				(t: any) => (t.id = "0")
+			);
+			this.game.data.currentTasks[taskIndex].progress = 100;
+			this.game.data.solvedTasks.push(
+				this.game.data.currentTasks.splice(taskIndex, 1)[0]
+			);
+
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
@@ -253,10 +264,18 @@ export default class DigitalWorldScene extends Scene {
 					channel.emit("dialogue", {
 						scenario: "BEGIN_GAME",
 					});
+				this.game.data.days++;
 			}
 		} else if (action === "CLEAR_PORTAL_QUEST") {
 			this.dialogue.ended.push("PORTAL_INTRO");
 			this.portal.display = false;
+			const taskIndex = this.game.data.currentTasks.findIndex(
+				(t: any) => (t.id = "2")
+			);
+			this.game.data.currentTasks[taskIndex].progress = 100;
+			this.game.data.solvedTasks.push(
+				this.game.data.currentTasks.splice(taskIndex, 1)[0]
+			);
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
@@ -266,10 +285,18 @@ export default class DigitalWorldScene extends Scene {
 					channel.emit("dialogue", {
 						scenario: "BEGIN_GAME",
 					});
+				this.game.data.days++;
 			}
 		} else if (action === "CLEAR_SHOP_QUEST") {
 			this.dialogue.ended.push("SHOP_INTRO");
 			this.shop.display = false;
+			const taskIndex = this.game.data.currentTasks.findIndex(
+				(t: any) => (t.id = "1")
+			);
+			this.game.data.currentTasks[taskIndex].progress = 100;
+			this.game.data.solvedTasks.push(
+				this.game.data.currentTasks.splice(taskIndex, 1)[0]
+			);
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
@@ -279,9 +306,15 @@ export default class DigitalWorldScene extends Scene {
 					channel.emit("dialogue", {
 						scenario: "BEGIN_GAME",
 					});
+				this.game.data.days++;
 			}
 		}
 		this.observable.notify();
+	}
+
+	generateTasks() {
+		const tasks = generateTasks(9);
+		this.game.data.openTasks = tasks;
 	}
 
 	update(_time: any, _delta: any) {

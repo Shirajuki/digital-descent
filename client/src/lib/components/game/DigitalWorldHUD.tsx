@@ -55,21 +55,13 @@ const DigitalWorldHUD = () => {
 					</div>
 				</div>
 				<div className="flex flex-col gap-1">
-					<div className="inline-block rounded-sm text-sm">
-						<div className="inline-block bg-slate-500 py-1 px-2 rounded-sm">
-							Task 1 aaaaaaaaaaaaaaa
+					{engine?.game.data.currentTasks.map((currentTask: any, i: number) => (
+						<div key={`task-${i}`} className="inline-block rounded-sm text-sm">
+							<div className="inline-block bg-slate-500 py-1 px-2 rounded-sm">
+								{currentTask.task}「{currentTask.progress}%」
+							</div>
 						</div>
-					</div>
-					<div className="inline-block rounded-sm text-sm">
-						<div className="inline-block bg-slate-500 py-1 px-2 rounded-sm">
-							Task 2
-						</div>
-					</div>
-					<div className="inline-block rounded-sm text-sm">
-						<div className="inline-block bg-slate-500 py-1 px-2 rounded-sm">
-							Task 3
-						</div>
-					</div>
+					))}
 				</div>
 			</div>
 
@@ -112,21 +104,6 @@ const DigitalWorldHUD = () => {
 									style={{
 										width: `${Math.floor(
 											(player.battleStats.HP / player.stats.HP) * 100
-										)}%`,
-									}}
-								></div>
-								<p className="-my-[1px] text-xs">
-									<span>
-										<span className="text-xs">SP</span>{" "}
-										{Math.ceil(player.battleStats.SP)}
-									</span>{" "}
-									/ {player.stats.SP}
-								</p>
-								<div
-									className="bg-blue-500 h-[0.35rem] w-full transition-all"
-									style={{
-										width: `${Math.floor(
-											(player.battleStats.SP / player.stats.SP) * 100
 										)}%`,
 									}}
 								></div>

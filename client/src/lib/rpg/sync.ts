@@ -22,7 +22,6 @@ export const addPlayers = (
 ) => {
 	// Add new players if found
 	const clientPlayers = scene.players.map((player: any) => player.id);
-	// console.log(clientPlayers, serverPlayers);
 	for (let i = 0; i < serverPlayers.length; i++) {
 		if (!clientPlayers.includes(serverPlayers[i])) {
 			const player: any = initializePlayer(scene, serverPlayersData[i].id);
@@ -35,6 +34,7 @@ export const addPlayers = (
 			window.channel.playerName = NAMES[i] ?? "Player";
 		}
 	}
+	// console.log(clientPlayers, serverPlayers);
 };
 
 export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
@@ -73,7 +73,7 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.movement = playerData[player.id].movement;
 		player.onTeleportingPad = playerData[player.id].onTeleportingPad;
 		player.eventCollision = playerData[player.id].eventCollision;
-		player.updatePlayerAnimation();
+		if (player.movement) player.updatePlayerAnimation();
 		player.setDepth(player.y);
 	}
 };

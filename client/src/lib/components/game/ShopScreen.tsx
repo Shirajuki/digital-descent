@@ -70,7 +70,6 @@ const ShopScreen = () => {
 					<div className="absolute left-10 top-8">
 						<button
 							className={`bg-gray-700 text-sm py-[0.70rem] px-5 rounded-md text-center transition-all duration-500`}
-							onClick={() => toggleShop()}
 						>
 							123 Workcredits
 						</button>
@@ -80,7 +79,7 @@ const ShopScreen = () => {
 							<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
 								Workshop
 							</div>
-							<div className="bg-gray-500 m-3 h-[20.75rem] overflow-y-scroll rounded-md gap-3 p-2">
+							<div className="bg-gray-500 m-3 h-[20.75rem] overflow-y-auto rounded-md gap-3 p-2">
 								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
 								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
 								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
@@ -91,7 +90,7 @@ const ShopScreen = () => {
 							</div>
 						</div>
 						<div className="flex flex-col w-full h-full gap-3">
-							<div className="bg-gray-700 rounded-md w-full h-36">
+							<div className="bg-gray-700 rounded-md w-full h-24">
 								<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
 									Equipment
 								</div>
@@ -112,12 +111,7 @@ const ShopScreen = () => {
 								<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
 									Inventory
 								</div>
-								<div className="bg-gray-500 m-3 h-[11rem] overflow-y-scroll rounded-md gap-3 p-2">
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
+								<div className="bg-gray-500 m-3 h-[14rem] overflow-y-auto rounded-md gap-3 p-2">
 									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
 									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
 								</div>

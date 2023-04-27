@@ -57,7 +57,7 @@ export const AREAS = {
 	TREASURE: { area: treasureArea, weight: 10 },
 	CHALLENGE: { area: challengeArea, weight: 30 },
 	BATTLE: { area: battleArea, weight: 60 },
-	SUBQUEST: { area: subQuestArea, weight: 15 },
+	// SUBQUEST: { area: subQuestArea, weight: 15 },
 	SHOP: { area: shopArea, weight: 15 },
 };
 

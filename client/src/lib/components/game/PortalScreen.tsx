@@ -73,8 +73,9 @@ const PortalScreen = () => {
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
+								togglePortal();
 								scene.switch("exploration");
-								scene.observable.notify();
+								setTimeout(() => scene.observable.notify(), 1000);
 							}}
 						>
 							work

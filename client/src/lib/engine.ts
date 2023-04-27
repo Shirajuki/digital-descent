@@ -43,7 +43,8 @@ export default class PhaserEngine {
 			input: {
 				queue: true,
 			} as Phaser.Types.Core.InputConfig,
-			backgroundColor: "#1a1a1a",
+			// transparent: true,
+			backgroundColor: "rgba(26,26,26)",
 			scene: [
 				new HomeScene({ key: "home" }, this.observable),
 
@@ -58,7 +59,49 @@ export default class PhaserEngine {
 		this.game.currentScene = "home";
 		this.game.data = {
 			days: 0,
-			currentTasks: [],
+			steps: 0,
+			openTasks: [
+				{
+					id: "3",
+					task: "Test 1",
+					rewards: { money: 100, exp: 100 },
+					progress: 0,
+					energy: 3,
+				},
+				{
+					id: "4",
+					task: "test 2",
+					rewards: { money: 100, exp: 100 },
+					progress: 0,
+					energy: 2,
+				},
+			],
+			currentTasks: [
+				{
+					id: "0",
+					task: "Visit the task board",
+					rewards: { money: 100, exp: 0 },
+					progress: 0,
+					energy: 0,
+					locked: true,
+				},
+				{
+					id: "1",
+					task: "Visit the shop",
+					rewards: { money: 100, exp: 0 },
+					progress: 0,
+					energy: 0,
+					locked: true,
+				},
+				{
+					id: "2",
+					task: "Visit the portal",
+					rewards: { money: 100, exp: 0 },
+					progress: 0,
+					energy: 0,
+					locked: true,
+				},
+			],
 			solvedTasks: [],
 		};
 	}

@@ -136,21 +136,6 @@ const BattleHUD = () => {
 										)}%`,
 									}}
 								></div>
-								<p className="-my-[1px] text-xs">
-									<span>
-										<span className="text-xs">SP</span>{" "}
-										{Math.ceil(player.battleStats.SP)}
-									</span>{" "}
-									/ {player.stats.SP}
-								</p>
-								<div
-									className="bg-blue-500 h-[0.35rem] w-full transition-all"
-									style={{
-										width: `${Math.floor(
-											(player.battleStats.SP / player.stats.SP) * 100
-										)}%`,
-									}}
-								></div>
 							</div>
 						</div>
 					))}

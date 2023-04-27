@@ -3,8 +3,6 @@ import { inputInitPlayerMovement } from "../rpg/input";
 import { initializePlayer } from "../rpg/player";
 import { addPlayers, removeDuplicatePlayers, updatePlayers } from "../rpg/sync";
 import Scene from "./scene";
-import collisions from "../collisions/officeCollisions.json";
-import { DEBUG } from "../constants";
 
 export default class HomeScene extends Scene {
 	public text: any;
@@ -79,7 +77,7 @@ export default class HomeScene extends Scene {
 			channel.emit("game-update", { player: this.player.getData() });
 		}
 
-		// this.switch("digitalworld");
-		this.switch("office");
+		this.switch("digitalworld");
+		// this.switch("office");
 	}
 }

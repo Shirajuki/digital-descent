@@ -128,12 +128,14 @@ export default class OfficeScene extends Scene {
 		if (!this.preloaded) return;
 		super.initialize();
 
-		setTimeout(() => {
-			const channel = window.channel;
-			if (channel) {
-				channel.emit("dialogue", { scenario: "GAME_INTRO" });
-			}
-		}, 500);
+		if (this.game.currentScene === "office") {
+			setTimeout(() => {
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("dialogue", { scenario: "GAME_INTRO" });
+				}
+			}, 500);
+		}
 	}
 
 	sync(data: any) {

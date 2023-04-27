@@ -178,6 +178,9 @@ export default class ExplorationScene extends Scene {
 				});
 			}
 		}, 1000);
+
+		// Check steps
+		this.checkSteps();
 	}
 
 	sync(data: any) {
@@ -193,6 +196,25 @@ export default class ExplorationScene extends Scene {
 			addPlayers(this, serverPlayers, serverPlayersData);
 			reorderPlayers(this, serverPlayers);
 			updatePlayers(this, data.players);
+		}
+	}
+
+	triggerAction(action: string): void {
+		console.log(action);
+		if (action === "TELEPORT_TO_DIGITALWORLD") {
+			this.switch("digitalworld");
+		}
+	}
+
+	checkSteps() {
+		if (this.game.data.steps > 6) {
+			this.game.data.steps = 0;
+			this.game.data.days += 1;
+			const channel = window.channel;
+			if (channel)
+				channel.emit("dialogue", {
+					scenario: "EXPLORATION_END",
+				});
 		}
 	}
 
@@ -233,6 +255,7 @@ export default class ExplorationScene extends Scene {
 			console.log(this.areas, area, this.player.onTeleportingPad);
 			// Load area data
 			this.switch("battle");
+			this.game.data.steps++;
 		}
 
 		// Send player data to server
