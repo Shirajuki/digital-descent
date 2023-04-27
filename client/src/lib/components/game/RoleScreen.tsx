@@ -95,7 +95,7 @@ const RoleScreen = () => {
 							>
 								<h3 className="text-2xl font-bold mb-2">The Architect</h3>
 								<p>
-									responsible for designing and building the foundational
+									Responsible for designing and building the foundational
 									systems that support the rest of the IT infrastructure.
 								</p>
 							</button>
@@ -109,7 +109,7 @@ const RoleScreen = () => {
 							>
 								<h3 className="text-2xl font-bold mb-2">The Tester</h3>
 								<p>
-									responsible for ensuring that the systems and applications are
+									Responsible for ensuring that the systems and applications are
 									functioning properly and addressing any issues that arise.
 								</p>
 							</button>
@@ -123,7 +123,7 @@ const RoleScreen = () => {
 							>
 								<h3 className="text-2xl font-bold mb-2">The Developer</h3>
 								<p>
-									responsible for building and maintaining the applications and
+									Responsible for building and maintaining the applications and
 									software that drive the organization forward.
 								</p>
 							</button>
