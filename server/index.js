@@ -98,9 +98,21 @@ io.onConnection((channel) => {
 		const roomId = channel.roomId;
 		if (!roomId || !data?.scenario) return;
 
-		// Update dialogue ended on some dialogue types
+		// Update dialogue ended
+		rooms[roomId].dialogues.push(data.scenario);
+
+		// Check if all players have ended the dialogue as well
+		const count = rooms[roomId].dialogues.filter(
+			(d) => d == data.scenario
+		).length;
+		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
+		console.log(count, players.length);
+		if (count !== players.length) return;
+
+		// Reset dialogue ended on all players
+		// But skip over on some dialoges types
 		if (
-			[
+			![
 				"GAME_INTRO",
 				"CUSTOMER_INTRO",
 				"ROLES",
@@ -111,16 +123,10 @@ io.onConnection((channel) => {
 				"BEGIN_GAME",
 			].includes(data.scenario)
 		) {
-			rooms[roomId].dialogues.push(data.scenario);
+			rooms[roomId].dialogues = rooms[roomId].dialogues.filter(
+				(d) => d !== data.scenario
+			);
 		}
-
-		// Check if all players have ended the dialogue as well
-		const count = rooms[roomId].dialogues.filter(
-			(d) => d == data.scenario
-		).length;
-		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
-		console.log(count, players.length);
-		if (count !== players.length) return;
 
 		// Sync dialogue end to all players
 		io.room(channel.roomId).emit("dialogue-end", {

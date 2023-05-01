@@ -85,3 +85,165 @@ button {
 		outline: 4px auto -webkit-focus-ring-color;
 	}
 }
+.glitch {
+	z-index: 0;
+}
+.glitch::before,
+.glitch::after {
+	content: "";
+	position: absolute;
+	transform: translateX(-3px);
+	overflow: hidden;
+	z-index: 1;
+	animation: glitch-animation-1 12s infinite linear alternate-reverse;
+	display: block;
+	background-image: url(/sprites/teamleadPortrait.png);
+	background-size: 100% 100%;
+
+	position: absolute;
+	width: 178px;
+	height: 319px;
+	top: -14px;
+	left: 9px;
+	opacity: 1;
+}
+.glitch::after {
+	z-index: -1;
+	opacity: 1;
+	animation: glitch-animation-2 8s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-animation-1 {
+	0% {
+		clip-path: polygon(0 0%, 100% 0%, 100% 0%, 0% 0%);
+	}
+	10.5% {
+		clip-path: polygon(0 39%, 100% 39%, 100% 96%, 0% 96%);
+	}
+	21.0% {
+		clip-path: polygon(0 20%, 100% 20%, 100% 44%, 0% 44%);
+	}
+	21.5% {
+		clip-path: polygon(0 82%, 100% 82%, 100% 55%, 0% 55%);
+	}
+	32.0% {
+		clip-path: polygon(0 42%, 100% 42%, 100% 26%, 0% 26%);
+	}
+	32.5% {
+		clip-path: polygon(0 84%, 100% 84%, 100% 1%, 0% 1%);
+	}
+	43.0% {
+		clip-path: polygon(0 41%, 100% 41%, 100% 84%, 0% 84%);
+	}
+	43.5% {
+		clip-path: polygon(0 40%, 100% 40%, 100% 68%, 0% 68%);
+	}
+	54.0% {
+		clip-path: polygon(0 28%, 100% 28%, 100% 90%, 0% 90%);
+	}
+	54.5% {
+		clip-path: polygon(0 56%, 100% 56%, 100% 77%, 0% 77%);
+	}
+	65.0% {
+		clip-path: polygon(0 67%, 100% 67%, 100% 76%, 0% 76%);
+	}
+	65.5% {
+		clip-path: polygon(0 61%, 100% 61%, 100% 78%, 0% 78%);
+	}
+	76.0% {
+		clip-path: polygon(0 24%, 100% 24%, 100% 85%, 0% 85%);
+	}
+	76.5% {
+		clip-path: polygon(0 35%, 100% 35%, 100% 44%, 0% 44%);
+	}
+	87.0% {
+		clip-path: polygon(0 26%, 100% 26%, 100% 20%, 0% 20%);
+	}
+	87.5% {
+		clip-path: polygon(0 27%, 100% 27%, 100% 13%, 0% 13%);
+	}
+	98.0% {
+		clip-path: polygon(0 79%, 100% 79%, 100% 23%, 0% 23%);
+	}
+	98.5% {
+		clip-path: polygon(0 11%, 100% 11%, 100% 72%, 0% 72%);
+	}
+	99.0% {
+		clip-path: polygon(0 31%, 100% 31%, 100% 6%, 0% 6%);
+	}
+	99.5% {
+		clip-path: polygon(0 43%, 100% 43%, 100% 64%, 0% 64%);
+	}
+	100.0% {
+		clip-path: polygon(0 28%, 100% 28%, 100% 43%, 0% 43%);
+	}
+}
+
+@keyframes glitch-animation-2 {
+	0% {
+		clip-path: polygon(0 0%, 100% 0%, 100% 0%, 0% 0%);
+	}
+	5% {
+		clip-path: polygon(0 0%, 100% 0%, 100% 0%, 0% 0%);
+	}
+	5.5% {
+		clip-path: polygon(0 77%, 100% 77%, 100% 70%, 0% 70%);
+	}
+	21.0% {
+		clip-path: polygon(0 23%, 100% 23%, 100% 73%, 0% 73%);
+	}
+	21.5% {
+		clip-path: polygon(0 91%, 100% 91%, 100% 47%, 0% 47%);
+	}
+	32.0% {
+		clip-path: polygon(0 62%, 100% 62%, 100% 6%, 0% 6%);
+	}
+	32.5% {
+		clip-path: polygon(0 74%, 100% 74%, 100% 39%, 0% 39%);
+	}
+	43.0% {
+		clip-path: polygon(0 68%, 100% 68%, 100% 1%, 0% 1%);
+	}
+	43.5% {
+		clip-path: polygon(0 39%, 100% 39%, 100% 33%, 0% 33%);
+	}
+	54.0% {
+		clip-path: polygon(0 53%, 100% 53%, 100% 30%, 0% 30%);
+	}
+	54.5% {
+		clip-path: polygon(0 23%, 100% 23%, 100% 54%, 0% 54%);
+	}
+	65.0% {
+		clip-path: polygon(0 76%, 100% 76%, 100% 53%, 0% 53%);
+	}
+	65.5% {
+		clip-path: polygon(0 24%, 100% 24%, 100% 21%, 0% 21%);
+	}
+	76.0% {
+		clip-path: polygon(0 25%, 100% 25%, 100% 76%, 0% 76%);
+	}
+	76.5% {
+		clip-path: polygon(0 95%, 100% 95%, 100% 30%, 0% 30%);
+	}
+	87.0% {
+		clip-path: polygon(0 74%, 100% 74%, 100% 67%, 0% 67%);
+	}
+	87.5% {
+		clip-path: polygon(0 93%, 100% 93%, 100% 46%, 0% 46%);
+	}
+	98.0% {
+		clip-path: polygon(0 35%, 100% 35%, 100% 23%, 0% 23%);
+	}
+	98.5% {
+		clip-path: polygon(0 13%, 100% 13%, 100% 57%, 0% 57%);
+	}
+	99.0% {
+		clip-path: polygon(0 46%, 100% 46%, 100% 82%, 0% 82%);
+	}
+	99.5% {
+		clip-path: polygon(0 15%, 100% 15%, 100% 99%, 0% 99%);
+	}
+	100.0% {
+		clip-path: polygon(0 92%, 100% 92%, 100% 91%, 0% 91%);
+	}
+}

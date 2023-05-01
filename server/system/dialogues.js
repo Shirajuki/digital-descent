@@ -2,7 +2,7 @@ export const DIALOGUES = {
 	// 0 - Introduction to the game
 	GAME_INTRO: [
 		{
-			text: "Welcome, everyone! I'm glad you could join us today. I will be your team lead in this project. I know this is your first project, but I will tell you everything you need to know.",
+			text: "Welcome, everyone! I'm glad you could join us today. I will be your team lead in this project. I am here to tell you everything you need to know.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -32,7 +32,7 @@ export const DIALOGUES = {
 			side: "left",
 		},
 		{
-			text: "Good question. That's where Agile project management tools and processes come in. We can use tools like Kanban boards and daily stand-up meetings to keep track of our progress and make sure everyone is on the same page. It is important to note here that you decide what tools you want to use and customize how you prefer to use it.",
+			text: "Good question. That's where Agile project management tools and processes come in. We can use tools like task boards and meetings with the customer to keep track of our progress and make sure everyone is on the same page. It is important to note here that you decide what tools you want to use and customize how you prefer to use it.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -47,12 +47,12 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Yes, I'm excited to learn more about Agile and work on this project. ",
+			text: "Yes, I'm excited to learn more about Agile and work on this project.",
 			speaker: "Player",
 			side: "left",
 		},
 		{
-			text: " Great to hear. Let's get started! Head out the meeting room. The customer will be there waiting. I will see you there.",
+			text: "Great to hear. Let's get started! Head out the meeting room. The customer will be there waiting. I will see you there.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -61,22 +61,22 @@ export const DIALOGUES = {
 	// 1 - Customer introduction
 	CUSTOMER_INTRO: [
 		{
-			text: "Thank you for joining us today. My name is Bob and I am a customer from the company Deep Solutions. I am excited to be able to introduce you to the project.  First I would like to know more about your team. Could you introduce yourselves?\n",
+			text: "Thank you for joining us today. I come from the company Deep Solutions and will be your customer for this project. I am excited to be able to introduce you to the project. First I would like to know more about your team.",
 			speaker: "Customer",
 			side: "right",
 		},
 		{
-			text: "Hey, Im Alice",
-			speaker: "Player",
+			text: "Now it is time to choose the role you want to be in the team guys. A well rounded team is important and each role will have different stats and specialize in have different abilities. Introduce yourselves to the customer.\n",
+			speaker: "Team lead",
 			side: "left",
+			action: "START_ROLE_SELECTION",
 		},
+	],
+
+	// 2 - Choosing roles
+	ROLES: [
 		{
-			text: "Hey, Im Bob",
-			speaker: "Player",
-			side: "left",
-		},
-		{
-			text: "Great! Nice to meet you guys. You probably wonder what the project is by now. My company is struggling to keep out viruses in our network. The project is to build software to protect and get rid of these viruses and keep our network safe. Now I wonder how you will approach this project?",
+			text: "Great to see such a well rounded team! Nice to meet you guys. You probably wonder what the project is by now. My company is struggling to keep out viruses in our network. The project is to build a solution to get rid of these viruses and keep our network safe. Now I wonder how you will approach this project?",
 			speaker: "Customer",
 			side: "right",
 		},
@@ -105,17 +105,6 @@ export const DIALOGUES = {
 			speaker: "Customer",
 			side: "right",
 		},
-
-		{
-			text: "Now it is time to choose the role you want to be in the team guys. A well rounded team is important and each role will have different stats and specialize in have different abilities.",
-			speaker: "Team lead",
-			side: "left",
-			action: "START_ROLE_SELECTION",
-		},
-	],
-
-	// 2 - Choosing roles
-	ROLES: [
 		{
 			text: "Now it's time for you to enter the digital world and start your work!",
 			speaker: "Team lead",
@@ -127,22 +116,17 @@ export const DIALOGUES = {
 	// 3 - First time in the digital world
 	DIGITALWORLD_INTRO: [
 		{
-			text: "You have now entered the digital world and inside a computer. As you can see, there is a digital version of me on your screen. I will appear inside this world throughout this world project to give you information and tips. You'll see three different places in this world.",
+			text: "Welcome to the digital world! In order to work efficiently, you have now entered inside a computer. As you can see, there is a digital version of me on your screen. I will appear inside this world throughout the project to give you information and tips.",
 			speaker: "Team lead",
 			side: "right",
 		},
 		{
-			text: "The first is the Task Board. Here, you'll find all the tasks and objectives that need to be completed for the project. The second place is the shop, where you can exchange work credits for consumables and equipment to help you on your journey. And the third place is the work portal, where you'll journey off to do your work. Think of it like going on a quest!\n",
+			text: "In the upper left corner of your screen, you'll see your current task list, as well as a counter showing how many days you've worked on the project. This list is closely connected to our work iterations, since we'll set out an objective to satisfy the customer for each iteration.\n",
 			speaker: "Team lead",
 			side: "right",
 		},
 		{
-			text: "In the upper left corner of your screen, you'll see an objective/milestone task list, as well as the current day count. This list is closely connected to our work iterations. For each iteration, we'll set out a milestone or objective to achieve.\n",
-			speaker: "Team lead",
-			side: "right",
-		},
-		{
-			text: "For now, your task is to visit all the stations: the Task Board, the shop, and the work portal. In each station you will understand how they work and how they relate to Agile methodology. Are you ready to begin?\n",
+			text: "For now, your task is to visit the stations found in the digital world: the Task Board, the workshop, and the work portal. In each station you will understand how they work and how they relate to the Agile methodology. You got this!\n",
 			speaker: "Team lead",
 			side: "right",
 			action: "INITIALIZE_DIGITALWORLD_HUD",
@@ -155,7 +139,6 @@ export const DIALOGUES = {
 			text: "This is the Task Board. This is where you'll find all the tasks and objectives that need to be completed for the project.",
 			speaker: "Team lead",
 			side: "right",
-
 		},
 		{
 			text: "First, you'll notice that each task has an energy cost associated with it. This indicates that there's a limit to how many tasks the team can take on at the same time. We need to be mindful of our energy usage and plan out which tasks we want to focus on.",
@@ -163,7 +146,7 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Each task also has a priority/difficulty level, which determines the rewards we'll receive upon completion. The more difficult the task, the higher the reward. However, we also need to consider the time and energy it will take to complete the task.",
+			text: "Each task also has a priority and a difficulty level, which determines the rewards we'll receive upon completion. The more difficult the task, the higher the reward. However, we also need to consider the time and energy it will take to complete the task.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -183,7 +166,7 @@ export const DIALOGUES = {
 	// 5 - First time accessing the portal
 	PORTAL_INTRO: [
 		{
-			text: "This is the portal. Here is where your journey starts. As you approach the Portal, a dialogue box appears with my digital avatar. This is where we'll journey off to do our work and collaborate to reach our final destination together. Let me explain how it works.",
+			text: "This is the portal. Here is where the actual work takes place. This is where we'll journey off to the codebase in order to do our work and collaborate to reach our final destination together. Let me explain how it works.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -193,12 +176,17 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Decision making and teamwork will be key to our success. Each time you select to work, you will go through a work day. There will be a limited times of work day before you have to meet the customer to check up on the progress. Delivery is for delivering the project and meet the customer for a final battle.",
+			text: "Decision making and teamwork will be key to our success when working. Each time you select to work, you will go through a work day. There will be a limited time of work days before you have to meet the customer to check up on the progress.",
 			speaker: "Team lead",
 			side: "right",
 		},
 		{
-			text: "The different challenge modes that we'll encounter include REST, where we can restore our HP and SP points, BATTLE where we'll need to use our SP points for each action, TOWER OF TRIALS/PUZZLE where we'll collaboratively solve puzzles through communication, and SHOP where we can buy consumables and special equipment to help us on our journey.",
+			text: "When you feel that you've ready to deliver the project and meet the customer for a final presentation and showdown on the team's progress. Then pick the second option: DELIVERY.",
+			speaker: "Team lead",
+			side: "right",
+		},
+		{
+			text: "The different challenge modes that we'll encounter include REST, where we can restore our HP points, BATTLE where we'll battle bugs, glitches and monsters for experience points, TOWER OF TRIALS where we'll have to collaboratively solve puzzles through communication, and SHOP where we can take a stop to buy consumables and special equipment to help us on our journey.",
 			speaker: "Team lead",
 			side: "right",
 		},
@@ -218,17 +206,17 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "First, you'll need to earn work credits by completing tasks on the Task Board. Once you have enough, you can exchange them at the Shop for consumables and equipment. Consumables include things like energy drinks, rubber ducks, and other items that can help you stay focused and energized during your work.",
+			text: "First, you'll need to earn work credits by completing tasks on the Task Board. Once you have enough, you can exchange them at the Shop for consumables and equipment. Consumables include things like different type of energy drinks and sodas that can help you stay focused and energized during your work.",
 			speaker: "Team lead",
 			side: "right",
 		},
 		{
-			text: "Equipment includes things like mechanical keyboards and ergonomic items that can improve your work environment and help you work more efficiently. You'll need to weigh the cost of each item against the potential benefits it can provide.",
+			text: "Equipment includes things like rubber ducks, mechanical keyboards and ergonomic items that can improve your work environment and help you work more efficiently. You'll need to weigh the cost of each item against the potential benefits it can provide.",
 			speaker: "Team lead",
 			side: "right",
 		},
 		{
-			text: "Remember, the goal of the Shop is to provide you with resources to help you complete your work more effectively.",
+			text: "Remember, the goal of the Shop is to provide you with resources to help you complete your work more effectively, so choose wisely and don't waste your work credits on unnecessary items.",
 			speaker: "Team lead",
 			side: "right",
 			action: "CLEAR_SHOP_QUEST",
@@ -257,14 +245,10 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Yes, we've been doing our best to complete the tasks on the task board and gathering resources from the shop.",
-			speaker: "Player",
-			side: "left",
-		},
-		{
-			text: "That's great to hear. Now it's time to meet with the customer to show them what we've accomplished so far. Let's head to the portal.",
+			text: "Now it's time to meet with the customer to show them what we've accomplished so far. Head to the portal and I'll send you on your way to the customer.",
 			speaker: "Team lead",
 			side: "right",
+			action: "INITIALIZE_MEETING",
 		},
 	],
 
@@ -289,6 +273,7 @@ export const DIALOGUES = {
 			text: "Bring it on!",
 			speaker: "Player",
 			side: "left",
+			action: "INITIALIZE_CUSTOMER_BATTLE",
 		},
 	],
 
@@ -308,13 +293,14 @@ export const DIALOGUES = {
 			text: "I look forward to seeing your progress. Keep up the good work.",
 			speaker: "Customer",
 			side: "right",
+			action: "CUSTOMER_MEETING_WIN",
 		},
 	],
 
 	// 11 - Customer NOT satisfied with milestone progress
 	CUSTOMER_MEETING_LOSE: [
 		{
-			text: "Unfortunately, I'm not satisfied with the work this time.",
+			text: "Unfortunately, I'm not satisfied with the work done thus far. I believe you can do better than this.",
 			speaker: "Customer",
 			side: "right",
 		},
@@ -322,6 +308,7 @@ export const DIALOGUES = {
 			text: "We will do it better next time!",
 			speaker: "Player",
 			side: "left",
+			action: "CUSTOMER_MEETING_LOSE",
 		},
 	],
 
@@ -333,16 +320,17 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Yes, we are ready!",
+			text: "Ready as we'll ever be!",
 			speaker: "Player",
 			side: "left",
+			action: "INITIALIZE_PROJECT_DELIVERY",
 		},
 	],
 
 	// 13 - Project delivery game win!
 	PROJECT_DELIVERY_WIN: [
 		{
-			text: "I must say, I'm impressed! This is exactly what I was looking for. You've done a great job, and I'm satisfied with the work you've done. Congratulations, you have completed the project",
+			text: "I must say, I'm impressed! This is exactly what I was looking for. You've done a great job, and I'm satisfied with the work you've done. Congratulations, you have completed the project!",
 			speaker: "Customer",
 			side: "right",
 		},
@@ -350,6 +338,7 @@ export const DIALOGUES = {
 			text: "Awesome to hear!",
 			speaker: "Player",
 			side: "left",
+			action: "PROJECT_DELIVERY_WIN",
 		},
 	],
 
@@ -361,9 +350,20 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Don't worry, we'll take note of your feedback and work on improving. We'll continue the game from here.",
+			text: "Don't worry, we'll take note of your feedback and work on improving. We'll continue the work from here.",
 			speaker: "Player",
 			side: "left",
+			action: "PROJECT_DELIVERY_LOSE",
+		},
+	],
+
+	// 15 - Finish exploration
+	EXPLORATION_END: [
+		{
+			text: "Greetings! Great work for today. For now, let's head back to the digital world and we'll continue tomorrow.",
+			speaker: "Team lead",
+			side: "right",
+			action: "TELEPORT_TO_DIGITALWORLD",
 		},
 	],
 };

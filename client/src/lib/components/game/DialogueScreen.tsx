@@ -76,6 +76,12 @@ const DialogueScreen = () => {
 								scene.dialogue.texts[0]?.side === "left"
 									? "left-12"
 									: "right-12"
+							}
+							${
+								scene.dialogue.texts[0]?.speaker === "Team lead" &&
+								scene.game.currentScene !== "office"
+									? "glitch"
+									: ""
 							}`}
 						>
 							{scene.dialogue.texts[0]?.speaker === "Customer" ? (

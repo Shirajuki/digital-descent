@@ -10,6 +10,7 @@ import {
 import Scene from "./scene";
 import collisions from "../collisions/officeCollisions.json";
 import { DEBUG } from "../constants";
+import { generateTasks } from "../rpg/systems/taskSystem";
 
 export default class OfficeScene extends Scene {
 	public text: any;
@@ -165,6 +166,8 @@ export default class OfficeScene extends Scene {
 			}
 		} else if (action === "TELEPORT_TO_DIGITALWORLD") {
 			this.switch("digitalworld");
+			const tasks = generateTasks(20);
+			this.game.data.openTasks = tasks;
 			// Trigger new dialogue for first time in digital world intro
 			setTimeout(() => {
 				const channel = window.channel;

@@ -207,7 +207,6 @@ export default class DigitalWorldScene extends Scene {
 
 		setTimeout(() => {
 			this.observable.notify();
-			this.generateTasks();
 		}, 1000);
 	}
 
@@ -310,11 +309,6 @@ export default class DigitalWorldScene extends Scene {
 			}
 		}
 		this.observable.notify();
-	}
-
-	generateTasks() {
-		const tasks = generateTasks(9);
-		this.game.data.openTasks = tasks;
 	}
 
 	update(_time: any, _delta: any) {
