@@ -21,7 +21,7 @@ const TaskDraggable = ({ currentTask, checked, parent, index }: any) => {
 			style={{
 				transform: CSS.Translate.toString(transform),
 				position: isDragging ? "absolute" : "relative",
-				top: isDragging ? `${index * 60 + 150 - scrollTop}px` : "0px",
+				top: isDragging ? `${index * 60 + 150}px` : "0px",
 				zIndex: isDragging ? 100 : 1,
 			}}
 			className="flex bg-slate-700 w-72 px-2 py-2 relative rounded-t-md rounded-l-md"
