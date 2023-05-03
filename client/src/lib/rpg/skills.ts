@@ -17,7 +17,7 @@ export const inspire = () => {
 		power: 1,
 		effects: {
 			attacker: ["all-smallHeal", "all-attackBoost"],
-			attackerAccuracy: 30,
+			attackerAccuracy: 100,
 		},
 	};
 };

@@ -534,27 +534,6 @@ io.onConnection((channel) => {
 			if (data.state.attacker?.effects?.some((e) => e.type === "lag")) {
 				extraInfo = `${data.state.attacker.name} is lagging, turn skipped`;
 			} else {
-				// Calculate player's damage on monsters
-				for (const monster of battle.monsters) {
-					let damage = { damage: 0, elementEffectiveness: 1 };
-					if (
-						attack.targets.type === "monster" &&
-						monster.id === data.state.target.id &&
-						monster.battleStats.HP > 0
-					) {
-						damage = battle.calculateDamage(data.state.attacker, monster);
-					} else if (
-						attack.targets.type === "player" &&
-						monster.battleStats.HP > 0
-					) {
-						damage = battle.calculateDamage(data.state.attacker, monster);
-					}
-					damages.push(damage);
-
-					monster.battleStats.HP -= damage.damage;
-					if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
-				}
-
 				// Apply effects to attacker
 				attackerEffects.forEach((effect) => {
 					const buff = effect.split("-");
@@ -584,6 +563,29 @@ io.onConnection((channel) => {
 						battle.applyEffects(monsters[i], buff[1]);
 					}
 				});
+
+				// Calculate player's damage on monsters
+				for (const monster of battle.monsters) {
+					let damage = { damage: 0, elementEffectiveness: 1 };
+					if (
+						attack.targets.type === "monster" &&
+						monster.id === data.state.target.id &&
+						monster.battleStats.HP > 0
+					) {
+						// Attack is targeted to one specific monsters
+						damage = battle.calculateDamage(data.state.attacker, monster);
+					} else if (
+						attack.targets.type === "player" &&
+						monster.battleStats.HP > 0
+					) {
+						// Attack is targeted to all monsters
+						damage = battle.calculateDamage(data.state.attacker, monster);
+					}
+					damages.push(damage);
+
+					monster.battleStats.HP -= damage.damage;
+					if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
+				}
 			}
 			// Emit updated state to all clients and update the turn queue
 			io.room(channel.roomId).emit(

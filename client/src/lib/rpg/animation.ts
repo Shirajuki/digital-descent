@@ -159,7 +159,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 								const attackerEntities =
 									attacker.type === "monster" ? scene.monsters : scene.players;
 								for (const entity of attackerEntities) {
-									scene.battle.applyEffect(attacker, buff[1]);
+									scene.battle.applyEffect(entity, buff[1]);
 									spawnTextAtEntity(
 										scene,
 										buff[1],

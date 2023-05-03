@@ -34,6 +34,7 @@ export const initializePlayer = (
 	player.battleClass =
 		window.playerBattleClass ??
 		["tank", "dps", "healer"][Math.floor(Math.random() * 3)];
+	player.battleClass = "healer"; // TEST
 	player.skills = getSkills(player);
 
 	player.inventory = [];
@@ -87,6 +88,7 @@ export const initializePlayer = (
 			battleStats: this.battleStats,
 			onTeleportingPad: this.onTeleportingPad,
 			eventCollision: this.eventCollision,
+			effects: this.effects,
 			inventory: this.inventory,
 			equipment: this.equipment,
 		};

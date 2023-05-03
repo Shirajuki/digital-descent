@@ -30,16 +30,21 @@ export default class BattleSystem {
 		this.turnQueue = this.turnQueue.filter((e) => e.id != entity.id);
 	}
 
-	calculateDamage(player, monster) {
-		const elementEffectiveness =
-			ELEMENT_EFFECTIVENESS_TABLE[player.stats.ELEMENT][monster.stats.ELEMENT];
+	calculateDamage(attacker, target) {
+		// TODO: Take into account player and monster stats
+		// TODO: Take into account player and monster status effects
+		const atkbuff =
+			attacker?.effects?.some((e) => e.type === "attackBoost") || undefined;
+		const defbuff =
+			target?.effects?.some((e) => e.type === "defenceBoost") || undefined;
 		const damage =
-			(((((2 * player.stats.LEVEL) / 5 + 2) * player.stats.ATK) /
-				monster.stats.DEF) *
-				elementEffectiveness *
+			(((((2 * attacker.stats.LEVEL) / 5 + 2) *
+				(attacker.stats.ATK * (atkbuff ? 1.2 : 1))) /
+				target.stats.DEF) *
+				(defbuff ? 1.2 : 1) *
 				randomInt(217, 255)) /
 			255;
-		return { damage: Math.max(damage, 1), elementEffectiveness };
+		return { damage: Math.max(damage, 1), elementEffectiveness: 1 };
 	}
 
 	calculateExperience(monsters) {
@@ -70,8 +75,57 @@ export default class BattleSystem {
 		return false;
 	}
 
-	applyEffects(entity, effectType) {
-		console.log("[...] Applying", effectType, "on", entity.name);
+	applyEffects(entity, effect) {
+		// Set effects on entity
+		if (!entity.effects) entity.effects = [];
+		// Apply new effect
+		if (effect === "smallHeal") {
+			entity.battleStats.HP = Math.min(
+				entity.battleStats.HP + 5,
+				entity.stats.HP
+			);
+		} else if (effect === "mediumHeal") {
+			entity.battleStats.HP = Math.min(
+				entity.battleStats.HP + 20,
+				entity.stats.HP
+			);
+		} else if (effect === "bigHeal") {
+			entity.battleStats.HP = entity.battleStats.HP;
+		} else if (effect === "clear") {
+			entity.effects = entity.effects.filter(
+				(e) => !["burn", "memoryLeak", "nervous", "lag"].includes(e.type)
+			);
+		} else if (effect === "lag") {
+			entity.effects.push({ type: "lag", duration: 2 });
+		} else if (effect === "nervous") {
+			entity.effects.push({ type: "nervous", duration: 2 });
+		} else if (effect === "memoryLeak") {
+			entity.effects.push({ type: "memoryLeak", duration: 2 });
+		} else if (effect === "burn") {
+			entity.effects.push({ type: "burn", duration: 1 });
+		} else if (effect === "fire") {
+			entity.effects.push({ type: "fire", duration: 2 });
+		} else if (effect === "attackBoost") {
+			entity.effects.push({ type: "attackBoost", duration: 2 });
+		} else if (effect === "defenceBoost") {
+			entity.effects.push({ type: "defenceBoost", duration: 2 });
+		} else if (effect === "taunt") {
+			entity.effects.push({ type: "taunt", duration: 4 });
+		}
+		// Remove duplicate effects and update duration using filter
+		entity.effects = entity.effects.filter((e, i) => {
+			const index = entity.effects.findIndex((e2) => e2.type === e.type);
+			if (index === i) return true;
+			else {
+				entity.effects[index].duration = Math.max(
+					entity.effects[index].duration,
+					e.duration
+				);
+				return false;
+			}
+		});
+
+		console.log("[...] Applying", effect, "on", entity.name || entity.id);
 	}
 
 	updateTurn() {
