@@ -42,17 +42,25 @@ const RoleScreen = () => {
 			scene.role.ready = !scene.role.ready;
 			window.playerBattleClass = role;
 			if (scene.role.ready) {
-				channel.emit("action-ready", {
-					id: player.id,
-					scenario: "END_ROLE_SELECTION",
-					ready: true,
-				});
+				channel.emit(
+					"action-ready",
+					{
+						id: player.id,
+						scenario: "END_ROLE_SELECTION",
+						ready: true,
+					},
+					{ reliable: true }
+				);
 			} else {
-				channel.emit("action-ready", {
-					id: player.id,
-					scenario: "END_ROLE_SELECTION",
-					ready: false,
-				});
+				channel.emit(
+					"action-ready",
+					{
+						id: player.id,
+						scenario: "END_ROLE_SELECTION",
+						ready: false,
+					},
+					{ reliable: true }
+				);
 			}
 			forceUpdate();
 		}

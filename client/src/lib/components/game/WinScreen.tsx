@@ -94,10 +94,14 @@ const WinScreen = () => {
 				DEF: player.stats.DEF + stats.DEF,
 				SPEED: player.stats.SPEED + stats.SPEED,
 			};
-			channel.emit("leveling-update", {
-				id: player.id,
-				stats: newStats,
-			});
+			channel.emit(
+				"leveling-update",
+				{
+					id: player.id,
+					stats: newStats,
+				},
+				{ reliable: true }
+			);
 			player.stats = newStats;
 			battle.leveling.levelUp = false;
 			forceUpdate();
@@ -107,9 +111,13 @@ const WinScreen = () => {
 	const toggleReady = () => {
 		const channel = window.channel;
 		if (channel) {
-			channel.emit("leveling-ready", {
-				id: player.id,
-			});
+			channel.emit(
+				"leveling-ready",
+				{
+					id: player.id,
+				},
+				{ reliable: true }
+			);
 			battle.leveling.ready = true;
 			forceUpdate();
 		}

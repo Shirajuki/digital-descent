@@ -41,11 +41,15 @@ function Chat({
 		event.preventDefault();
 		if (inputRef.current) {
 			const message = inputRef.current.value;
-			window.channel.emit("message-send", {
-				roomId,
-				message,
-				sender: window.channel.playerName ?? window.channel.id,
-			});
+			window.channel.emit(
+				"message-send",
+				{
+					roomId,
+					message,
+					sender: window.playerName ?? window.channel.id,
+				},
+				{ reliable: true }
+			);
 			inputRef.current.value = "";
 			inputRef.current.focus();
 		}

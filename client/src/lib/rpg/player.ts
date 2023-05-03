@@ -50,7 +50,7 @@ export const initializePlayer = (
 		dead: false,
 	};
 	player.effects = [];
-	player.name = name;
+	player.name = window.playerName || name;
 
 	if (oldPlayer) {
 		player.stats = oldPlayer.stats;

@@ -173,9 +173,13 @@ export default class ExplorationScene extends Scene {
 			const channel = window.channel;
 			if (channel) {
 				if (!this.player.id) this.player.id = channel.id;
-				channel.emit("exploration-initialize", {
-					exploration: { steps: 0, danger: 0, areas: this.areas },
-				});
+				channel.emit(
+					"exploration-initialize",
+					{
+						exploration: { steps: 0, danger: 0, areas: this.areas },
+					},
+					{ reliable: true }
+				);
 			}
 		}, 1000);
 
@@ -212,9 +216,13 @@ export default class ExplorationScene extends Scene {
 			this.game.data.days += 1;
 			const channel = window.channel;
 			if (channel)
-				channel.emit("dialogue", {
-					scenario: "EXPLORATION_END",
-				});
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "EXPLORATION_END",
+					},
+					{ reliable: true }
+				);
 		}
 	}
 

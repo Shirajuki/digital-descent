@@ -223,9 +223,13 @@ export const animateSingleAttack = (scene: BattleScene) => {
 					scene.tweens.killAll();
 					const channel = window.channel;
 					if (channel)
-						channel.emit("battle-turn-finished", {
-							turns: scene.battle.turns,
-						});
+						channel.emit(
+							"battle-turn-finished",
+							{
+								turns: scene.battle.turns,
+							},
+							{ reliable: true }
+						);
 				}
 			}
 		}
@@ -401,9 +405,13 @@ export const animateStandingAttack = (scene: BattleScene) => {
 					// Turn finished
 					const channel = window.channel;
 					if (channel)
-						channel.emit("battle-turn-finished", {
-							turns: scene.battle.turns,
-						});
+						channel.emit(
+							"battle-turn-finished",
+							{
+								turns: scene.battle.turns,
+							},
+							{ reliable: true }
+						);
 				}
 			}
 		}

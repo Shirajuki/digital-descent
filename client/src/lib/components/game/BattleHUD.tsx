@@ -108,17 +108,6 @@ const BattleHUD = () => {
 									<p>{player.name}</p>
 									<span className="px-1">•</span>
 								</div>
-								<div
-									className={`w-6 h-6 bg-slate-500 rotate-45 text-center text-transparent rounded-sm
-									${player.stats.ELEMENT === ELEMENT.FIRE && "!bg-red-400"}
-									${player.stats.ELEMENT === ELEMENT.WATER && "!bg-blue-400"}
-									${player.stats.ELEMENT === ELEMENT.WOOD && "!bg-green-400"}
-									${player.stats.ELEMENT === ELEMENT.LIGHT && "!bg-yellow-200"}
-									${player.stats.ELEMENT === ELEMENT.DARK && "!bg-indigo-500"}
-									}`}
-								>
-									{player.stats.ELEMENT}
-								</div>
 							</div>
 							<div className="pr-5 flex flex-col items-end w-32">
 								<p className="-my-[1px] text-xs">

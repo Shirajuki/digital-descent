@@ -62,6 +62,19 @@ const DigitalWorldHUD = () => {
 							</div>
 						</div>
 					))}
+					{engine?.game.data.solvedTasks.map((solvedTask: any, i: number) => {
+						if (!solvedTask.done === engine?.game.data.days) return <></>;
+						return (
+							<div
+								key={`task-${i}`}
+								className="inline-block rounded-sm text-sm"
+							>
+								<div className="inline-block bg-slate-500 py-1 px-2 rounded-sm opacity-50">
+									{solvedTask.task}「{solvedTask.progress}%」
+								</div>
+							</div>
+						);
+					})}
 				</div>
 			</div>
 

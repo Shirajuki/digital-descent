@@ -1,20 +1,7 @@
 import { useAtom } from "jotai";
 import { engineAtom } from "../../atoms";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
-import {
-	DndContext,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-	rectIntersection,
-} from "@dnd-kit/core";
-import type { Active, UniqueIdentifier } from "@dnd-kit/core";
-import {
-	SortableContext,
-	arrayMove,
-	sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
+import { DragDropContext } from "@hello-pangea/dnd";
 import autoAnimate from "@formkit/auto-animate";
 import DigitalWorldScene from "../../scenes/digitalworld";
 import TaskDroppable from "./TaskDroppable";
@@ -32,12 +19,6 @@ const TaskBoardScreen = () => {
 	const [scaling, setScaling] = useState(1);
 	const [infoPopup] = useAutoAnimate();
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
-	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		})
-	);
 
 	useEffect(() => {
 		setScaling((document.querySelector("canvas")?.clientWidth ?? 1157) / 1157);
@@ -66,7 +47,6 @@ const TaskBoardScreen = () => {
 		engine?.game.data.currentTasks
 			.map((t: any) => t.energy)
 			.reduce((a: number, b: number) => a + b, 0) || 0;
-
 	if (!player || !scene) return <></>;
 
 	return (
@@ -102,51 +82,53 @@ const TaskBoardScreen = () => {
 							{currentEnergy} / 10 energy
 						</button>
 					</div>
-					<DndContext
-						sensors={sensors}
-						collisionDetection={rectIntersection}
-						onDragEnd={(e) => {
-							const container = e.over?.id;
-							const currentElement = e.active.data.current;
-
-							if (!container && !currentElement) return;
-							if (container === currentElement?.parent) return;
+					<DragDropContext
+						onDragEnd={(result) => {
+							const { source, destination } = result;
+							if (!destination) return;
+							if (
+								source.droppableId === destination.droppableId &&
+								source.index === destination.index
+							)
+								return;
 
 							const openTasks = engine?.game.data.openTasks;
 							const currentTasks = engine?.game.data.currentTasks;
-							if (container === "droppable-1") {
-								const cindex = currentTasks.findIndex(
-									(t: any) => t.id === currentElement?.id
-								);
-								const currentTask = currentTasks[cindex];
-								if (currentTask.locked) return;
-								if (cindex > -1) {
-									const task = currentTasks.splice(cindex, 1);
-									openTasks.push(task[0]);
-									scene.observable.notify();
+							if (destination?.droppableId === "droppable-1") {
+								const currentTask = currentTasks[source.index];
+								if (source?.droppableId === "droppable-1") {
+									const task = openTasks.splice(source.index, 1);
+									openTasks.splice(destination.index, 0, task[0]);
+								} else {
+									if (currentTask.locked) return;
+									const task = currentTasks.splice(source.index, 1);
+									openTasks.splice(destination.index, 0, task[0]);
 								}
-							} else if (container === "droppable-2") {
-								const cindex = openTasks.findIndex(
-									(t: any) => t.id === currentElement?.id
-								);
-								const openTask = openTasks[cindex];
-								if (openTask.energy + currentEnergy > 10) return;
-								if (cindex > -1) {
-									const task = openTasks.splice(cindex, 1);
-									currentTasks.push(task[0]);
+							} else if (destination?.droppableId === "droppable-2") {
+								const openTask = openTasks[source.index];
+								if (source?.droppableId === "droppable-2") {
+									const task = currentTasks.splice(source.index, 1);
+									currentTasks.splice(destination.index, 0, task[0]);
+								} else {
+									if (openTask.energy + currentEnergy > 10) return;
+									const task = openTasks.splice(source.index, 1);
+									currentTasks.splice(destination.index, 0, task[0]);
 								}
-								scene.observable.notify();
 							}
+							scene.observable.notify();
+							forceUpdate();
 						}}
 					>
 						<div className="flex gap-3 pl-2 h-full">
 							<div className="bg-gray-800 border-slate-900 border-2 h-full w-full rounded-md">
 								<h2 className="text-center text-md py-1 bg-zinc-900 mb-3">
-									Backlog (5)
+									Backlog ({engine?.game.data.openTasks.length})
 								</h2>
 								<TaskDroppable
+									key="droppable-1"
 									items={engine?.game.data.openTasks}
 									id="droppable-1"
+									currentEnergy={currentEnergy}
 								/>
 							</div>
 							<div className="bg-gray-800 border-slate-900 border-2 h-full w-full rounded-md">
@@ -154,6 +136,7 @@ const TaskBoardScreen = () => {
 									Current ({engine?.game.data.currentTasks.length})
 								</h2>
 								<TaskDroppable
+									key="droppable-2"
 									items={engine?.game.data.currentTasks}
 									id="droppable-2"
 								/>
@@ -193,7 +176,7 @@ const TaskBoardScreen = () => {
 								</div>
 							</div>
 						</div>
-					</DndContext>
+					</DragDropContext>
 				</div>
 			</div>
 		</div>

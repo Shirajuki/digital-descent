@@ -68,7 +68,7 @@ export const DIALOGUES = {
 		{
 			text: "Now it is time to choose the role you want to be in the team guys. A well rounded team is important and each role will have different stats and specialize in have different abilities. Introduce yourselves to the customer.\n",
 			speaker: "Team lead",
-			side: "left",
+			side: "right",
 			action: "START_ROLE_SELECTION",
 		},
 	],
@@ -83,12 +83,12 @@ export const DIALOGUES = {
 		{
 			text: "We will be using the Agile Software development methodology in this project. We'll begin by gathering your requirements and breaking down the project into smaller tasks. We'll then prioritize those tasks and assign them to our team members.",
 			speaker: "Team lead",
-			side: "left",
+			side: "right",
 		},
 		{
 			text: "Each task will be developed in a iteration with a defined time limit. In this project we set the iteration time to be 5 days, and we'll have a set of deliverables at the end of each iteration. This allows us to stay on track and deliver a high-quality product on time and within budget. After each iteration we will meet you to present you the progress. You will be able to discuss any changes you have.",
 			speaker: "Team lead",
-			side: "left",
+			side: "right",
 		},
 		{
 			text: "That's impressive. How will you handle changes in requirements?",
@@ -98,7 +98,7 @@ export const DIALOGUES = {
 		{
 			text: "Changes in requirements are expected.  We will try to work closely with you and have frequent customer meeting to understand the impact of the change on the project and adjusting the project plan accordingly. This ensures that any changes are incorporated smoothly and without disrupting the project timeline.",
 			speaker: "Team lead",
-			side: "left",
+			side: "right",
 		},
 		{
 			text: "Thank you for explaining your approach. We're excited to see what your team can do and look forward to working with you to develop a high-quality software solution.",
@@ -262,7 +262,7 @@ export const DIALOGUES = {
 		{
 			text: "Certainly, we're ready to demonstrate our work. But first, we have to pass your test, right?",
 			speaker: "Team lead",
-			side: "left",
+			side: "right",
 		},
 		{
 			text: "That's correct. I have a challenge prepared for you to test your skills. Are you ready?",

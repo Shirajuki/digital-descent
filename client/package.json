@@ -13,6 +13,7 @@
 		"@dnd-kit/sortable": "^7.0.2",
 		"@formkit/auto-animate": "^1.0.0-beta.6",
 		"@geckos.io/client": "^2.3.0",
+		"@hello-pangea/dnd": "^16.2.0",
 		"jotai": "^2.0.3",
 		"phaser": "^3.55.2",
 		"react": "^18.2.0",

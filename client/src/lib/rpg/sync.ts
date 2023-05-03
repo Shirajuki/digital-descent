@@ -31,7 +31,7 @@ export const addPlayers = (
 		}
 		if (serverPlayers[i] === scene.player?.id) {
 			scene.player.name = NAMES[i];
-			window.channel.playerName = NAMES[i] ?? "Player";
+			window.playerName = NAMES[i] ?? "Player";
 		}
 	}
 	// console.log(clientPlayers, serverPlayers);

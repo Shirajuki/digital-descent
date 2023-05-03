@@ -3,6 +3,7 @@ import { roomIdAtom } from "./lib/atoms";
 import { useCallback, useEffect, useState } from "react";
 import Chat from "./lib/components/chat/Chat";
 import { useNavigate } from "react-router-dom";
+import { NAMES } from "./lib/constants";
 
 type LobbyPlayersType = {
 	id: string;
@@ -13,7 +14,7 @@ type LobbyPlayersType = {
 
 function Lobby() {
 	const [lobbyId, _setLobbyId] = useAtom(roomIdAtom);
-	const [players, setPlayers] = useState<LobbyPlayersType[]>();
+	const [players, setPlayers] = useState<LobbyPlayersType[]>([]);
 	const [player, setPlayer] = useState({
 		id: "undefined",
 		name: "Player",
@@ -55,14 +56,14 @@ function Lobby() {
 				host: false,
 			};
 			setPlayer(player);
-			channel.emit("lobby-update", { player });
+			channel.emit("lobby-update", { player }, { reliable: true });
 		}
 		if (!lobbyId) navigate("/");
 	}, [navigate, setPlayer]);
 
 	const updateLobby = useCallback(
 		(player: any) => {
-			window?.channel?.emit("lobby-update", { player });
+			window?.channel?.emit("lobby-update", { player }, { reliable: true });
 		},
 		[player]
 	);
@@ -74,16 +75,22 @@ function Lobby() {
 	}, [updateLobby, player]);
 
 	const startGame = useCallback(() => {
-		window?.channel?.emit("lobby-startgame");
+		window?.channel?.emit("lobby-startgame", {}, { reliable: true });
 		console.log("start game");
 	}, []);
+
+	for (let i = 0; i < players.length; i++) {
+		if (players[i].id == window?.channel?.id) {
+			window.playerName = NAMES[i];
+		}
+	}
 
 	return (
 		<main className="flex flex-col items-center w-screen">
 			<div className="flex w-full max-w-5xl gap-4">
 				<div className="w-8/12">
 					<div className="grid grid-cols-4 gap-3 mb-4 p-4 bg-[rgba(255,255,255,0.05)] rounded-md">
-						{players?.map((player) => (
+						{players?.map((player, i) => (
 							<div
 								key={player.id}
 								className={`bg-slate-200 bg-opacity-0 h-48 rounded-sm flex flex-col gap justify-between items-center ${
@@ -93,7 +100,7 @@ function Lobby() {
 								}`}
 							>
 								<div className="bg-[rgba(255,255,255,0.05)] m-2 [width:calc(100%-1rem)] h-full text-center rounded-sm">
-									<div className="mt-3 mb-1">{player.name}</div>
+									<div className="mt-3 mb-1">{NAMES[i] || player.name}</div>
 									<div className="sprite [zoom:1.1] mx-auto"></div>
 								</div>
 								<div

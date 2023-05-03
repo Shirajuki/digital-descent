@@ -133,7 +133,11 @@ export default class OfficeScene extends Scene {
 			setTimeout(() => {
 				const channel = window.channel;
 				if (channel) {
-					channel.emit("dialogue", { scenario: "GAME_INTRO" });
+					channel.emit(
+						"dialogue",
+						{ scenario: "GAME_INTRO" },
+						{ reliable: true }
+					);
 				}
 			}, 500);
 		}
@@ -160,9 +164,13 @@ export default class OfficeScene extends Scene {
 			// Trigger new dialogue for roles
 			const channel = window.channel;
 			if (channel) {
-				channel.emit("dialogue", {
-					scenario: "ROLES",
-				});
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "ROLES",
+					},
+					{ reliable: true }
+				);
 			}
 		} else if (action === "TELEPORT_TO_DIGITALWORLD") {
 			this.switch("digitalworld");
@@ -172,9 +180,13 @@ export default class OfficeScene extends Scene {
 			setTimeout(() => {
 				const channel = window.channel;
 				if (channel) {
-					channel.emit("dialogue", {
-						scenario: "DIGITALWORLD_INTRO",
-					});
+					channel.emit(
+						"dialogue",
+						{
+							scenario: "DIGITALWORLD_INTRO",
+						},
+						{ reliable: true }
+					);
 				}
 			}, 1000);
 		}
@@ -208,10 +220,14 @@ export default class OfficeScene extends Scene {
 						setTimeout(() => {
 							const channel = window.channel;
 							if (channel) {
-								channel.emit("dialogue", {
-									scenario: "CUSTOMER_INTRO",
-									forceall: true,
-								});
+								channel.emit(
+									"dialogue",
+									{
+										scenario: "CUSTOMER_INTRO",
+										forceall: true,
+									},
+									{ reliable: true }
+								);
 							}
 						}, 1000);
 					}

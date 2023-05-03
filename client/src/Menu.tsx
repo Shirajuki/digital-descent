@@ -47,7 +47,7 @@ function Menu() {
 
 	const joinLobby = useCallback(
 		(id: string) => {
-			channel?.emit("lobby-join", { roomId: id });
+			channel?.emit("lobby-join", { roomId: id }, { reliable: true });
 		},
 		[channel]
 	);
@@ -55,10 +55,14 @@ function Menu() {
 		(event: any) => {
 			event.preventDefault();
 			const roomName = event.target.lobbyId.value;
-			channel?.emit("lobby-create", {
-				roomId: "" + Math.floor(Math.random() * 10 ** 10),
-				name: roomName,
-			});
+			channel?.emit(
+				"lobby-create",
+				{
+					roomId: "" + Math.floor(Math.random() * 10 ** 10),
+					name: roomName,
+				},
+				{ reliable: true }
+			);
 		},
 		[channel]
 	);

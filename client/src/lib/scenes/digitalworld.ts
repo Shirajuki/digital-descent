@@ -228,21 +228,33 @@ export default class DigitalWorldScene extends Scene {
 		if (action === "OPEN_TASKBOARD") {
 			this.togglePopup("taskboard");
 			if (channel)
-				channel.emit("dialogue", {
-					scenario: "TASKBOARD_INTRO",
-				});
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "TASKBOARD_INTRO",
+					},
+					{ reliable: true }
+				);
 		} else if (action === "OPEN_PORTAL") {
 			this.togglePopup("portal");
 			if (channel)
-				channel.emit("dialogue", {
-					scenario: "PORTAL_INTRO",
-				});
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "PORTAL_INTRO",
+					},
+					{ reliable: true }
+				);
 		} else if (action === "OPEN_SHOP") {
 			this.togglePopup("shop");
 			if (channel)
-				channel.emit("dialogue", {
-					scenario: "SHOP_INTRO",
-				});
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "SHOP_INTRO",
+					},
+					{ reliable: true }
+				);
 		} else if (action === "CLEAR_TASKBOARD_QUEST") {
 			this.dialogue.ended.push("TASKBOARD_INTRO");
 			this.taskboard.display = false;
@@ -260,9 +272,13 @@ export default class DigitalWorldScene extends Scene {
 				).length === 3
 			) {
 				if (channel)
-					channel.emit("dialogue", {
-						scenario: "BEGIN_GAME",
-					});
+					channel.emit(
+						"dialogue",
+						{
+							scenario: "BEGIN_GAME",
+						},
+						{ reliable: true }
+					);
 				this.game.data.days++;
 			}
 		} else if (action === "CLEAR_PORTAL_QUEST") {
@@ -281,9 +297,13 @@ export default class DigitalWorldScene extends Scene {
 				).length === 3
 			) {
 				if (channel)
-					channel.emit("dialogue", {
-						scenario: "BEGIN_GAME",
-					});
+					channel.emit(
+						"dialogue",
+						{
+							scenario: "BEGIN_GAME",
+						},
+						{ reliable: true }
+					);
 				this.game.data.days++;
 			}
 		} else if (action === "CLEAR_SHOP_QUEST") {
@@ -302,9 +322,13 @@ export default class DigitalWorldScene extends Scene {
 				).length === 3
 			) {
 				if (channel)
-					channel.emit("dialogue", {
-						scenario: "BEGIN_GAME",
-					});
+					channel.emit(
+						"dialogue",
+						{
+							scenario: "BEGIN_GAME",
+						},
+						{ reliable: true }
+					);
 				this.game.data.days++;
 			}
 		}
@@ -347,10 +371,14 @@ export default class DigitalWorldScene extends Scene {
 								scenario = "OPEN_SHOP";
 							const channel = window.channel;
 							if (channel) {
-								channel.emit("action", {
-									scenario: scenario,
-									forceall: true,
-								});
+								channel.emit(
+									"action",
+									{
+										scenario: scenario,
+										forceall: true,
+									},
+									{ reliable: true }
+								);
 							}
 						}, 1000);
 					}
@@ -370,8 +398,5 @@ export default class DigitalWorldScene extends Scene {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", { player: this.player.getData() });
 		}
-
-		// this.switch("exploration");
-		// this.switch("office");
 	}
 }

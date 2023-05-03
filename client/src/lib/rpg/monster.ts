@@ -57,10 +57,11 @@ API Firefly - This firefly-like monster emits bright flashes of API responses th
 
 */
 
-const slime = () => {
+const bug = () => {
 	return {
-		name: "slime",
+		name: "Bug",
 		type: "monster",
+		monsterType: "BUG",
 		sprite: "./spritesheet.png",
 		stats: {
 			HP: 10,
@@ -80,16 +81,16 @@ const slime = () => {
 };
 
 export const EASY_MONSTERS = [
-	{ monster: slime, weight: 1 },
-	{ monster: slime, weight: 20 },
+	{ monster: bug, weight: 1 },
+	{ monster: bug, weight: 20 },
 ];
 export const MEDIUM_MONSTERS = [
-	{ monster: slime, weight: 1 },
-	{ monster: slime, weight: 20 },
+	{ monster: bug, weight: 1 },
+	{ monster: bug, weight: 20 },
 ];
 export const HARD_MONSTERS = [
-	{ monster: slime, weight: 1 },
-	{ monster: slime, weight: 20 },
+	{ monster: bug, weight: 1 },
+	{ monster: bug, weight: 20 },
 ];
 
 export const generateMonstersByPreset = (preset: string[]) => {

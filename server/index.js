@@ -27,7 +27,8 @@ io.onConnection((channel) => {
 					status: rooms[roomId].status,
 				};
 			})
-			.filter((room) => room.status === "lobby")
+			.filter((room) => room.status === "lobby"),
+		{ reliable: true }
 	);
 
 	channel.onDisconnect(() => {
@@ -50,12 +51,17 @@ io.onConnection((channel) => {
 			// Emit disconnection to all clients
 			io.room(roomId).emit(
 				"lobby-update",
-				Object.values(rooms[roomId].players)
+				Object.values(rooms[roomId].players),
+				{ reliable: true }
 			);
-			io.room(roomId).emit("message-update", {
-				sender: "[system]",
-				message: "A player left the lobby.",
-			});
+			io.room(roomId).emit(
+				"message-update",
+				{
+					sender: "[system]",
+					message: "A player left the lobby.",
+				},
+				{ reliable: true }
+			);
 			// Delete room if all players have left
 			if (rooms[roomId]?.joined.length === 0) {
 				delete rooms[roomId];
@@ -64,11 +70,27 @@ io.onConnection((channel) => {
 	});
 
 	channel.on("message-send", (data) => {
-		if (data?.message)
-			io.room(channel.roomId).emit("message-update", {
-				sender: data?.sender ?? channel.id,
-				message: data.message,
-			});
+		if (data?.message) {
+			if (data?.private) {
+				channel.emit(
+					"message-update",
+					{
+						sender: data?.sender ?? channel.id,
+						message: data.message,
+					},
+					{ reliable: true }
+				);
+			} else {
+				io.room(channel.roomId).emit(
+					"message-update",
+					{
+						sender: data?.sender ?? channel.id,
+						message: data.message,
+					},
+					{ reliable: true }
+				);
+			}
+		}
 	});
 
 	channel.on("dialogue", (data) => {
@@ -82,15 +104,23 @@ io.onConnection((channel) => {
 		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
 		if (rooms[roomId] && count !== players.length) {
 			if (data?.forceall) {
-				io.room(roomId).emit("dialogue", {
-					texts: DIALOGUES[data.scenario] ?? [],
-					scenario: data.scenario,
-				});
+				io.room(roomId).emit(
+					"dialogue",
+					{
+						texts: DIALOGUES[data.scenario] ?? [],
+						scenario: data.scenario,
+					},
+					{ reliable: true }
+				);
 			} else {
-				channel.emit("dialogue", {
-					texts: DIALOGUES[data.scenario] ?? [],
-					scenario: data.scenario,
-				});
+				channel.emit(
+					"dialogue",
+					{
+						texts: DIALOGUES[data.scenario] ?? [],
+						scenario: data.scenario,
+					},
+					{ reliable: true }
+				);
 			}
 		}
 	});
@@ -129,9 +159,13 @@ io.onConnection((channel) => {
 		}
 
 		// Sync dialogue end to all players
-		io.room(channel.roomId).emit("dialogue-end", {
-			scenario: data.scenario,
-		});
+		io.room(channel.roomId).emit(
+			"dialogue-end",
+			{
+				scenario: data.scenario,
+			},
+			{ reliable: true }
+		);
 	});
 	channel.on("action", (data) => {
 		const roomId = channel.roomId;
@@ -139,13 +173,21 @@ io.onConnection((channel) => {
 
 		if (rooms[roomId]) {
 			if (data?.forceall) {
-				io.room(roomId).emit("action", {
-					scenario: data.scenario,
-				});
+				io.room(roomId).emit(
+					"action",
+					{
+						scenario: data.scenario,
+					},
+					{ reliable: true }
+				);
 			} else {
-				channel.emit("action", {
-					scenario: data.scenario,
-				});
+				channel.emit(
+					"action",
+					{
+						scenario: data.scenario,
+					},
+					{ reliable: true }
+				);
 			}
 		}
 	});
@@ -175,9 +217,13 @@ io.onConnection((channel) => {
 			room.actions[data.scenario] = {};
 
 			// Emit action end to all clients
-			io.room(roomId).emit("action", {
-				scenario: data.scenario,
-			});
+			io.room(roomId).emit(
+				"action",
+				{
+					scenario: data.scenario,
+				},
+				{ reliable: true }
+			);
 		}
 	});
 
@@ -203,7 +249,7 @@ io.onConnection((channel) => {
 				customization: {},
 				ready: false,
 			};
-			io.room(roomId).emit("lobby-joined", roomId);
+			io.room(roomId).emit("lobby-joined", roomId, { reliable: true });
 			io.emit(
 				"lobby-listing",
 				Object.keys(rooms)
@@ -215,7 +261,8 @@ io.onConnection((channel) => {
 							status: rooms[roomId].status,
 						};
 					})
-					.filter((room) => room.status === "lobby")
+					.filter((room) => room.status === "lobby"),
+				{ reliable: true }
 			);
 			console.log(`${channel.id} created room ${channel.roomId}`);
 		}
@@ -237,11 +284,15 @@ io.onConnection((channel) => {
 				ready: false,
 			};
 			rooms[roomId].joined.push(channel.id);
-			io.room(roomId).emit("lobby-joined", roomId);
-			io.room(roomId).emit("message-update", {
-				sender: "[system]",
-				message: "A player joined the lobby.",
-			});
+			io.room(roomId).emit("lobby-joined", roomId, { reliable: true });
+			io.room(roomId).emit(
+				"message-update",
+				{
+					sender: "[system]",
+					message: "A player joined the lobby.",
+				},
+				{ reliable: true }
+			);
 		} else {
 			// Else create a new room
 			channel.join(roomId);
@@ -262,7 +313,7 @@ io.onConnection((channel) => {
 				customization: {},
 				ready: false,
 			};
-			io.room(roomId).emit("lobby-joined", roomId);
+			io.room(roomId).emit("lobby-joined", roomId, { reliable: true });
 		}
 		io.emit(
 			"lobby-listing",
@@ -275,7 +326,8 @@ io.onConnection((channel) => {
 						status: rooms[roomId].status,
 					};
 				})
-				.filter((room) => room.status === "lobby")
+				.filter((room) => room.status === "lobby"),
+			{ reliable: true }
 		);
 		console.log(`${channel.id} joined room ${channel.roomId}`);
 	});
@@ -288,7 +340,8 @@ io.onConnection((channel) => {
 			}
 			io.room(roomId).emit(
 				"lobby-update",
-				Object.values(rooms[roomId].players)
+				Object.values(rooms[roomId].players),
+				{ reliable: true }
 			);
 		}
 	});
@@ -303,7 +356,7 @@ io.onConnection((channel) => {
 				rooms[roomId].lobbyPlayers = rooms[roomId].players;
 				rooms[roomId].players = {};
 				rooms[roomId].status = "game";
-				io.room(roomId).emit("lobby-startgame");
+				io.room(roomId).emit("lobby-startgame", {}, { reliable: true });
 			}
 		}
 	});
@@ -339,10 +392,14 @@ io.onConnection((channel) => {
 				rooms[channel.roomId].exploration.players = players;
 				rooms[channel.roomId].exploration.initializeDifficulty();
 			}
-			io.room(channel.roomId).emit("exploration-initialize", {
-				exploration: rooms[channel.roomId].exploration,
-				type: "exploration-initialize",
-			});
+			io.room(channel.roomId).emit(
+				"exploration-initialize",
+				{
+					exploration: rooms[channel.roomId].exploration,
+					type: "exploration-initialize",
+				},
+				{ reliable: true }
+			);
 		}
 	});
 
@@ -363,10 +420,14 @@ io.onConnection((channel) => {
 				rooms[channel.roomId].battle.initializeQueue();
 			}
 			console.log(rooms[channel.roomId].players);
-			io.room(channel.roomId).emit("battle", {
-				battle: rooms[channel.roomId].battle,
-				type: "battle-initialize",
-			});
+			io.room(channel.roomId).emit(
+				"battle",
+				{
+					battle: rooms[channel.roomId].battle,
+					type: "battle-initialize",
+				},
+				{ reliable: true }
+			);
 		}
 	});
 	channel.on("battle-update", (data) => {
@@ -377,11 +438,15 @@ io.onConnection((channel) => {
 		) {
 			rooms[channel.roomId].players[data.player.id] = data.player;
 			// rooms[channel.roomId].battle = data;
-			io.room(channel.roomId).emit("battle", {
-				players: rooms[channel.roomId].players,
-				battle: rooms[channel.roomId].battle,
-				type: "battle-update",
-			});
+			io.room(channel.roomId).emit(
+				"battle",
+				{
+					players: rooms[channel.roomId].players,
+					battle: rooms[channel.roomId].battle,
+					type: "battle-update",
+				},
+				{ reliable: true }
+			);
 		}
 	});
 	channel.on("battle-turn", (data) => {
@@ -465,26 +530,30 @@ io.onConnection((channel) => {
 				});
 			}
 			// Emit updated state to all clients and update the turn queue
-			io.room(channel.roomId).emit("battle", {
-				players: rooms[channel.roomId].players,
-				battle: rooms[channel.roomId].battle,
-				attack: {
-					effects: {
-						attacker: attackerEffects,
-						attackerAccuracy: 100,
-						target: targetEffects,
-						targetAccuracy: 100,
+			io.room(channel.roomId).emit(
+				"battle",
+				{
+					players: rooms[channel.roomId].players,
+					battle: rooms[channel.roomId].battle,
+					attack: {
+						effects: {
+							attacker: attackerEffects,
+							attackerAccuracy: 100,
+							target: targetEffects,
+							targetAccuracy: 100,
+						},
+						damage: damages,
 					},
-					damage: damages,
+					state: {
+						...data.state,
+						attacker: data.state.attacker.id,
+						target: data.state.target.id,
+					},
+					extra: extraInfo,
+					type: "battle-turn",
 				},
-				state: {
-					...data.state,
-					attacker: data.state.attacker.id,
-					target: data.state.target.id,
-				},
-				extra: extraInfo,
-				type: "battle-turn",
-			});
+				{ reliable: true }
+			);
 			battle.updateTurn();
 		}
 	});
@@ -523,25 +592,29 @@ io.onConnection((channel) => {
 				});
 				battle.initializeQueue();
 
-				io.room(channel.roomId).emit("battle", {
-					battle: rooms[channel.roomId].battle,
-					players: players.map((p) => {
-						p.stats.EXP += exp;
-						const oldLevel = p.stats.LEVEL;
-						battle.calculateLevelUp(p);
-						return {
-							id: p.id,
-							stats: p.stats,
-							exp: exp,
-							levelUp: p.stats.LEVEL - oldLevel,
-						};
-					}),
-					leveling: {
-						ready: false,
-						display: true,
+				io.room(channel.roomId).emit(
+					"battle",
+					{
+						battle: rooms[channel.roomId].battle,
+						players: players.map((p) => {
+							p.stats.EXP += exp;
+							const oldLevel = p.stats.LEVEL;
+							battle.calculateLevelUp(p);
+							return {
+								id: p.id,
+								stats: p.stats,
+								exp: exp,
+								levelUp: p.stats.LEVEL - oldLevel,
+							};
+						}),
+						leveling: {
+							ready: false,
+							display: true,
+						},
+						type: "battle-end",
 					},
-					type: "battle-end",
-				});
+					{ reliable: true }
+				);
 				return;
 			}
 
@@ -566,28 +639,36 @@ io.onConnection((channel) => {
 					}
 				}
 
-				io.room(channel.roomId).emit("battle", {
-					players: rooms[channel.roomId].players,
-					battle: rooms[channel.roomId].battle,
-					attack: { effects: {}, damage: damages },
-					state: {
-						type: "single-attack",
-						attacker: monster.id,
-						target: player.id,
-						running: true,
-						text: "quick attack",
-						finished: false,
-						initialPosition: { x: 0, y: 0 },
+				io.room(channel.roomId).emit(
+					"battle",
+					{
+						players: rooms[channel.roomId].players,
+						battle: rooms[channel.roomId].battle,
+						attack: { effects: {}, damage: damages },
+						state: {
+							type: "single-attack",
+							attacker: monster.id,
+							target: player.id,
+							running: true,
+							text: "quick attack",
+							finished: false,
+							initialPosition: { x: 0, y: 0 },
+						},
+						extra: "",
+						type: "battle-turn",
 					},
-					extra: "",
-					type: "battle-turn",
-				});
+					{ reliable: true }
+				);
 				battle.updateTurn();
 				battle.ready = 0;
 			} else {
-				io.room(channel.roomId).emit("battle", {
-					type: "battle-pointer",
-				});
+				io.room(channel.roomId).emit(
+					"battle",
+					{
+						type: "battle-pointer",
+					},
+					{ reliable: true }
+				);
 				battle.ready = 0;
 			}
 		}
@@ -602,17 +683,25 @@ io.onConnection((channel) => {
 			// Check if all players are ready before continueing
 			if (++battle.levelReady !== players.length) return;
 
-			io.room(channel.roomId).emit("leveling", {
-				type: "leveling-end",
-			});
+			io.room(channel.roomId).emit(
+				"leveling",
+				{
+					type: "leveling-end",
+				},
+				{ reliable: true }
+			);
 		}
 	});
 	channel.on("leveling-update", (data) => {
 		if (rooms[channel.roomId] && data) {
-			io.room(channel.roomId).emit("leveling", {
-				type: "leveling-update",
-				players: [data],
-			});
+			io.room(channel.roomId).emit(
+				"leveling",
+				{
+					type: "leveling-update",
+					players: [data],
+				},
+				{ reliable: true }
+			);
 		}
 	});
 });

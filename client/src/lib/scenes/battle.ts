@@ -131,15 +131,19 @@ export default class BattleScene extends Scene {
 		if (channel) {
 			channel.emit("battle-initialize", {
 				players: this.players.map((p) => p.id),
-				monsters: monsters.map((m: any, i: number) => {
-					return {
-						id: "monster" + i,
-						name: m.name,
-						stats: m.stats,
-						battleStats: m.battleStats,
-						type: m.type,
-					};
-				}),
+				monsters: monsters.map(
+					(m: any, i: number) => {
+						return {
+							id: "monster" + i,
+							name: m.name,
+							stats: m.stats,
+							battleStats: m.battleStats,
+							type: m.type,
+							monsterType: m.monsterType,
+						};
+					},
+					{ reliable: true }
+				),
 			});
 		}
 
@@ -160,6 +164,7 @@ export default class BattleScene extends Scene {
 	}
 
 	sync(data: any) {
+		const channel = window.channel;
 		if (data.type === "leveling-update") {
 			const players = data.players;
 			this.players.forEach((p) => {
@@ -170,8 +175,39 @@ export default class BattleScene extends Scene {
 			});
 		} else if (data.type === "leveling-end") {
 			this.switch("exploration");
+			channel?.emit(
+				"message-send",
+				{
+					sender: "[battle]",
+					message: "Battle ended",
+					private: true,
+				},
+				{ reliable: true }
+			);
 		} else if (data.type === "battle-end") {
 			console.log("Battle ended");
+			// Update quest clearing
+			const currentTasks = this.game.data.currentTasks;
+			if (currentTasks) {
+				for (let i = currentTasks.length - 1; i >= 0; i--) {
+					const task = currentTasks[i];
+					if (task?.type === "BUGS") {
+						task.check();
+						console.log(task);
+						if (task.progress >= 100) {
+							const solvedTask = currentTasks.splice(i, 1);
+							this.game.data.solvedTasks.push(solvedTask);
+
+							// Reward players
+							// TODO: move this to serverside
+							const rewards = task.rewards;
+							this.player.stats.gold += rewards.money;
+							this.player.stats.exp += rewards.exp;
+						}
+					}
+				}
+			}
+
 			const leveling = data.leveling;
 			const players = data.players;
 			this.battle.leveling.ready = leveling.ready;
@@ -311,10 +347,11 @@ export default class BattleScene extends Scene {
 				monsterSprite.setDepth(monsterSprite.y);
 				monsterSprite.flipX = false;
 				monsterSprite.animationState = "idle";
-				monsterSprite.name = monster.name + " " + index;
+				monsterSprite.name = monster.name;
 				monsterSprite.stats = monster.stats;
 				monsterSprite.battleStats = monster.battleStats;
 				monsterSprite.type = monster.type;
+				monsterSprite.monsterType = monster.monsterType;
 				monsterSprite.effects = monster.effects;
 				monsterSprite.id = "monster" + index;
 
@@ -397,17 +434,22 @@ export default class BattleScene extends Scene {
 			if (clientPlayers.join() !== serverPlayers.join()) {
 				const channel = window.channel;
 				if (channel) {
-					channel.emit("battle-initialize", {
-						players: this.players?.map((p) => p.id) || [],
-						monsters: this.monsters.map((m: any) => {
-							return {
-								name: m.name,
-								stats: m.stats,
-								battleStats: m.battleStats,
-								type: m.type,
-							};
-						}),
-					});
+					channel.emit(
+						"battle-initialize",
+						{
+							players: this.players?.map((p) => p.id) || [],
+							monsters: this.monsters.map((m: any) => {
+								return {
+									name: m.name,
+									stats: m.stats,
+									battleStats: m.battleStats,
+									type: m.type,
+									monsterType: m.monsterType,
+								};
+							}),
+						},
+						{ reliable: true }
+					);
 				}
 				this.observable.notify();
 			}
@@ -436,6 +478,21 @@ export default class BattleScene extends Scene {
 				this.battle.state.finished = false;
 				this.battle.state.running = false;
 				this.battle.updateActionQueue();
+				const channel = window.channel;
+				if (
+					this.battle.actionText !== "" &&
+					channel &&
+					this.battle.actionText !== "Battle ended"
+				)
+					channel?.emit(
+						"message-send",
+						{
+							sender: "[battle]",
+							message: this.battle.actionText,
+							private: true,
+						},
+						{ reliable: true }
+					);
 			}
 		} else if (this.battle?.state.type === "skip") {
 			if (!this.battle.state.finished) {
@@ -447,9 +504,13 @@ export default class BattleScene extends Scene {
 				// Turn finished
 				const channel = window.channel;
 				if (channel)
-					channel.emit("battle-turn-finished", {
-						turns: this.battle.turns,
-					});
+					channel.emit(
+						"battle-turn-finished",
+						{
+							turns: this.battle.turns,
+						},
+						{ reliable: true }
+					);
 			}
 		}
 
@@ -536,10 +597,14 @@ export default class BattleScene extends Scene {
 		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit("battle-update", {
-				player: this.player.getData(),
-				battle: this.battle,
-			});
+			channel.emit(
+				"battle-update",
+				{
+					player: this.player.getData(),
+					battle: this.battle,
+				},
+				{ reliable: true }
+			);
 		}
 	}
 }

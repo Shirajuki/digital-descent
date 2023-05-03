@@ -43,6 +43,7 @@ declare global {
 		exploration: any;
 		engine: any; // For testing and debugging purposes
 		playerBattleClass: string;
+		playerName: string;
 	}
 }
 declare module "phaser" {

@@ -42,7 +42,7 @@ function Game() {
 					setRoomId(data);
 					console.log(`You joined the room ${data}`);
 				});
-				channel.emit("lobby-join", { roomId: "test-room" });
+				channel.emit("lobby-join", { roomId: "test-room" }, { reliable: true });
 			});
 		}
 
