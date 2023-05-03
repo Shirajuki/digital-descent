@@ -1,4 +1,4 @@
-import { SCALE } from "../constants";
+import { NAMES, SCALE } from "../constants";
 import {
 	MONSTER_PRESET_BY_RISKLEVEL,
 	generateMonstersByPreset,
@@ -131,6 +131,7 @@ export default class BattleScene extends Scene {
 		let monsters = generateMonstersByPreset(
 			preset[Math.floor(Math.random() * preset.length)]
 		);
+		monsters = generateMonstersByPreset(["easy"]); // TEST
 		this.monsters = [];
 
 		// Initialize battle
@@ -182,6 +183,13 @@ export default class BattleScene extends Scene {
 				}
 			});
 		} else if (data.type === "leveling-end") {
+			// Reset all players by changing out the id
+			for (let i = 0; i < this.players.length; i++) {
+				const player = this.players[i];
+				player.id = "entityKill" + i;
+				player.name = "entityKill" + i;
+			}
+
 			this.switch("exploration");
 			channel?.emit(
 				"message-send",
@@ -507,6 +515,7 @@ export default class BattleScene extends Scene {
 						},
 						{ reliable: true }
 					);
+				this.observable.notify();
 			}
 		} else if (this.battle?.state.type === "skip") {
 			if (!this.battle.state.finished) {
@@ -609,6 +618,7 @@ export default class BattleScene extends Scene {
 		// Update name entity to player position
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i];
+			if (player.name !== NAMES[i]) player.name = NAMES[i];
 			if (player.nameEntity.text !== player.name)
 				player.nameEntity.setText(player.name);
 			player.nameEntity.x = player.x;

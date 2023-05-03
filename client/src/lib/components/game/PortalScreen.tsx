@@ -1,8 +1,9 @@
 import { useAtom } from "jotai";
-import { engineAtom } from "../../atoms";
+import { engineAtom, selectsAtom } from "../../atoms";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import DigitalWorldScene from "../../scenes/digitalworld";
+import { PLAYER_COLORS } from "../../constants";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -16,6 +17,8 @@ const PortalScreen = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
 	const [scaling, setScaling] = useState(1);
 	const [infoPopup] = useAutoAnimate();
+	const [select, setSelect] = useState<any>(null);
+	const [selects, setSelects] = useAtom(selectsAtom);
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
 	useEffect(() => {
@@ -34,8 +37,42 @@ const PortalScreen = () => {
 		engine?.game.scene.getScene(engine.game.currentScene) as DigitalWorldScene
 	)?.player;
 
+	const channel = window.channel;
+	if (channel && !channel.portalLoaded) {
+		channel.portalLoaded = true;
+		channel.on("selects", (data: any) => {
+			if (data.type === "selects-update") {
+				setSelects(data.selects);
+				forceUpdate();
+			}
+		});
+	}
+
+	useEffect(() => {
+		console.log(selects);
+		const sel = Object.values(selects);
+		const selSet = new Set(sel);
+		if (scene.players.length === sel.length && selSet.size === 1) {
+			if (selSet.has("work")) {
+				togglePortal();
+				scene.switch("exploration");
+				setTimeout(() => scene.observable.notify(), 1000);
+			} else {
+				togglePortal();
+			}
+		}
+	}, [selects]);
+
 	const togglePortal = () => {
 		if (scene?.portal?.display) {
+			window.channel.emit(
+				"selects-reset",
+				{
+					id: player.id,
+				},
+				{ reliable: true }
+			);
+
 			scene.portal.display = false;
 		}
 		forceUpdate();
@@ -69,23 +106,68 @@ const PortalScreen = () => {
 					</div>
 					<div className="flex flex-col gap-3 pl-2 h-full">
 						<button
-							className={`bg-gray-900 h-full text-2xl [width:calc(100%-1rem)] text-center transition-all duration-500 ${
+							className={`relative bg-gray-900 h-full text-2xl [width:calc(100%-1rem)] text-center transition-all duration-500 ${
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
-								togglePortal();
-								scene.switch("exploration");
-								setTimeout(() => scene.observable.notify(), 1000);
+								window.channel.emit(
+									"selects-update",
+									{
+										id: player.id,
+										select: select === "work" ? null : "work",
+									},
+									{ reliable: true }
+								);
+								setSelect(select === "work" ? null : "work");
 							}}
 						>
+							{scene.players.map((p, i) => {
+								if (selects[p.id] !== "work")
+									return <div key={"workselect" + i} className="hidden"></div>;
+								return (
+									<div
+										key={"workselect" + i}
+										className={`absolute top-0 h-5 w-5 ${
+											PLAYER_COLORS[i % PLAYER_COLORS.length]
+										} -translate-x-2 -translate-y-2 rotate-45`}
+										style={{ left: i * 32 }}
+									></div>
+								);
+							})}
 							work
 						</button>
 						<button
-							className={`bg-gray-900 text-sm [width:calc(100%-1rem)] text-center transition-all duration-500 ${
+							className={`relative bg-gray-900 h-24 text-sm [width:calc(100%-1rem)] text-center transition-all duration-500 ${
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
-							onClick={() => togglePortal()}
+							onClick={() => {
+								window.channel.emit(
+									"selects-update",
+									{
+										id: player.id,
+										select: select === "delivery" ? null : "delivery",
+									},
+									{ reliable: true }
+								);
+								setSelect(select === "delivery" ? null : "delivery");
+								// togglePortal();
+							}}
 						>
+							{scene.players.map((p, i) => {
+								if (selects[p.id] !== "delivery")
+									return (
+										<div key={"deliveryselect" + i} className="hidden"></div>
+									);
+								return (
+									<div
+										key={"deliveryselect" + i}
+										className={`absolute top-0 h-5 w-5 ${
+											PLAYER_COLORS[i % PLAYER_COLORS.length]
+										} -translate-x-2 -translate-y-2 rotate-45`}
+										style={{ left: i * 32 }}
+									></div>
+								);
+							})}
 							delivery
 						</button>
 					</div>

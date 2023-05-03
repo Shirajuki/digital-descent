@@ -7,7 +7,8 @@ export const removeDuplicatePlayers = (scene: any, serverPlayers: any[]) => {
 		const player = scene.players[i];
 		if (
 			(!serverPlayers.includes(player.id) && scene.player?.id !== player.id) ||
-			(scene.player?.id == player.id && scene.player != player)
+			(scene.player?.id == player.id && scene.player != player) ||
+			!player.displayList
 		) {
 			const p = scene.players.splice(i, 1)[0];
 			p.nameEntity.destroy();
@@ -75,6 +76,7 @@ export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
 };
 
 export const updatePlayers = (scene: any, playerData: any) => {
+	console.log(scene.players, playerData);
 	// Update player position
 	for (let i = 0; i < scene.players.length; i++) {
 		const player = scene.players[i];

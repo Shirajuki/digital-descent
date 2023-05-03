@@ -228,6 +228,39 @@ io.onConnection((channel) => {
 		}
 	});
 
+	// Selects listeners
+	// Specifically for portal selection as of now
+	channel.on("selects-update", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId) return;
+		if (rooms[roomId]) {
+			rooms[roomId].selects[channel.id] = data.select;
+			io.room(roomId).emit(
+				"selects",
+				{
+					selects: rooms[roomId].selects,
+					type: "selects-update",
+				},
+				{ reliable: true }
+			);
+		}
+	});
+	channel.on("selects-reset", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId) return;
+		if (rooms[roomId]) {
+			rooms[roomId].selects[channel.id] = null;
+			io.room(roomId).emit(
+				"selects",
+				{
+					selects: rooms[roomId].selects,
+					type: "selects-update",
+				},
+				{ reliable: true }
+			);
+		}
+	});
+
 	channel.on("lobby-create", (data) => {
 		const roomId = data.roomId;
 		if (!roomId) return;
@@ -244,6 +277,7 @@ io.onConnection((channel) => {
 				host: channel.id,
 				dialogues: [],
 				actions: {},
+				selects: {},
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -309,6 +343,7 @@ io.onConnection((channel) => {
 				host: channel.id,
 				dialogues: [],
 				actions: {},
+				selects: {},
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,

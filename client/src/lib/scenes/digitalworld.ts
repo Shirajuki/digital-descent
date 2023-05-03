@@ -397,6 +397,6 @@ export default class DigitalWorldScene extends Scene {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", { player: this.player.getData() });
 		}
-		this.switch("exploration");
+		// this.switch("exploration");
 	}
 }
