@@ -115,6 +115,15 @@ const TaskBoardScreen = () => {
 									currentTasks.splice(destination.index, 0, task[0]);
 								}
 							}
+
+							window.channel.emit(
+								"task-update",
+								{
+									openTasks: openTasks,
+									currentTasks: currentTasks,
+								},
+								{ reliable: true }
+							);
 							scene.observable.notify();
 							forceUpdate();
 						}}

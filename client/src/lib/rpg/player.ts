@@ -7,6 +7,19 @@ export const initializePlayer = (
 	oldPlayer: any = null
 ) => {
 	const player = scene.add.sprite(0, 0, "player");
+	const playerName = scene.add.text(0, 0, window.playerName || name, {
+		fontFamily: "Arial",
+		fontSize: "16px",
+		color: "#ffffff",
+		stroke: "#000000",
+		strokeThickness: 4,
+	}) as any;
+	playerName.setScale(1);
+	playerName.setAlpha(1);
+	playerName.setDepth(1000);
+	playerName.setOrigin(0.5, 0.5);
+	player.nameEntity = playerName;
+
 	// General
 	player.setScale(SCALE);
 	player.flipX = true;
@@ -24,6 +37,11 @@ export const initializePlayer = (
 	player.skills = getSkills(player);
 
 	player.inventory = [];
+	player.equipment = {
+		weapon: null,
+		armor: null,
+		accessory: null,
+	};
 
 	// Event collisions
 	player.eventCollision = "";
@@ -69,6 +87,8 @@ export const initializePlayer = (
 			battleStats: this.battleStats,
 			onTeleportingPad: this.onTeleportingPad,
 			eventCollision: this.eventCollision,
+			inventory: this.inventory,
+			equipment: this.equipment,
 		};
 	};
 	player.updatePlayerAnimation = function () {
@@ -135,6 +155,9 @@ export const initializePlayer = (
 		this.updatePlayerAnimation();
 
 		this.setDepth(this.y);
+		this.nameEntity.x = this.x;
+		this.nameEntity.y = this.y - 40;
+		this.nameEntity.setDepth(this.y + 1);
 	};
 	const channel = window.channel;
 	if (channel) player.id = channel.id;

@@ -10,7 +10,6 @@ import {
 import Scene from "./scene";
 import collisions from "../collisions/digitalWorldCollisions.json";
 import { DEBUG } from "../constants";
-import { generateTasks } from "../rpg/systems/taskSystem";
 
 export default class DigitalWorldScene extends Scene {
 	public text: any;
@@ -50,13 +49,13 @@ export default class DigitalWorldScene extends Scene {
 	) {
 		super(config, observable);
 	}
-	togglePopup(data: any): void {
+	togglePopup(data: any, force: any = null): void {
 		if (data === "taskboard") {
-			this.taskboard.display = !this.taskboard.display;
+			this.taskboard.display = force ? force.force : !this.taskboard.display;
 		} else if (data === "portal") {
-			this.portal.display = !this.portal.display;
+			this.portal.display = force ? force.force : !this.portal.display;
 		} else if (data === "shop") {
-			this.shop.display = !this.shop.display;
+			this.shop.display = force ? force.force : !this.shop.display;
 		}
 		this.observable.notify();
 	}
@@ -226,7 +225,7 @@ export default class DigitalWorldScene extends Scene {
 		const channel = window.channel;
 
 		if (action === "OPEN_TASKBOARD") {
-			this.togglePopup("taskboard");
+			this.togglePopup("taskboard", { force: true });
 			if (channel)
 				channel.emit(
 					"dialogue",
@@ -236,7 +235,7 @@ export default class DigitalWorldScene extends Scene {
 					{ reliable: true }
 				);
 		} else if (action === "OPEN_PORTAL") {
-			this.togglePopup("portal");
+			this.togglePopup("portal", { force: true });
 			if (channel)
 				channel.emit(
 					"dialogue",
@@ -246,7 +245,7 @@ export default class DigitalWorldScene extends Scene {
 					{ reliable: true }
 				);
 		} else if (action === "OPEN_SHOP") {
-			this.togglePopup("shop");
+			this.togglePopup("shop", { force: true });
 			if (channel)
 				channel.emit(
 					"dialogue",
@@ -259,7 +258,7 @@ export default class DigitalWorldScene extends Scene {
 			this.dialogue.ended.push("TASKBOARD_INTRO");
 			this.taskboard.display = false;
 			const taskIndex = this.game.data.currentTasks.findIndex(
-				(t: any) => (t.id = "0")
+				(t: any) => t.id === "0"
 			);
 			this.game.data.currentTasks[taskIndex].progress = 100;
 			this.game.data.solvedTasks.push(
@@ -285,7 +284,7 @@ export default class DigitalWorldScene extends Scene {
 			this.dialogue.ended.push("PORTAL_INTRO");
 			this.portal.display = false;
 			const taskIndex = this.game.data.currentTasks.findIndex(
-				(t: any) => (t.id = "2")
+				(t: any) => t.id === "2"
 			);
 			this.game.data.currentTasks[taskIndex].progress = 100;
 			this.game.data.solvedTasks.push(
@@ -310,7 +309,7 @@ export default class DigitalWorldScene extends Scene {
 			this.dialogue.ended.push("SHOP_INTRO");
 			this.shop.display = false;
 			const taskIndex = this.game.data.currentTasks.findIndex(
-				(t: any) => (t.id = "1")
+				(t: any) => t.id === "1"
 			);
 			this.game.data.currentTasks[taskIndex].progress = 100;
 			this.game.data.solvedTasks.push(
@@ -398,5 +397,6 @@ export default class DigitalWorldScene extends Scene {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", { player: this.player.getData() });
 		}
+		this.switch("exploration");
 	}
 }

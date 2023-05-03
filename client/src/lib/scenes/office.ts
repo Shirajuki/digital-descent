@@ -173,21 +173,29 @@ export default class OfficeScene extends Scene {
 				);
 			}
 		} else if (action === "TELEPORT_TO_DIGITALWORLD") {
+			const channel = window.channel;
 			this.switch("digitalworld");
+
+			// Generate new set of tasks
 			const tasks = generateTasks(20);
 			this.game.data.openTasks = tasks;
+			channel?.emit(
+				"task-initialize",
+				{
+					tasks: tasks,
+				},
+				{ reliable: true }
+			);
+
 			// Trigger new dialogue for first time in digital world intro
 			setTimeout(() => {
-				const channel = window.channel;
-				if (channel) {
-					channel.emit(
-						"dialogue",
-						{
-							scenario: "DIGITALWORLD_INTRO",
-						},
-						{ reliable: true }
-					);
-				}
+				channel?.emit(
+					"dialogue",
+					{
+						scenario: "DIGITALWORLD_INTRO",
+					},
+					{ reliable: true }
+				);
 			}, 1000);
 		}
 	}

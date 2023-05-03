@@ -1,3 +1,6 @@
+export const lerp = (a: number, b: number, n: number) => {
+	return (1 - n) * a + n * b;
+};
 export const clearFocus = () => {
 	if (document.activeElement instanceof HTMLElement) {
 		document.activeElement.blur();

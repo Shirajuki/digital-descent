@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
-import { ELEMENT } from "../../constants";
+import { ELEMENT, PLAYER_COLORS } from "../../constants";
 import EffectIcon from "./EffectIcon";
 
 function useAutoAnimate(options = {}) {
@@ -106,7 +106,11 @@ const BattleHUD = () => {
 									</div>
 									<p className="text-xs">LV.{player.stats.LEVEL}</p>
 									<p>{player.name}</p>
-									<span className="px-1">•</span>
+									<div
+										className={`w-2 h-2 rotate-45 ${
+											PLAYER_COLORS[i % PLAYER_COLORS.length]
+										} bg-opacity-90`}
+									></div>
 								</div>
 							</div>
 							<div className="pr-5 flex flex-col items-end w-32">

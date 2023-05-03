@@ -1,11 +1,16 @@
 import { SCALE } from "../constants";
-import { generateMonstersByPreset } from "../rpg/monster";
+import {
+	MONSTER_PRESET_BY_RISKLEVEL,
+	generateMonstersByPreset,
+} from "../rpg/monster";
 import BattleSystem from "../rpg/systems/battleSystem";
 import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
 import { removeDuplicatePlayers, reorderPlayers } from "../rpg/sync";
 import { animateSingleAttack, animateStandingAttack } from "../rpg/animation";
+import { weightedRandom } from "../utils";
+import { randomInt } from "../utils";
 
 /*
 engine.game.scene.getScene(engine.game.currentScene).switch("battle")
@@ -122,7 +127,10 @@ export default class BattleScene extends Scene {
 		this.cameras.main.startFollow(this.centerPoint, true, 0.03, 0.03);
 
 		// Generate monsters
-		let monsters = generateMonstersByPreset(["easy", "easy"]);
+		const preset = MONSTER_PRESET_BY_RISKLEVEL[1];
+		let monsters = generateMonstersByPreset(
+			preset[Math.floor(Math.random() * preset.length)]
+		);
 		this.monsters = [];
 
 		// Initialize battle
@@ -192,11 +200,17 @@ export default class BattleScene extends Scene {
 				for (let i = currentTasks.length - 1; i >= 0; i--) {
 					const task = currentTasks[i];
 					if (task?.type === "BUGS") {
-						task.check();
+						for (let j = 0; j < this.monsters.length; j++) {
+							const m = this.monsters[j];
+							if (m.monsterType === "BUG") {
+								task.check();
+							}
+						}
 						console.log(task);
 						if (task.progress >= 100) {
-							const solvedTask = currentTasks.splice(i, 1);
-							this.game.data.solvedTasks.push(solvedTask);
+							task.progress = 100;
+							currentTasks.splice(i, 1);
+							this.game.data.solvedTasks.push(task);
 
 							// Reward players
 							// TODO: move this to serverside
@@ -592,6 +606,15 @@ export default class BattleScene extends Scene {
 		if (monsterHasEffects) this.observable.notify("effect");
 		// Render depth of player
 		this.player.setDepth(this.player.y);
+		// Update name entity to player position
+		for (let i = 0; i < this.players.length; i++) {
+			const player = this.players[i];
+			if (player.nameEntity.text !== player.name)
+				player.nameEntity.setText(player.name);
+			player.nameEntity.x = player.x;
+			player.nameEntity.y = player.y - 40;
+			player.nameEntity.setDepth(player.y + 1);
+		}
 
 		// Multiplayer test
 		const channel = window.channel;

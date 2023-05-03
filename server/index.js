@@ -45,6 +45,7 @@ io.onConnection((channel) => {
 		// Remove player from room on disconnect
 		if (rooms[roomId]) {
 			delete rooms[roomId].players[channel.id];
+			delete rooms[roomId].cursors[channel.id];
 			rooms[roomId].joined = rooms[roomId].joined.filter(
 				(id) => id === channel.id
 			);
@@ -234,6 +235,7 @@ io.onConnection((channel) => {
 			channel.join(roomId);
 			rooms[roomId] = {
 				players: {},
+				cursors: {},
 				battle: {},
 				exploration: {},
 				name: data.name ?? "An open room",
@@ -298,6 +300,7 @@ io.onConnection((channel) => {
 			channel.join(roomId);
 			rooms[roomId] = {
 				players: {},
+				cursors: {},
 				battle: {},
 				exploration: {},
 				name: "An open room",
@@ -358,6 +361,24 @@ io.onConnection((channel) => {
 				rooms[roomId].status = "game";
 				io.room(roomId).emit("lobby-startgame", {}, { reliable: true });
 			}
+		}
+	});
+
+	channel.on("mouse-move", (data) => {
+		const roomId = channel.roomId;
+		if (!roomId) return;
+
+		if (rooms[roomId] && channel.id !== "undefined") {
+			rooms[roomId].cursors[channel.id] = {
+				id: channel.id,
+				x: data.x,
+				y: data.y,
+				scaling: data.scaling,
+			};
+			io.room(roomId).emit("mouse-move", {
+				cursors: rooms[roomId].cursors,
+				type: "mouse-move",
+			});
 		}
 	});
 
@@ -699,6 +720,33 @@ io.onConnection((channel) => {
 				{
 					type: "leveling-update",
 					players: [data],
+				},
+				{ reliable: true }
+			);
+		}
+	});
+
+	// Task listeners
+	channel.on("task-initialize", (data) => {
+		if (rooms[channel.roomId] && data.tasks) {
+			io.room(channel.roomId).emit(
+				"task",
+				{
+					type: "task-initialize",
+					tasks: data.tasks,
+				},
+				{ reliable: true }
+			);
+		}
+	});
+	channel.on("task-update", (data) => {
+		if (rooms[channel.roomId] && data) {
+			io.room(channel.roomId).emit(
+				"task",
+				{
+					type: "task-update",
+					openTasks: data.openTasks,
+					currentTasks: data.currentTasks,
 				},
 				{ reliable: true }
 			);

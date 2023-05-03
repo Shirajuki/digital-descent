@@ -68,6 +68,7 @@ function Game() {
 				};
 			}
 			scene.dialogueSync();
+			scene.observable.notify();
 		});
 		channel.on("dialogue-end", () => {
 			const scene = engine.game.scene.getScene(
@@ -99,6 +100,21 @@ function Game() {
 					data
 				);
 			}
+		});
+		// Task syncing
+		channel.on("task", (data: any) => {
+			const scene = engine.game.scene.getScene(
+				engine.game.currentScene
+			) as Scene;
+
+			if (data?.type === "task-initialize") {
+				scene.game.data.openTasks = data?.tasks;
+			} else if (data?.type === "task-update") {
+				scene.game.data.openTasks = data?.openTasks;
+				scene.game.data.currentTasks = data?.currentTasks;
+			}
+
+			scene.observable.notify();
 		});
 
 		// Battle syncing

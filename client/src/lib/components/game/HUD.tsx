@@ -3,6 +3,7 @@ import BattleHUD from "./BattleHUD";
 import PhaserEngine from "../../engine";
 import EffectHUD from "./EffectHUD";
 import WinScreen from "./WinScreen";
+import CursorScreen from "./CursorScreen";
 import DialogueScreen from "./DialogueScreen";
 import TaskBoardScreen from "./TaskBoardScreen";
 import ShopScreen from "./ShopScreen";
@@ -47,6 +48,7 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 				<></>
 			)}
 			<DialogueScreen />
+			<CursorScreen />
 		</>
 	);
 }

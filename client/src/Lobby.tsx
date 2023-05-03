@@ -3,7 +3,7 @@ import { roomIdAtom } from "./lib/atoms";
 import { useCallback, useEffect, useState } from "react";
 import Chat from "./lib/components/chat/Chat";
 import { useNavigate } from "react-router-dom";
-import { NAMES } from "./lib/constants";
+import { CURSOR_COLORS, NAMES } from "./lib/constants";
 
 type LobbyPlayersType = {
 	id: string;
@@ -95,8 +95,12 @@ function Lobby() {
 								key={player.id}
 								className={`bg-slate-200 bg-opacity-0 h-48 rounded-sm flex flex-col gap justify-between items-center ${
 									player.id == window?.channel?.id
-										? "border-stone-100 border-opacity-20 border-4 bg-opacity-0"
-										: ""
+										? `border-stone-100 border-opacity-50 border-4 bg-opacity-0 ${
+												CURSOR_COLORS[i % CURSOR_COLORS.length]
+										  }`
+										: `border-4 border-opacity-[0.15] ${
+												CURSOR_COLORS[i % CURSOR_COLORS.length]
+										  }`
 								}`}
 							>
 								<div className="bg-[rgba(255,255,255,0.05)] m-2 [width:calc(100%-1rem)] h-full text-center rounded-sm">
@@ -126,13 +130,15 @@ function Lobby() {
 							className="max-h-24 h-24"
 						/>
 						<div className="bg-[rgba(255,255,255,0.05)] w-full rounded-md p-2">
-							<p className="text-center">Observers</p>
+							{/* <p className="text-center">Observers</p> */}
 						</div>
 					</div>
 				</div>
 				<div className="flex flex-col w-4/12 justify-between gap-4">
 					<div className="bg-[rgba(255,255,255,0.05)] p-4 h-full">
-						<div className="bg-slate-200 bg-opacity-10 h-72"></div>
+						{/* <div className="bg-slate-200 bg-opacity-10 h-72 p-2">
+							<p className="text-center">Customization</p>
+						</div> */}
 					</div>
 					{player.host && players?.every((p) => p.ready) ? (
 						<button

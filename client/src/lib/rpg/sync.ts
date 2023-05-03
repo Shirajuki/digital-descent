@@ -10,6 +10,7 @@ export const removeDuplicatePlayers = (scene: any, serverPlayers: any[]) => {
 			(scene.player?.id == player.id && scene.player != player)
 		) {
 			const p = scene.players.splice(i, 1)[0];
+			p.nameEntity.destroy();
 			p.destroy();
 		}
 	}
@@ -24,13 +25,21 @@ export const addPlayers = (
 	const clientPlayers = scene.players.map((player: any) => player.id);
 	for (let i = 0; i < serverPlayers.length; i++) {
 		if (!clientPlayers.includes(serverPlayers[i])) {
-			const player: any = initializePlayer(scene, serverPlayersData[i].id);
-			player.id = serverPlayersData[i].id;
-			player.name = NAMES[i] ?? serverPlayersData[i].id;
+			const data = serverPlayersData[i];
+			const player: any = initializePlayer(scene, data.id);
+			player.id = data.id;
+			player.name = NAMES[i] ?? data.id;
+			player.nameEntity.setText(NAMES[i] ?? data.id);
+			if (data.stats) player.stats = data.stats;
+			if (data.battleStats) player.battleStats = data.battleStats;
+			if (data.inventory) player.inventory = data.inventory;
+			if (data.equipment) player.equipment = data.equipment;
 			scene.players.push(player);
+			scene.observable.notify();
 		}
 		if (serverPlayers[i] === scene.player?.id) {
 			scene.player.name = NAMES[i];
+			scene.player.nameEntity.setText(NAMES[i]);
 			window.playerName = NAMES[i] ?? "Player";
 		}
 	}
@@ -58,7 +67,9 @@ export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
 		// Update name on player
 		for (let i = 0; i < scene.players.length; i++) {
 			const player = scene.players[i];
-			player.name = NAMES[i];
+			if (player) {
+				player.name = NAMES[i];
+			}
 		}
 	}
 };
@@ -75,5 +86,8 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.eventCollision = playerData[player.id].eventCollision;
 		if (player.movement) player.updatePlayerAnimation();
 		player.setDepth(player.y);
+		player.nameEntity.x = player.x;
+		player.nameEntity.y = player.y - 40;
+		player.nameEntity.setDepth(player.y + 1);
 	}
 };
