@@ -238,7 +238,7 @@ export default class BattleScene extends Scene {
 						for (let j = 0; j < this.monsters.length; j++) {
 							const m = this.monsters[j];
 							if (m.monsterType === "BUG") {
-								task.check();
+								if (task.check) task?.check();
 							}
 						}
 						console.log(task);
