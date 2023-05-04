@@ -52,7 +52,7 @@ const PortalScreen = () => {
 		console.log(selects);
 		const sel = Object.values(selects);
 		const selSet = new Set(sel);
-		if (scene.players.length === sel.length && selSet.size === 1) {
+		if (scene?.players.length === sel.length && selSet.size === 1) {
 			if (selSet.has("work")) {
 				togglePortal();
 				scene.switch("exploration");
@@ -121,7 +121,7 @@ const PortalScreen = () => {
 								setSelect(select === "work" ? null : "work");
 							}}
 						>
-							{scene.players.map((p, i) => {
+							{scene?.players.map((p, i) => {
 								if (selects[p.id] !== "work")
 									return <div key={"workselect" + i} className="hidden"></div>;
 								return (
@@ -153,7 +153,7 @@ const PortalScreen = () => {
 								// togglePortal();
 							}}
 						>
-							{scene.players.map((p, i) => {
+							{scene?.players.map((p, i) => {
 								if (selects[p.id] !== "delivery")
 									return (
 										<div key={"deliveryselect" + i} className="hidden"></div>
