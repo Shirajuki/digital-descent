@@ -185,6 +185,7 @@ export default class ExplorationScene extends Scene {
 
 		// Check steps
 		this.checkSteps();
+		this.game.data.returnBackTo = "exploration";
 	}
 
 	sync(data: any) {
@@ -213,6 +214,9 @@ export default class ExplorationScene extends Scene {
 	checkSteps() {
 		if (this.game.data.steps > 6) {
 			this.game.data.steps = 0;
+			if (this.game.data.days % 5 === 0) {
+				this.game.data.displayDays = this.game.data.days;
+			}
 			this.game.data.days += 1;
 			const channel = window.channel;
 			if (channel)

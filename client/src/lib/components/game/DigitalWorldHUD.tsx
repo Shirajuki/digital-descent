@@ -46,12 +46,23 @@ const DigitalWorldHUD = () => {
 		>
 			{/* Taskboard, day and milestone */}
 			<div className="absolute top-5 left-5 flex flex-col gap-2 [user-select:none]">
-				<div className="flex gap-1">
-					<div className="bg-slate-500 rounded-sm w-16 text-sm py-2 px-2">
-						Day {engine?.game.data.days}
+				<div
+					className="flex gap-1 cursor-pointer"
+					onClick={() => {
+						scene.days.display = true;
+						scene.observable.notify();
+					}}
+				>
+					<div className="bg-slate-500 rounded-sm w-24 text-center text-sm py-2 px-2">
+						CALENDAR
 					</div>
-					<div className="bg-slate-500 rounded-sm w-36 text-sm py-2 px-2">
-						WORKDAY
+					<div className="flex">
+						<div className="bg-slate-500 rounded-sm rounded-r-none w-16 text-center text-sm py-2 pl-2 pr-1">
+							Day {engine?.game.data.days}
+						</div>
+						<div className="bg-slate-500 rounded-sm rounded-l-none w-24 text-center text-sm py-2 pl-1 pr-2">
+							WORKDAY
+						</div>
 					</div>
 				</div>
 				<div className="flex flex-col gap-1">

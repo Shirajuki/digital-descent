@@ -52,6 +52,8 @@ export default class PhaserEngine {
 				new ExplorationScene({ key: "exploration" }, this.observable),
 				new BattleScene({ key: "battle" }, this.observable),
 				new OfficeScene({ key: "office" }, this.observable),
+				new OfficeScene({ key: "newoffice" }, this.observable),
+				new OfficeScene({ key: "partyoffice" }, this.observable),
 			],
 			render: { pixelArt: true, antialias: true },
 		};
@@ -59,6 +61,7 @@ export default class PhaserEngine {
 		this.game.currentScene = "home";
 		this.game.data = {
 			days: 0,
+			displayDays: 0,
 			steps: 0,
 			openTasks: [
 				{
@@ -108,6 +111,11 @@ export default class PhaserEngine {
 				},
 			],
 			solvedTasks: [],
+			customerBattle: {
+				status: "battling",
+				enemy: "customer",
+			},
+			returnBackTo: "digitalworld",
 		};
 	}
 

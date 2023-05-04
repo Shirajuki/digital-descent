@@ -205,8 +205,20 @@ export default class DigitalWorldScene extends Scene {
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
 		setTimeout(() => {
+			if (this.game.data.days % 5 === 0 && this.game.data.days > 0) {
+				// Toggle meeting time!
+				window.channel.emit(
+					"dialogue",
+					{
+						scenario: "MEETING_TIME",
+						forceall: true,
+					},
+					{ reliable: true }
+				);
+			}
 			this.observable.notify();
 		}, 1000);
+		this.game.data.returnBackTo = "digitalworld";
 	}
 
 	sync(data: any) {
@@ -223,8 +235,9 @@ export default class DigitalWorldScene extends Scene {
 	triggerAction(action: string): void {
 		console.log(action);
 		const channel = window.channel;
-
-		if (action === "OPEN_TASKBOARD") {
+		if (action === "INITIALIZE_MEETING") {
+			this.switch("newoffice");
+		} else if (action === "OPEN_TASKBOARD") {
 			this.togglePopup("taskboard", { force: true });
 			if (channel)
 				channel.emit(

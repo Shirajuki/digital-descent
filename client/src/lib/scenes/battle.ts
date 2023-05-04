@@ -1,6 +1,7 @@
 import { NAMES, SCALE } from "../constants";
 import {
 	MONSTER_PRESET_BY_RISKLEVEL,
+	customer,
 	generateMonstersByPreset,
 } from "../rpg/monster";
 import BattleSystem from "../rpg/systems/battleSystem";
@@ -56,7 +57,7 @@ export default class BattleScene extends Scene {
 	}
 	preload() {
 		// Load all monster sprites
-		this.load.spritesheet("monster", "sprites/spritesheet2.png", {
+		this.load.spritesheet("monster", "sprites/bug.png", {
 			frameWidth: 32,
 			frameHeight: 32,
 		});
@@ -79,17 +80,9 @@ export default class BattleScene extends Scene {
 		this.anims.create({
 			key: "idle",
 			frames: this.anims.generateFrameNumbers("monster", {
-				frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+				frames: [0, 1],
 			}),
 			frameRate: 10,
-			repeat: -1,
-		});
-		this.anims.create({
-			key: "run",
-			frames: this.anims.generateFrameNumbers("monster", {
-				frames: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-			}),
-			frameRate: 20,
 			repeat: -1,
 		});
 
@@ -131,7 +124,10 @@ export default class BattleScene extends Scene {
 		let monsters = generateMonstersByPreset(
 			preset[Math.floor(Math.random() * preset.length)]
 		);
-		monsters = generateMonstersByPreset(["easy"]); // TEST
+		// monsters = generateMonstersByPreset(["easy"]); // TEST
+		if (this.game.data.returnBackTo === "newoffice") {
+			monsters = [customer()];
+		}
 		this.monsters = [];
 
 		// Initialize battle
@@ -174,7 +170,28 @@ export default class BattleScene extends Scene {
 
 	sync(data: any) {
 		const channel = window.channel;
-		if (data.type === "leveling-update") {
+		if (data.type === "battle-lose") {
+			if (this.game.data.returnBackTo === "newoffice") {
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "CUSTOMER_MEETING_LOSE",
+						forceall: true,
+					},
+					{ reliable: true }
+				);
+			}
+			this.switch(this.game.data.returnBackTo);
+			channel?.emit(
+				"message-send",
+				{
+					sender: "[battle]",
+					message: "Battle lost",
+					private: true,
+				},
+				{ reliable: true }
+			);
+		} else if (data.type === "leveling-update") {
 			const players = data.players;
 			this.players.forEach((p) => {
 				const player = players.find((pl: any) => pl.id === p.id);
@@ -190,7 +207,17 @@ export default class BattleScene extends Scene {
 				player.name = "entityKill" + i;
 			}
 
-			this.switch("exploration");
+			if (this.game.data.returnBackTo === "newoffice") {
+				channel.emit(
+					"dialogue",
+					{
+						scenario: "CUSTOMER_MEETING_WIN",
+						forceall: true,
+					},
+					{ reliable: true }
+				);
+			}
+			this.switch(this.game.data.returnBackTo);
 			channel?.emit(
 				"message-send",
 				{
@@ -359,10 +386,11 @@ export default class BattleScene extends Scene {
 			this.monsters = [];
 			for (let index = 0; index < data.battle.monsters.length; index++) {
 				const monster = data.battle.monsters[index];
+				console.log(monster.monsterType === "BUG");
 				const monsterSprite = this.add.sprite(
 					this.monsterLocations[index].x,
 					this.monsterLocations[index].y,
-					"player"
+					monster.monsterType === "BUG" ? "monster" : "player"
 				) as any;
 				monsterSprite.setScale(SCALE);
 				monsterSprite.play("idle");

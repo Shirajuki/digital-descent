@@ -366,4 +366,35 @@ export const DIALOGUES = {
 			action: "TELEPORT_TO_DIGITALWORLD",
 		},
 	],
+	// 16 - Exploration intro
+	EXPLORATION_INTRO: [
+		{
+			text: "Welcome to the codebase. This is where we'll be working on the project. There's a step indicator in the top middle that shows you how many steps you have left to complete the current workday.",
+			speaker: "Team lead",
+			side: "right",
+		},
+		{
+			text: "There are also four paths you can take. Each path leads to a different part of the codebase and comes with its own challenges. You can choose which path you want to take, but you can only take one path per step. So choose wisely.",
+			speaker: "Team lead",
+			side: "right",
+		},
+	],
+	// 17 - Battle intro
+	BATTLE_INTRO: [
+		{
+			text: "Welcome to the battle arena. This is where you'll be fighting the bugs, implementation- and technical difficulties in order to complete your tasks.",
+			speaker: "Team lead",
+			side: "right",
+		},
+		{
+			text: "Each of you have three different attack skills, some of which costs energy to use. Attacking normally recovers energy, so you can use your energy skills more often. You can also use consumables to recharge yourself.",
+			speaker: "Team lead",
+			side: "right",
+		},
+		{
+			text: "Use your skills to defeat the bugs and complete your tasks.",
+			speaker: "Team lead",
+			side: "right",
+		},
+	],
 };

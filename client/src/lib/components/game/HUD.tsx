@@ -11,6 +11,7 @@ import PortalScreen from "./PortalScreen";
 import RoleScreen from "./RoleScreen";
 import DigitalWorldHUD from "./DigitalWorldHUD";
 import ExplorationHUD from "./ExplorationHUD";
+import DaysScreen from "./DaysScreen";
 
 function HUD({ engine }: { engine: PhaserEngine | null }) {
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -33,7 +34,10 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 			)}
 			{engine?.game.currentScene === "digitalworld" ||
 			engine?.game.currentScene === "exploration" ? (
-				<DigitalWorldHUD />
+				<>
+					<DigitalWorldHUD />
+					<DaysScreen />
+				</>
 			) : (
 				<></>
 			)}

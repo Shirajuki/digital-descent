@@ -83,7 +83,8 @@ const DialogueScreen = () => {
 							}
 							${
 								scene.dialogue.texts[0]?.speaker === "Team lead" &&
-								scene.game.currentScene !== "office"
+								scene.game.currentScene !== "office" &&
+								scene.game.currentScene !== "newoffice"
 									? "glitch"
 									: ""
 							}`}

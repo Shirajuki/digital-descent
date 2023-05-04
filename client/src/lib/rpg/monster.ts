@@ -80,6 +80,29 @@ const bug = () => {
 	};
 };
 
+export const customer = () => {
+	return {
+		name: "Customer",
+		type: "monster",
+		monsterType: "CUSTOMER",
+		sprite: "./spritesheet.png",
+		stats: {
+			HP: 10,
+			ATK: 20,
+			DEF: 15,
+			SPEED: 5,
+			ELEMENT: ELEMENT.WATER,
+			LEVEL: 1,
+		},
+		battleStats: {
+			HP: 10,
+			dead: false,
+		},
+		effects: [],
+		itemDrop: [],
+	};
+};
+
 export const EASY_MONSTERS = [
 	{ monster: bug, weight: 1 },
 	{ monster: bug, weight: 20 },

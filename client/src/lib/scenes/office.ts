@@ -153,50 +153,70 @@ export default class OfficeScene extends Scene {
 		reorderPlayers(this, serverPlayers);
 		updatePlayers(this, data.players);
 	}
+
 	triggerAction(action: string): void {
 		console.log(action);
-		if (action === "START_ROLE_SELECTION") {
-			this.role.display = true;
-			this.observable.notify();
-		} else if (action === "END_ROLE_SELECTION") {
-			this.role.display = false;
-			this.observable.notify();
-			// Trigger new dialogue for roles
-			const channel = window.channel;
-			if (channel) {
-				channel.emit(
-					"dialogue",
-					{
-						scenario: "ROLES",
-					},
-					{ reliable: true }
-				);
-			}
-		} else if (action === "TELEPORT_TO_DIGITALWORLD") {
-			const channel = window.channel;
-			this.switch("digitalworld");
+		if (this.game.currentScene === "office") {
+			if (action === "START_ROLE_SELECTION") {
+				this.role.display = true;
+				this.observable.notify();
+			} else if (action === "END_ROLE_SELECTION") {
+				this.role.display = false;
+				this.observable.notify();
+				// Trigger new dialogue for roles
+				const channel = window.channel;
+				if (channel) {
+					channel.emit(
+						"dialogue",
+						{
+							scenario: "ROLES",
+						},
+						{ reliable: true }
+					);
+				}
+			} else if (action === "TELEPORT_TO_DIGITALWORLD") {
+				const channel = window.channel;
+				this.switch("digitalworld");
 
-			// Generate new set of tasks
-			const tasks = generateTasks(20);
-			this.game.data.openTasks = tasks;
-			channel?.emit(
-				"task-initialize",
-				{
-					tasks: tasks,
-				},
-				{ reliable: true }
-			);
-
-			// Trigger new dialogue for first time in digital world intro
-			setTimeout(() => {
+				// Generate new set of tasks
+				const tasks = generateTasks(20);
+				this.game.data.openTasks = tasks;
 				channel?.emit(
-					"dialogue",
+					"task-initialize",
 					{
-						scenario: "DIGITALWORLD_INTRO",
+						tasks: tasks,
 					},
 					{ reliable: true }
 				);
-			}, 1000);
+
+				// Trigger new dialogue for first time in digital world intro
+				setTimeout(() => {
+					channel?.emit(
+						"dialogue",
+						{
+							scenario: "DIGITALWORLD_INTRO",
+						},
+						{ reliable: true }
+					);
+				}, 1000);
+			}
+		} else if (this.game.currentScene === "newoffice") {
+			if (action === "INITIALIZE_CUSTOMER_BATTLE") {
+				this.game.data.returnBackTo = "newoffice";
+				if (this.game.data.days % 5 === 0)
+					this.game.data.displayDays = this.game.data.days;
+				this.game.data.days++;
+				this.switch("battle");
+			} else if (action === "CUSTOMER_MEETING_WIN") {
+				this.switch("digitalworld");
+			} else if (action === "CUSTOMER_MEETING_LOSE") {
+				this.switch("digitalworld");
+			} else if (action === "PROJECT_DELIVERY_WIN") {
+				// Game over!
+				this.switch("partyoffice");
+			} else if (action === "PROJECT_DELIVERY_LOSE") {
+				this.switch("digitalworld");
+			}
 		}
 	}
 	update(_time: any, _delta: any) {
@@ -225,19 +245,35 @@ export default class OfficeScene extends Scene {
 							(p) => p.eventCollision === this.eventCollisions[i].name
 						).length === this.players.length
 					) {
-						setTimeout(() => {
-							const channel = window.channel;
-							if (channel) {
-								channel.emit(
-									"dialogue",
-									{
-										scenario: "CUSTOMER_INTRO",
-										forceall: true,
-									},
-									{ reliable: true }
-								);
-							}
-						}, 1000);
+						if (this.game.currentScene === "office") {
+							setTimeout(() => {
+								const channel = window.channel;
+								if (channel) {
+									channel.emit(
+										"dialogue",
+										{
+											scenario: "CUSTOMER_INTRO",
+											forceall: true,
+										},
+										{ reliable: true }
+									);
+								}
+							}, 1000);
+						} else if (this.game.currentScene === "newoffice") {
+							setTimeout(() => {
+								const channel = window.channel;
+								if (channel) {
+									channel.emit(
+										"dialogue",
+										{
+											scenario: "CUSTOMER_MEETING",
+											forceall: true,
+										},
+										{ reliable: true }
+									);
+								}
+							}, 1000);
+						}
 					}
 				}
 			} else {
@@ -248,7 +284,6 @@ export default class OfficeScene extends Scene {
 		}
 		if (!eventCollided && this.player.eventCollision !== "")
 			this.player.eventCollision = "";
-
 		// Send player data to server
 		const channel = window.channel;
 		if (channel) {

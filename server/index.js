@@ -675,6 +675,17 @@ io.onConnection((channel) => {
 				);
 				return;
 			}
+			// Check if all monsters are dead
+			if (battle.players.every((p) => p.battleStats.HP <= 0)) {
+				io.room(channel.roomId).emit(
+					"battle",
+					{
+						type: "battle-lose",
+					},
+					{ reliable: true }
+				);
+				return;
+			}
 
 			if (battle.turnQueue[0].type === "monster") {
 				// Calculate monsters's damage and emit updated state to all clients

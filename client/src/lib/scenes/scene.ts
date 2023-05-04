@@ -23,6 +23,10 @@ export default class Scene extends Phaser.Scene {
 		scenario: "",
 		action: "",
 	};
+	public days = {
+		display: false,
+		ready: false,
+	};
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
