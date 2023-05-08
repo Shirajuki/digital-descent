@@ -1,4 +1,3 @@
-import { Data } from "phaser";
 import { NAMES, PLAYER_COLORS } from "../constants";
 import { initializePlayer } from "./player";
 

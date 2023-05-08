@@ -207,14 +207,10 @@ export default class DigitalWorldScene extends Scene {
 		setTimeout(() => {
 			if (this.game.data.days % 5 === 0 && this.game.data.days > 0) {
 				// Toggle meeting time!
-				window.channel.emit(
-					"dialogue",
-					{
-						scenario: "MEETING_TIME",
-						forceall: true,
-					},
-					{ reliable: true }
-				);
+				window.channel.emit("dialogue", {
+					scenario: "MEETING_TIME",
+					forceall: true,
+				});
 			}
 			this.observable.notify();
 		}, 1000);
@@ -240,33 +236,21 @@ export default class DigitalWorldScene extends Scene {
 		} else if (action === "OPEN_TASKBOARD") {
 			this.togglePopup("taskboard", { force: true });
 			if (channel)
-				channel.emit(
-					"dialogue",
-					{
-						scenario: "TASKBOARD_INTRO",
-					},
-					{ reliable: true }
-				);
+				channel.emit("dialogue", {
+					scenario: "TASKBOARD_INTRO",
+				});
 		} else if (action === "OPEN_PORTAL") {
 			this.togglePopup("portal", { force: true });
 			if (channel)
-				channel.emit(
-					"dialogue",
-					{
-						scenario: "PORTAL_INTRO",
-					},
-					{ reliable: true }
-				);
+				channel.emit("dialogue", {
+					scenario: "PORTAL_INTRO",
+				});
 		} else if (action === "OPEN_SHOP") {
 			this.togglePopup("shop", { force: true });
 			if (channel)
-				channel.emit(
-					"dialogue",
-					{
-						scenario: "SHOP_INTRO",
-					},
-					{ reliable: true }
-				);
+				channel.emit("dialogue", {
+					scenario: "SHOP_INTRO",
+				});
 		} else if (action === "CLEAR_TASKBOARD_QUEST") {
 			this.dialogue.ended.push("TASKBOARD_INTRO");
 			this.taskboard.display = false;
@@ -284,13 +268,9 @@ export default class DigitalWorldScene extends Scene {
 				).length === 3
 			) {
 				if (channel)
-					channel.emit(
-						"dialogue",
-						{
-							scenario: "BEGIN_GAME",
-						},
-						{ reliable: true }
-					);
+					channel.emit("dialogue", {
+						scenario: "BEGIN_GAME",
+					});
 				this.game.data.days++;
 			}
 		} else if (action === "CLEAR_PORTAL_QUEST") {
@@ -309,13 +289,9 @@ export default class DigitalWorldScene extends Scene {
 				).length === 3
 			) {
 				if (channel)
-					channel.emit(
-						"dialogue",
-						{
-							scenario: "BEGIN_GAME",
-						},
-						{ reliable: true }
-					);
+					channel.emit("dialogue", {
+						scenario: "BEGIN_GAME",
+					});
 				this.game.data.days++;
 			}
 		} else if (action === "CLEAR_SHOP_QUEST") {
@@ -334,13 +310,9 @@ export default class DigitalWorldScene extends Scene {
 				).length === 3
 			) {
 				if (channel)
-					channel.emit(
-						"dialogue",
-						{
-							scenario: "BEGIN_GAME",
-						},
-						{ reliable: true }
-					);
+					channel.emit("dialogue", {
+						scenario: "BEGIN_GAME",
+					});
 				this.game.data.days++;
 			}
 		}
@@ -383,14 +355,10 @@ export default class DigitalWorldScene extends Scene {
 								scenario = "OPEN_SHOP";
 							const channel = window.channel;
 							if (channel) {
-								channel.emit(
-									"action",
-									{
-										scenario: scenario,
-										forceall: true,
-									},
-									{ reliable: true }
-								);
+								channel.emit("action", {
+									scenario: scenario,
+									forceall: true,
+								});
 							}
 						}, 1000);
 					}

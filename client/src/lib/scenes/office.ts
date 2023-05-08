@@ -138,11 +138,7 @@ export default class OfficeScene extends Scene {
 			setTimeout(() => {
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"dialogue",
-						{ scenario: "GAME_INTRO" },
-						{ reliable: true }
-					);
+					channel.emit("dialogue", { scenario: "GAME_INTRO" });
 				}
 			}, 500);
 		}
@@ -171,13 +167,9 @@ export default class OfficeScene extends Scene {
 				// Trigger new dialogue for roles
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"dialogue",
-						{
-							scenario: "ROLES",
-						},
-						{ reliable: true }
-					);
+					channel.emit("dialogue", {
+						scenario: "ROLES",
+					});
 				}
 			} else if (action === "TELEPORT_TO_DIGITALWORLD") {
 				const channel = window.channel;
@@ -186,23 +178,15 @@ export default class OfficeScene extends Scene {
 				// Generate new set of tasks
 				const tasks = generateTasks(20);
 				this.game.data.openTasks = tasks;
-				channel?.emit(
-					"task-initialize",
-					{
-						tasks: tasks,
-					},
-					{ reliable: true }
-				);
+				channel?.emit("task-initialize", {
+					tasks: tasks,
+				});
 
 				// Trigger new dialogue for first time in digital world intro
 				setTimeout(() => {
-					channel?.emit(
-						"dialogue",
-						{
-							scenario: "DIGITALWORLD_INTRO",
-						},
-						{ reliable: true }
-					);
+					channel?.emit("dialogue", {
+						scenario: "DIGITALWORLD_INTRO",
+					});
 				}, 1000);
 			}
 		} else if (this.game.currentScene === "newoffice") {
@@ -255,28 +239,20 @@ export default class OfficeScene extends Scene {
 							setTimeout(() => {
 								const channel = window.channel;
 								if (channel) {
-									channel.emit(
-										"dialogue",
-										{
-											scenario: "CUSTOMER_INTRO",
-											forceall: true,
-										},
-										{ reliable: true }
-									);
+									channel.emit("dialogue", {
+										scenario: "CUSTOMER_INTRO",
+										forceall: true,
+									});
 								}
 							}, 1000);
 						} else if (this.game.currentScene === "newoffice") {
 							setTimeout(() => {
 								const channel = window.channel;
 								if (channel) {
-									channel.emit(
-										"dialogue",
-										{
-											scenario: "CUSTOMER_MEETING",
-											forceall: true,
-										},
-										{ reliable: true }
-									);
+									channel.emit("dialogue", {
+										scenario: "CUSTOMER_MEETING",
+										forceall: true,
+									});
 								}
 							}, 1000);
 						}

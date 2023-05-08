@@ -49,7 +49,7 @@ const StatsComponent = ({ stats, newStats }: any) => {
 				{newStats.DEF != 0 ? `(+${newStats.DEF})` : ""}
 			</p>
 			<p>
-				SPEED: {stats.SPEED + newStats.SPEED}{" "}
+				LUCK: {stats.SPEED + newStats.SPEED}{" "}
 				{newStats.SPEED != 0 ? `(+${newStats.SPEED})` : ""}
 			</p>
 		</div>
@@ -94,14 +94,10 @@ const WinScreen = () => {
 				DEF: player.stats.DEF + stats.DEF,
 				SPEED: player.stats.SPEED + stats.SPEED,
 			};
-			channel.emit(
-				"leveling-update",
-				{
-					id: player.id,
-					stats: newStats,
-				},
-				{ reliable: true }
-			);
+			channel.emit("leveling-update", {
+				id: player.id,
+				stats: newStats,
+			});
 			player.stats = newStats;
 			battle.leveling.levelUp = false;
 			forceUpdate();
@@ -111,13 +107,9 @@ const WinScreen = () => {
 	const toggleReady = () => {
 		const channel = window.channel;
 		if (channel) {
-			channel.emit(
-				"leveling-ready",
-				{
-					id: player.id,
-				},
-				{ reliable: true }
-			);
+			channel.emit("leveling-ready", {
+				id: player.id,
+			});
 			battle.leveling.ready = true;
 			forceUpdate();
 		}
@@ -296,7 +288,7 @@ const WinScreen = () => {
 								}`}
 								onClick={() => setLevelSelect("SPEED")}
 							>
-								Speed
+								Luck
 							</button>
 						</div>
 						<div className="flex gap-10 justify-center" ref={levelingInfo}>
@@ -304,7 +296,7 @@ const WinScreen = () => {
 								<p>HP: {player.stats.HP}</p>
 								<p>ATK: {player.stats.ATK}</p>
 								<p>DEF: {player.stats.DEF}</p>
-								<p>SPEED: {player.stats.SPEED}</p>
+								<p>LUCK: {player.stats.SPEED}</p>
 							</div>
 							<div>
 								<p>→</p>

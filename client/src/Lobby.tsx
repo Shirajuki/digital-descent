@@ -57,14 +57,14 @@ function Lobby() {
 				host: false,
 			};
 			setPlayer(player);
-			channel.emit("lobby-update", { player }, { reliable: true });
+			channel.emit("lobby-update", { player });
 		}
 		if (!lobbyId) navigate("/");
 	}, [navigate, setPlayer]);
 
 	const updateLobby = useCallback(
 		(player: any) => {
-			window?.channel?.emit("lobby-update", { player }, { reliable: true });
+			window?.channel?.emit("lobby-update", { player });
 		},
 		[player]
 	);
@@ -76,7 +76,7 @@ function Lobby() {
 	}, [updateLobby, player]);
 
 	const startGame = useCallback(() => {
-		window?.channel?.emit("lobby-startgame", {}, { reliable: true });
+		window?.channel?.emit("lobby-startgame", {});
 		console.log("start game");
 	}, []);
 

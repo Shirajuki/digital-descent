@@ -173,26 +173,22 @@ export default class BattleSystem {
 				};
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"battle-turn",
-						{
-							attack: attack,
-							state: {
-								...state,
-								attacker: {
-									id: player.id,
-									stats: player.stats,
-									battleStats: player.battleStats,
-								},
-								target: {
-									id: state.target.id,
-									stats: state.target.stats,
-									battleStats: state.target.battleStats,
-								},
+					channel.emit("battle-turn", {
+						attack: attack,
+						state: {
+							...state,
+							attacker: {
+								id: player.id,
+								stats: player.stats,
+								battleStats: player.battleStats,
+							},
+							target: {
+								id: state.target.id,
+								stats: state.target.stats,
+								battleStats: state.target.battleStats,
 							},
 						},
-						{ reliable: true }
-					);
+					});
 				}
 				this.playerTarget = state.target;
 				console.log(this.state.target);
@@ -232,18 +228,14 @@ export default class BattleSystem {
 				}
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"battle-turn",
-						{
-							attack: attack,
-							state: {
-								...state,
-								attacker: attacker,
-								target: attack.targets.amount === "self" ? attacker : target,
-							},
+					channel.emit("battle-turn", {
+						attack: attack,
+						state: {
+							...state,
+							attacker: attacker,
+							target: attack.targets.amount === "self" ? attacker : target,
 						},
-						{ reliable: true }
-					);
+					});
 				}
 				this.playerTarget = state.target;
 				console.log(this.state.target);
@@ -283,18 +275,14 @@ export default class BattleSystem {
 				}
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"battle-turn",
-						{
-							attack: attack,
-							state: {
-								...state,
-								attacker: attacker,
-								target: attack.targets.amount === "self" ? attacker : target,
-							},
+					channel.emit("battle-turn", {
+						attack: attack,
+						state: {
+							...state,
+							attacker: attacker,
+							target: attack.targets.amount === "self" ? attacker : target,
 						},
-						{ reliable: true }
-					);
+					});
 				}
 				this.playerTarget = state.target;
 				console.log(this.state.target);

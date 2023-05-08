@@ -1,16 +1,17 @@
 import { useAtom } from "jotai";
-import { engineAtom, roomIdAtom } from "./lib/atoms";
+import { engineAtom, roomIdAtom, socketAtom } from "./lib/atoms";
 import { useEffect, useRef } from "react";
 import PhaserEngine from "./lib/engine";
-import geckos from "@geckos.io/client";
 import Chat from "./lib/components/chat/Chat";
 import HUD from "./lib/components/game/HUD";
 import Scene from "./lib/scenes/scene";
+import { io } from "socket.io-client";
 
 function Game() {
 	// Retrieve lobby id
 	const [_roomId, setRoomId] = useAtom(roomIdAtom);
 	const [engine, setEngine] = useAtom(engineAtom);
+	const [_socket, setSocket] = useAtom(socketAtom);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	// Load game engine
@@ -24,7 +25,7 @@ function Game() {
 		}
 	}, [setEngine]);
 
-	// Load geckos channel and initialize listeners for geckos
+	// Load socketio and initialize listeners for socketio
 	useEffect(() => {
 		if (!engine || !setRoomId) return;
 
@@ -33,18 +34,17 @@ function Game() {
 		if ((window as any).lobbyInitialized) {
 			channel = window.channel;
 		} else {
-			// Initialize gecko from scratch, for testing purposes
+			// Initialize socket from scratch, for testing purposes
 			// TODO: at some point remove this when done with dev
-			channel = geckos({ port: 3000 });
+			channel = io(`http://${window.location.hostname}:3000`);
 			window.channel = channel;
-			channel.onConnect((_error: any) => {
-				channel.on("lobby-joined", (data: any) => {
-					setRoomId(data);
-					console.log(`You joined the room ${data}`);
-				});
-				channel.emit("lobby-join", { roomId: "test-room" }, { reliable: true });
+			channel.on("lobby-joined", (data: any) => {
+				setRoomId(data);
+				console.log(`You joined the room ${data}`);
 			});
+			channel.emit("lobby-join", { roomId: "test-room" });
 		}
+		setSocket(channel);
 
 		// Game syncing
 		channel.on("game-update", (data: any) => {
@@ -60,12 +60,14 @@ function Game() {
 			if (scene.dialogue.scenario !== data.scenarion) {
 				scene.dialogue.scenario = data.scenario;
 				scene.dialogue.texts = [...scene.dialogue.texts, ...data.texts];
-				scene.player.movement = {
-					left: false,
-					up: false,
-					right: false,
-					down: false,
-				};
+				if (scene.player) {
+					scene.player.movement = {
+						left: false,
+						up: false,
+						right: false,
+						down: false,
+					};
+				}
 			}
 			scene.dialogueSync();
 			scene.observable.notify();
@@ -142,6 +144,7 @@ function Game() {
 				<HUD engine={engine} />
 				<Chat
 					channel={window.channel}
+					className="!max-h-24"
 					wrapperClassName="absolute bottom-2 left-2"
 					scale={true}
 				/>

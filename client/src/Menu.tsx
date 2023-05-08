@@ -2,8 +2,7 @@ import { useAtom } from "jotai";
 import { roomIdAtom } from "./lib/atoms";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import geckos from "@geckos.io/client";
+import { io } from "socket.io-client";
 
 const testLobbies = [
 	{ id: "test-room", name: "A dummy lobby name :)", joined: 1 },
@@ -27,27 +26,23 @@ function Menu() {
 	useEffect(() => {
 		if (!navigate || !setLobbyId || !setChannel || !setLobbyId) return;
 		if (window.channel) return;
-		const channel = geckos({ port: 3000 });
+		const channel = io(`http://${window.location.hostname}:3000`);
 		window.channel = channel;
 		setChannel(channel);
-		channel.onConnect((error: any) => {
-			if (error) return console.error(error.message);
-
-			channel.on("lobby-joined", (data: any) => {
-				setLobbyId(data);
-				console.log(`You joined the room ${data}`);
-				navigate("/lobby");
-			});
-			channel.on("lobby-listing", (data: any) => {
-				console.log(data);
-				setLobbies(data);
-			});
+		channel.on("lobby-joined", (data: any) => {
+			setLobbyId(data);
+			console.log(`You joined the room ${data}`);
+			navigate("/lobby");
+		});
+		channel.on("lobby-listing", (data: any) => {
+			console.log(data);
+			setLobbies(data);
 		});
 	}, [navigate, setChannel, setLobbyId, setLobbies]);
 
 	const joinLobby = useCallback(
 		(id: string) => {
-			channel?.emit("lobby-join", { roomId: id }, { reliable: true });
+			channel?.emit("lobby-join", { roomId: id });
 		},
 		[channel]
 	);
@@ -55,14 +50,10 @@ function Menu() {
 		(event: any) => {
 			event.preventDefault();
 			const roomName = event.target.lobbyId.value;
-			channel?.emit(
-				"lobby-create",
-				{
-					roomId: "" + Math.floor(Math.random() * 10 ** 10),
-					name: roomName,
-				},
-				{ reliable: true }
-			);
+			channel?.emit("lobby-create", {
+				roomId: "" + Math.floor(Math.random() * 10 ** 10),
+				name: roomName,
+			});
 		},
 		[channel]
 	);

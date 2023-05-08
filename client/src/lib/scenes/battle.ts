@@ -136,19 +136,16 @@ export default class BattleScene extends Scene {
 		if (channel) {
 			channel.emit("battle-initialize", {
 				players: this.players.map((p) => p.id),
-				monsters: monsters.map(
-					(m: any, i: number) => {
-						return {
-							id: "monster" + i,
-							name: m.name,
-							stats: m.stats,
-							battleStats: m.battleStats,
-							type: m.type,
-							monsterType: m.monsterType,
-						};
-					},
-					{ reliable: true }
-				),
+				monsters: monsters.map((m: any, i: number) => {
+					return {
+						id: "monster" + i,
+						name: m.name,
+						stats: m.stats,
+						battleStats: m.battleStats,
+						type: m.type,
+						monsterType: m.monsterType,
+					};
+				}),
 			});
 		}
 
@@ -172,25 +169,17 @@ export default class BattleScene extends Scene {
 		const channel = window.channel;
 		if (data.type === "battle-lose") {
 			if (this.game.data.returnBackTo === "newoffice") {
-				channel.emit(
-					"dialogue",
-					{
-						scenario: "CUSTOMER_MEETING_LOSE",
-						forceall: true,
-					},
-					{ reliable: true }
-				);
+				channel.emit("dialogue", {
+					scenario: "CUSTOMER_MEETING_LOSE",
+					forceall: true,
+				});
 			}
 			this.switch(this.game.data.returnBackTo);
-			channel?.emit(
-				"message-send",
-				{
-					sender: "[battle]",
-					message: "Battle lost",
-					private: true,
-				},
-				{ reliable: true }
-			);
+			channel?.emit("message-send", {
+				sender: "[battle]",
+				message: "Battle lost",
+				private: true,
+			});
 		} else if (data.type === "leveling-update") {
 			const players = data.players;
 			this.players.forEach((p) => {
@@ -208,25 +197,17 @@ export default class BattleScene extends Scene {
 			}
 
 			if (this.game.data.returnBackTo === "newoffice") {
-				channel.emit(
-					"dialogue",
-					{
-						scenario: "CUSTOMER_MEETING_WIN",
-						forceall: true,
-					},
-					{ reliable: true }
-				);
+				channel.emit("dialogue", {
+					scenario: "CUSTOMER_MEETING_WIN",
+					forceall: true,
+				});
 			}
 			this.switch(this.game.data.returnBackTo);
-			channel?.emit(
-				"message-send",
-				{
-					sender: "[battle]",
-					message: "Battle ended",
-					private: true,
-				},
-				{ reliable: true }
-			);
+			channel?.emit("message-send", {
+				sender: "[battle]",
+				message: "Battle ended",
+				private: true,
+			});
 		} else if (data.type === "battle-end") {
 			console.log("Battle ended");
 			// Update quest clearing
@@ -484,22 +465,18 @@ export default class BattleScene extends Scene {
 			if (clientPlayers.join() !== serverPlayers.join()) {
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"battle-initialize",
-						{
-							players: this.players?.map((p) => p.id) || [],
-							monsters: this.monsters.map((m: any) => {
-								return {
-									name: m.name,
-									stats: m.stats,
-									battleStats: m.battleStats,
-									type: m.type,
-									monsterType: m.monsterType,
-								};
-							}),
-						},
-						{ reliable: true }
-					);
+					channel.emit("battle-initialize", {
+						players: this.players?.map((p) => p.id) || [],
+						monsters: this.monsters.map((m: any) => {
+							return {
+								name: m.name,
+								stats: m.stats,
+								battleStats: m.battleStats,
+								type: m.type,
+								monsterType: m.monsterType,
+							};
+						}),
+					});
 				}
 				this.observable.notify();
 			}
@@ -534,15 +511,11 @@ export default class BattleScene extends Scene {
 					channel &&
 					this.battle.actionText !== "Battle ended"
 				)
-					channel?.emit(
-						"message-send",
-						{
-							sender: "[battle]",
-							message: this.battle.actionText,
-							private: true,
-						},
-						{ reliable: true }
-					);
+					channel?.emit("message-send", {
+						sender: "[battle]",
+						message: this.battle.actionText,
+						private: true,
+					});
 				this.observable.notify();
 			}
 		} else if (this.battle?.state.type === "skip") {
@@ -555,13 +528,9 @@ export default class BattleScene extends Scene {
 				// Turn finished
 				const channel = window.channel;
 				if (channel)
-					channel.emit(
-						"battle-turn-finished",
-						{
-							turns: this.battle.turns,
-						},
-						{ reliable: true }
-					);
+					channel.emit("battle-turn-finished", {
+						turns: this.battle.turns,
+					});
 			}
 		}
 
@@ -658,14 +627,10 @@ export default class BattleScene extends Scene {
 		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
-			channel.emit(
-				"battle-update",
-				{
-					player: this.player.getData(),
-					battle: this.battle,
-				},
-				{ reliable: true }
-			);
+			channel.emit("battle-update", {
+				player: this.player.getData(),
+				battle: this.battle,
+			});
 		}
 	}
 }

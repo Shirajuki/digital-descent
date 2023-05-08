@@ -116,14 +116,10 @@ const TaskBoardScreen = () => {
 								}
 							}
 
-							window.channel.emit(
-								"task-update",
-								{
-									openTasks: openTasks,
-									currentTasks: currentTasks,
-								},
-								{ reliable: true }
-							);
+							window.channel.emit("task-update", {
+								openTasks: openTasks,
+								currentTasks: currentTasks,
+							});
 							scene.observable.notify();
 							forceUpdate();
 						}}

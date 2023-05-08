@@ -44,13 +44,9 @@ const DialogueScreen = () => {
 			if (scene.dialogue.texts.length === 0) {
 				const channel = window.channel;
 				if (channel) {
-					channel.emit(
-						"dialogue-end",
-						{
-							scenario: scene.dialogue.scenario,
-						},
-						{ reliable: true }
-					);
+					channel.emit("dialogue-end", {
+						scenario: scene.dialogue.scenario,
+					});
 				}
 			}
 

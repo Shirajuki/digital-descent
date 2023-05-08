@@ -65,13 +65,9 @@ const PortalScreen = () => {
 
 	const togglePortal = () => {
 		if (scene?.portal?.display) {
-			window.channel.emit(
-				"selects-reset",
-				{
-					id: player.id,
-				},
-				{ reliable: true }
-			);
+			window.channel.emit("selects-reset", {
+				id: player.id,
+			});
 
 			scene.portal.display = false;
 		}
@@ -110,14 +106,10 @@ const PortalScreen = () => {
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
-								window.channel.emit(
-									"selects-update",
-									{
-										id: player.id,
-										select: select === "work" ? null : "work",
-									},
-									{ reliable: true }
-								);
+								window.channel.emit("selects-update", {
+									id: player.id,
+									select: select === "work" ? null : "work",
+								});
 								setSelect(select === "work" ? null : "work");
 							}}
 						>
@@ -141,14 +133,10 @@ const PortalScreen = () => {
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
-								window.channel.emit(
-									"selects-update",
-									{
-										id: player.id,
-										select: select === "delivery" ? null : "delivery",
-									},
-									{ reliable: true }
-								);
+								window.channel.emit("selects-update", {
+									id: player.id,
+									select: select === "delivery" ? null : "delivery",
+								});
 								setSelect(select === "delivery" ? null : "delivery");
 								// togglePortal();
 							}}
