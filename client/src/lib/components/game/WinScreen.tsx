@@ -22,14 +22,14 @@ function calculateLevelUp(attribute: string) {
 		SP: 0,
 		ATK: 0,
 		DEF: 0,
-		SPEED: 0,
+		LUCK: 0,
 	};
 	const add = 2;
 	if (attribute === "HP") stats.HP = 10;
 	else if (attribute === "SP") stats.SP = 10;
 	else if (attribute === "ATK") stats.ATK = add;
 	else if (attribute === "DEF") stats.DEF = add;
-	else if (attribute === "SPEED") stats.SPEED = add;
+	else if (attribute === "LUCK") stats.LUCK = add;
 	return stats;
 }
 
@@ -49,8 +49,8 @@ const StatsComponent = ({ stats, newStats }: any) => {
 				{newStats.DEF != 0 ? `(+${newStats.DEF})` : ""}
 			</p>
 			<p>
-				LUCK: {stats.SPEED + newStats.SPEED}{" "}
-				{newStats.SPEED != 0 ? `(+${newStats.SPEED})` : ""}
+				LUCK: {stats.LUCK + newStats.LUCK}{" "}
+				{newStats.LUCK != 0 ? `(+${newStats.LUCK})` : ""}
 			</p>
 		</div>
 	);
@@ -92,7 +92,7 @@ const WinScreen = () => {
 				SP: player.stats.SP + stats.SP,
 				ATK: player.stats.ATK + stats.ATK,
 				DEF: player.stats.DEF + stats.DEF,
-				SPEED: player.stats.SPEED + stats.SPEED,
+				LUCK: player.stats.LUCK + stats.LUCK,
 			};
 			channel.emit("leveling-update", {
 				id: player.id,
@@ -282,11 +282,11 @@ const WinScreen = () => {
 							</button>
 							<button
 								className={`bg-gray-900 rounded-sm p-2 w-32 text-center ${
-									levelSelect === "SPEED"
+									levelSelect === "LUCK"
 										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
 										: ""
 								}`}
-								onClick={() => setLevelSelect("SPEED")}
+								onClick={() => setLevelSelect("LUCK")}
 							>
 								Luck
 							</button>
@@ -296,7 +296,7 @@ const WinScreen = () => {
 								<p>HP: {player.stats.HP}</p>
 								<p>ATK: {player.stats.ATK}</p>
 								<p>DEF: {player.stats.DEF}</p>
-								<p>LUCK: {player.stats.SPEED}</p>
+								<p>LUCK: {player.stats.LUCK}</p>
 							</div>
 							<div>
 								<p>→</p>

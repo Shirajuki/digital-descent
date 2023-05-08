@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { engineAtom, selectsAtom } from "../../atoms";
+import { engineAtom, selectsAtom, socketAtom } from "../../atoms";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import DigitalWorldScene from "../../scenes/digitalworld";
@@ -19,6 +19,7 @@ const PortalScreen = () => {
 	const [infoPopup] = useAutoAnimate();
 	const [select, setSelect] = useState<any>(null);
 	const [selects, setSelects] = useAtom(selectsAtom);
+	const [socket, _setSocket] = useAtom(socketAtom);
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
 	useEffect(() => {
@@ -37,16 +38,23 @@ const PortalScreen = () => {
 		engine?.game.scene.getScene(engine.game.currentScene) as DigitalWorldScene
 	)?.player;
 
-	const channel = window.channel;
-	if (channel && !channel.portalLoaded) {
-		channel.portalLoaded = true;
+	useEffect(() => {
+		const channel = socket;
+		if (!channel) return;
+
 		channel.on("selects", (data: any) => {
 			if (data.type === "selects-update") {
 				setSelects(data.selects);
 				forceUpdate();
 			}
 		});
-	}
+
+		forceUpdate();
+
+		return () => {
+			channel.off("selects");
+		};
+	}, [socket, setSelects, forceUpdate, player]);
 
 	useEffect(() => {
 		console.log(selects);
@@ -114,7 +122,7 @@ const PortalScreen = () => {
 							}}
 						>
 							{scene?.players.map((p, i) => {
-								if (selects[p.id] !== "work")
+								if (selects[p?.id] !== "work")
 									return <div key={"workselect" + i} className="hidden"></div>;
 								return (
 									<div
@@ -123,6 +131,7 @@ const PortalScreen = () => {
 											PLAYER_COLORS[i % PLAYER_COLORS.length]
 										} -translate-x-2 -translate-y-2 rotate-45`}
 										style={{ left: i * 32 }}
+										title={p.name}
 									></div>
 								);
 							})}
@@ -142,7 +151,7 @@ const PortalScreen = () => {
 							}}
 						>
 							{scene?.players.map((p, i) => {
-								if (selects[p.id] !== "delivery")
+								if (selects[p?.id] !== "delivery")
 									return (
 										<div key={"deliveryselect" + i} className="hidden"></div>
 									);
@@ -153,6 +162,7 @@ const PortalScreen = () => {
 											PLAYER_COLORS[i % PLAYER_COLORS.length]
 										} -translate-x-2 -translate-y-2 rotate-45`}
 										style={{ left: i * 32 }}
+										title={p.name}
 									></div>
 								);
 							})}

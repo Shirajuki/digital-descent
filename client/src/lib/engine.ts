@@ -47,7 +47,6 @@ export default class PhaserEngine {
 			backgroundColor: "rgba(26,26,26)",
 			scene: [
 				new HomeScene({ key: "home" }, this.observable),
-				new HomeScene({ key: "jump" }, this.observable),
 
 				new DigitalWorldScene({ key: "digitalworld" }, this.observable),
 				new ExplorationScene({ key: "exploration" }, this.observable),
@@ -64,6 +63,7 @@ export default class PhaserEngine {
 			days: 0,
 			displayDays: 0,
 			steps: 0,
+			maxSteps: 3,
 			openTasks: [
 				{
 					id: "3",

@@ -69,6 +69,7 @@ export default class BattleSystem {
 			player.battleStats.SP += player.stats.SP;
 			player.stats.ATK += 1;
 			player.stats.DEF += 1;
+			player.stats.LUCK += 1;
 			player.stats.SPEED += 1;
 			return true;
 		}

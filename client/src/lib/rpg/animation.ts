@@ -226,6 +226,14 @@ export const animateSingleAttack = (scene: BattleScene) => {
 						channel.emit("battle-turn-finished", {
 							turns: scene.battle.turns,
 						});
+
+					// If players turn and no target is chosen, pick first monster
+					if (!scene.battle.playerTarget) {
+						scene.battle.state.target = scene.battle.monsters.find(
+							(e: any) => !e.battleStats.dead
+						);
+						scene.battle.playerTarget = scene.battle.state.target;
+					}
 				}
 			}
 		}
@@ -404,6 +412,14 @@ export const animateStandingAttack = (scene: BattleScene) => {
 						channel.emit("battle-turn-finished", {
 							turns: scene.battle.turns,
 						});
+
+					// If players turn and no target is chosen, pick first monster
+					if (!scene.battle.playerTarget) {
+						scene.battle.state.target = scene.battle.monsters.find(
+							(e: any) => !e.battleStats.dead
+						);
+						scene.battle.playerTarget = scene.battle.state.target;
+					}
 				}
 			}
 		}

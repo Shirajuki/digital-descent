@@ -182,6 +182,16 @@ export default class ExplorationScene extends Scene {
 		// Check steps
 		this.checkSteps();
 		this.game.data.returnBackTo = "exploration";
+
+		// First time exploration intro
+		if (this.game.currentScene === "exploration") {
+			setTimeout(() => {
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("dialogue", { scenario: "EXPLORATION_INTRO" });
+				}
+			}, 500);
+		}
 	}
 
 	sync(data: any) {
@@ -208,7 +218,7 @@ export default class ExplorationScene extends Scene {
 	}
 
 	checkSteps() {
-		if (this.game.data.steps > 6) {
+		if (this.game.data.steps > this.game.data.maxSteps) {
 			this.game.data.steps = 0;
 			if (this.game.data.days % 5 === 0) {
 				this.game.data.displayDays = this.game.data.days;

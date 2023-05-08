@@ -50,6 +50,7 @@ export const addPlayers = (
 			if (data.battleStats) player.battleStats = data.battleStats;
 			if (data.inventory) player.inventory = data.inventory;
 			if (data.equipment) player.equipment = data.equipment;
+			if (data.battleClass) player.battleClass = data.battleClass;
 			scene.players.push(player);
 			scene.observable.notify();
 		}
@@ -112,6 +113,7 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.movement = playerData[player.id].movement;
 		player.onTeleportingPad = playerData[player.id].onTeleportingPad;
 		player.eventCollision = playerData[player.id].eventCollision;
+		player.battleClass = playerData[player.id].battleClass;
 		if (player.movement) player.updatePlayerAnimation();
 		player.setDepth(player.y);
 		player.nameEntity.x = player.x;

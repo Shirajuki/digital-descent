@@ -80,11 +80,8 @@ export default class HomeScene extends Scene {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", { player: this.player.getData() });
 		}
-		if (this.game.currentScene === "home") {
-			this.switch("jump");
-		} else {
-			// this.switch("digitalworld");
-			this.switch("office");
-		}
+
+		// this.switch("digitalworld");
+		this.switch("office");
 	}
 }

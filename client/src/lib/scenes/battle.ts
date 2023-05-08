@@ -163,6 +163,15 @@ export default class BattleScene extends Scene {
 		setTimeout(() => {
 			this.observable.notify();
 		}, 1000);
+
+		if (this.game.currentScene === "battle") {
+			setTimeout(() => {
+				const channel = window.channel;
+				if (channel) {
+					channel.emit("dialogue", { scenario: "BATTLE_INTRO" });
+				}
+			}, 500);
+		}
 	}
 
 	sync(data: any) {
@@ -531,6 +540,14 @@ export default class BattleScene extends Scene {
 					channel.emit("battle-turn-finished", {
 						turns: this.battle.turns,
 					});
+
+				// If players turn and no target is chosen, pick first monster
+				if (!this.battle.playerTarget) {
+					this.battle.state.target = this.battle.monsters.find(
+						(e: any) => !e.battleStats.dead
+					);
+					this.battle.playerTarget = this.battle.state.target;
+				}
 			}
 		}
 

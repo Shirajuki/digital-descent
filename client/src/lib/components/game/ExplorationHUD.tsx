@@ -48,7 +48,7 @@ const ExplorationHUD = () => {
 			<div className="absolute top-5 left-1/2 -translate-x-1/2 flex flex-col gap-2 [user-select:none]">
 				<div className="flex gap-1">
 					<div className="bg-slate-500 rounded-sm w-28 text-center text-sm py-2 px-2">
-						Steps: {scene.game.data.steps} / 6
+						Steps: {scene.game.data.steps} / {scene.game.data.maxSteps}
 					</div>
 				</div>
 			</div>

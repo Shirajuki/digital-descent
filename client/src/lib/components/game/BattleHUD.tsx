@@ -31,6 +31,9 @@ const BattleHUD = () => {
 		});
 	}, [setScaling]);
 
+	const scene: BattleScene = engine?.game.scene.getScene(
+		engine.game.currentScene
+	) as BattleScene;
 	const battle: BattleSystem = (
 		engine?.game.scene.getScene(engine.game.currentScene) as BattleScene
 	)?.battle;
@@ -105,7 +108,10 @@ const BattleHUD = () => {
 										))}
 									</div>
 									<p className="text-xs">LV.{player.stats.LEVEL}</p>
-									<p>{player.name}</p>
+									<p>
+										{player.name}{" "}
+										{scene.player?.id === player?.id ? "(you)" : ""}
+									</p>
 									<div
 										className={`w-2 h-2 rotate-45 ${
 											PLAYER_COLORS[i % PLAYER_COLORS.length]

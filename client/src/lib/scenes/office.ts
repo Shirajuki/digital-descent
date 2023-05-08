@@ -18,6 +18,7 @@ export default class OfficeScene extends Scene {
 		display: false,
 		ready: false,
 	};
+	public customer: any;
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -69,10 +70,17 @@ export default class OfficeScene extends Scene {
 			oldPlayer?.destroy();
 		}
 		console.log(this.players);
+
+		// Create customer
+		this.customer = initializePlayer(this, "Customer");
+		this.customer.name = "Customer";
+		this.customer.nameEntity.setText("Customer");
+		this.customer.setPosition(195, -140);
+
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
 		// Move player to starting position
-		this.player.setPosition(-250, 150);
+		this.player.setPosition(-250, 140);
 		this.player.flipX = false;
 		// Setup collisions
 		const objects = collisions?.layers.find(
@@ -211,6 +219,7 @@ export default class OfficeScene extends Scene {
 	update(_time: any, _delta: any) {
 		// Update player
 		this.player.updatePlayer(this.collisions);
+		if (this.customer) this.customer.updatePlayer(this.collisions);
 
 		// Event collisions
 		let eventCollided = false;

@@ -57,7 +57,9 @@ export default class DigitalWorldScene extends Scene {
 		} else if (data === "shop") {
 			this.shop.display = force ? force.force : !this.shop.display;
 		}
-		this.observable.notify();
+		setTimeout(() => {
+			this.observable.notify();
+		}, 500);
 	}
 	preload() {
 		// Load bg sprite

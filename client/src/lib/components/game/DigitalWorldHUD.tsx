@@ -92,7 +92,7 @@ const DigitalWorldHUD = () => {
 			{/* Party / player status information */}
 			<div className="absolute top-5 right-5 text-right [user-select:none] flex flex-col gap-4">
 				{scene.players
-					?.filter((player) => player.stats && player.battleStats)
+					?.filter((player) => player?.stats && player?.battleStats)
 					.map((player, i) => (
 						<div
 							className={`relative flex flex-col items-end transition-all bg-[rgba(0,0,0,0.7)] py-2 px-3 rounded-md ${
@@ -110,7 +110,9 @@ const DigitalWorldHUD = () => {
 											/>
 										))}
 									</div>
-									<p className="text-xs">LV.{player.stats.LEVEL}</p>
+									<p className="text-xs uppercase">{player.battleClass}</p>
+									<p className="text-xs">LV.{player.stats.LEVEL} </p>
+									<p className="text-xs">•</p>
 									<p>{player.name}</p>
 									<div
 										className={`w-2 h-2 rotate-45 ${
