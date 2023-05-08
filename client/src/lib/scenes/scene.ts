@@ -42,6 +42,7 @@ export default class Scene extends Phaser.Scene {
 	}
 	create() {
 		console.log("CREATE SCENE " + this);
+		this.physics.world.setFPS(60);
 	}
 	initialize() {
 		console.log("INIT SCENE " + this);

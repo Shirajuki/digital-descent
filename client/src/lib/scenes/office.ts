@@ -59,11 +59,16 @@ export default class OfficeScene extends Scene {
 
 		// Create player
 		const oldPlayer = this.player;
-		this.player = initializePlayer(this, "Player 1");
+		this.player = initializePlayer(this, window.playerName ?? "Player");
 		this.players = [
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
 		];
+		if (oldPlayer) {
+			oldPlayer?.nameEntity?.destroy();
+			oldPlayer?.destroy();
+		}
+		console.log(this.players);
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
 		// Move player to starting position
@@ -238,11 +243,12 @@ export default class OfficeScene extends Scene {
 				eventCollided = true;
 				if (this.player.eventCollision !== this.eventCollisions[i].name) {
 					this.player.eventCollision = this.eventCollisions[i].name;
+					console.log(this.players);
 
 					// Emit meeting event if all players are in the event collision
 					if (
 						this.players.filter(
-							(p) => p.eventCollision === this.eventCollisions[i].name
+							(p) => p?.eventCollision === this.eventCollisions[i].name
 						).length === this.players.length
 					) {
 						if (this.game.currentScene === "office") {

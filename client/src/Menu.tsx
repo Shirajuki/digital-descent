@@ -89,15 +89,15 @@ function Menu() {
 						Play
 					</button>
 					<span className="text-[#a6a6a6] m-2 text-center text-xs">• • •</span>
-					<button className="w-full" onClick={() => setLobbyState("login")}>
+					{/* <button className="w-full" onClick={() => setLobbyState("login")}>
 						Login
-					</button>
+					</button> */}
 					<button className="w-full" onClick={() => setLobbyState("highscore")}>
 						Highscore
 					</button>
-					<button className="w-full" onClick={() => setLobbyState("options")}>
+					{/* <button className="w-full" onClick={() => setLobbyState("options")}>
 						Options
-					</button>
+					</button> */}
 					<button className="w-full" onClick={() => setLobbyState("credits")}>
 						Credits
 					</button>
@@ -108,6 +108,7 @@ function Menu() {
 
 			{lobbyState === "play" ? (
 				<div className="flex flex-col w-full max-w-xl gap-2">
+					<p>Create a lobby:</p>
 					<form onSubmit={createLobby} className="flex gap-2">
 						<input
 							type="text"
@@ -145,7 +146,25 @@ function Menu() {
 			) : (
 				<></>
 			)}
-			{/* <Chat channel={window.channel} /> */}
+
+			{lobbyState === "credits" ? (
+				<p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-xl">
+					Master's Project 2023 | Digital Descent | Managing the Agile Realm
+				</p>
+			) : (
+				<></>
+			)}
+
+			{lobbyState !== "menu" ? (
+				<button
+					className="absolute top-5 left-5"
+					onClick={() => setLobbyState("menu")}
+				>
+					← Back
+				</button>
+			) : (
+				<></>
+			)}
 		</main>
 	);
 }

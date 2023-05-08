@@ -44,6 +44,7 @@ declare global {
 		engine: any; // For testing and debugging purposes
 		playerBattleClass: string;
 		playerName: string;
+		playerIndex: number;
 	}
 }
 declare module "phaser" {

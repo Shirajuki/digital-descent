@@ -80,6 +80,7 @@ export const initializePlayer = (
 	player.getData = function () {
 		return {
 			id: this.id,
+			name: this.name,
 			x: this.x,
 			y: this.y,
 			animationState: this.animationState,

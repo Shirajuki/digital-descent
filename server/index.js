@@ -152,6 +152,8 @@ io.onConnection((channel) => {
 				"PORTAL_INTRO",
 				"SHOP_INTRO",
 				"BEGIN_GAME",
+				"BATTLE_INTRO",
+				"EXPLORATION_INTRO",
 			].includes(data.scenario)
 		) {
 			rooms[roomId].dialogues = rooms[roomId].dialogues.filter(

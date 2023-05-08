@@ -35,20 +35,20 @@ export const ELEMENT_EFFECTIVENESS_TABLE = [
 export const NEGATIVE_STATUS = ["lag", "nervous", "memoryLeak", "burn"];
 
 export const CURSOR_COLORS = [
-	"border-pink-400",
-	"border-violet-400",
-	"border-emerald-400",
-	"border-green-400",
-	"border-blue-400",
-	"border-red-400",
-	"border-yellow-400",
+	"!border-pink-400",
+	"!border-violet-400",
+	"!border-emerald-400",
+	"!border-green-400",
+	"!border-blue-400",
+	"!border-red-400",
+	"!border-yellow-400",
 ];
 export const PLAYER_COLORS = [
-	"bg-pink-400",
-	"bg-violet-400",
-	"bg-emerald-400",
-	"bg-green-400",
-	"bg-blue-400",
-	"bg-red-400",
-	"bg-yellow-400",
+	"!bg-pink-400",
+	"!bg-violet-400",
+	"!bg-emerald-400",
+	"!bg-green-400",
+	"!bg-blue-400",
+	"!bg-red-400",
+	"!bg-yellow-400",
 ];

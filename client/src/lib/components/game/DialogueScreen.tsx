@@ -131,14 +131,18 @@ const DialogueScreen = () => {
 							"Waiting for all players to end dialogue..."}
 					</div>
 					<div>
-						<button
-							className={`absolute rounded-b-none text-sm right-4 bottom-4 bg-gray-900 w-24 text-center transition-all duration-500 ${
-								false ? "!bg-green-700 !bg-opacity-70" : ""
-							}`}
-							onClick={() => nextDialogue()}
-						>
-							next →
-						</button>
+						{scene.dialogue.texts.length > 0 ? (
+							<button
+								className={`absolute rounded-b-none text-sm right-4 bottom-4 bg-gray-900 w-24 text-center transition-all duration-500 ${
+									false ? "!bg-green-700 !bg-opacity-70" : ""
+								}`}
+								onClick={() => nextDialogue()}
+							>
+								next →
+							</button>
+						) : (
+							<></>
+						)}
 					</div>
 				</div>
 			</div>

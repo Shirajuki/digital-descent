@@ -35,6 +35,10 @@ export default class HomeScene extends Scene {
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
 		];
+		if (oldPlayer) {
+			oldPlayer?.nameEntity?.destroy();
+			oldPlayer?.destroy();
+		}
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
 
@@ -76,8 +80,11 @@ export default class HomeScene extends Scene {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", { player: this.player.getData() });
 		}
-
-		// this.switch("digitalworld");
-		this.switch("office");
+		if (this.game.currentScene === "home") {
+			this.switch("jump");
+		} else {
+			// this.switch("digitalworld");
+			this.switch("office");
+		}
 	}
 }

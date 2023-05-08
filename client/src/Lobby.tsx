@@ -45,12 +45,13 @@ function Lobby() {
 			});
 			channel.on("lobby-startgame", () => {
 				console.log("starting game...");
+				window.playerIndex = players.findIndex((p) => p.id === channel.id);
 				navigate("/game");
 			});
 
 			const player = {
 				id: channel.id,
-				name: "Player",
+				name: NAMES[Math.max(0, players.length - 1)] || "Player",
 				customization: {},
 				ready: false,
 				host: false,
@@ -87,6 +88,7 @@ function Lobby() {
 
 	return (
 		<main className="flex flex-col items-center w-screen">
+			{/* <div className="flex w-full max-w-5xl gap-4 p-2">{lobbyId}</div> */}
 			<div className="flex w-full max-w-5xl gap-4">
 				<div className="w-8/12">
 					<div className="grid grid-cols-4 gap-3 mb-4 p-4 bg-[rgba(255,255,255,0.05)] rounded-md">
@@ -95,10 +97,10 @@ function Lobby() {
 								key={player.id}
 								className={`bg-slate-200 bg-opacity-0 h-48 rounded-sm flex flex-col gap justify-between items-center ${
 									player.id == window?.channel?.id
-										? `border-stone-100 border-opacity-50 border-4 bg-opacity-0 ${
+										? `border-stone-100 !border-opacity-60 border-4 bg-opacity-0 ${
 												CURSOR_COLORS[i % CURSOR_COLORS.length]
 										  }`
-										: `border-4 border-opacity-[0.15] ${
+										: `border-4 !border-opacity-[0.15] ${
 												CURSOR_COLORS[i % CURSOR_COLORS.length]
 										  }`
 								}`}
