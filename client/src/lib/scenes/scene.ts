@@ -60,6 +60,11 @@ export default class Scene extends Phaser.Scene {
 	triggerAction(action: string) {}
 	togglePopup(data: any) {}
 	sync(data: any) {}
+	update(_dt: number, delta: number) {
+		(window as any).frameTime += delta;
+		if ((window as any).frameTime > 16.5) (window as any).frameTime = 0;
+		else if ((window as any).frameTime <= 16.5) return;
+	}
 	switch(scene: string) {
 		console.log(this.game.currentScene, "->", scene);
 		// Cleanup scene

@@ -71,6 +71,7 @@ export default class HomeScene extends Scene {
 	}
 
 	update(_time: any, _delta: any) {
+		super.update(_time, _delta);
 		// Update player
 		this.player.updatePlayer(this.collisions);
 

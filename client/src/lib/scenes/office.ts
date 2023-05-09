@@ -217,6 +217,8 @@ export default class OfficeScene extends Scene {
 		}
 	}
 	update(_time: any, _delta: any) {
+		super.update(_time, _delta);
+
 		// Update player
 		this.player.updatePlayer(this.collisions);
 		if (this.customer) this.customer.updatePlayer(this.collisions);

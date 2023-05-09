@@ -493,6 +493,7 @@ export default class BattleScene extends Scene {
 	}
 
 	update(_time: any, _delta: any) {
+		super.update(_time, _delta);
 		// Animate battle attacking state for player
 		if (this.battle?.state.type === "single-attack") {
 			animateSingleAttack(this);
