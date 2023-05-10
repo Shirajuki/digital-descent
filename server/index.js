@@ -87,9 +87,8 @@ io.on("connection", (channel) => {
 		if (!roomId || !data?.scenario) return;
 
 		// Check if dialogue is done
-		const count = rooms[roomId].dialogues.filter(
-			(d) => d == data.scenario
-		).length;
+		const count =
+			rooms[roomId]?.dialogues?.filter((d) => d == data.scenario)?.length || 0;
 		const players = Object.values(rooms[roomId].players).filter((p) => p.id);
 		if (rooms[roomId] && count !== players.length) {
 			if (data?.forceall) {
@@ -244,7 +243,10 @@ io.on("connection", (channel) => {
 				customization: {},
 				ready: false,
 			};
-			io.to(roomId).emit("lobby-joined", roomId);
+			const players = Object.values(rooms[roomId]?.players)?.filter(
+				(p) => p.id
+			) || [""];
+			io.to(roomId).emit("lobby-joined", { roomId, id: players.length - 1 });
 			io.emit(
 				"lobby-listing",
 				Object.keys(rooms)
@@ -278,8 +280,11 @@ io.on("connection", (channel) => {
 				customization: {},
 				ready: false,
 			};
+			const players = Object.values(rooms[roomId]?.players)?.filter(
+				(p) => p.id
+			) || [""];
 			rooms[roomId].joined.push(channel.id);
-			io.to(roomId).emit("lobby-joined", roomId);
+			io.to(roomId).emit("lobby-joined", { roomId, id: players.length - 1 });
 			io.to(roomId).emit("message-update", {
 				sender: "[system]",
 				message: "A player joined the lobby.",
@@ -307,7 +312,10 @@ io.on("connection", (channel) => {
 				customization: {},
 				ready: false,
 			};
-			io.to(roomId).emit("lobby-joined", roomId);
+			const players = Object.values(rooms[roomId]?.players)?.filter(
+				(p) => p.id
+			) || [""];
+			io.to(roomId).emit("lobby-joined", { roomId, id: players.length - 1 });
 		}
 		io.emit(
 			"lobby-listing",

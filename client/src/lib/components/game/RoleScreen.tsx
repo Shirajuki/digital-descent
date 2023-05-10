@@ -118,11 +118,11 @@ const RoleScreen = () => {
 								{scene?.players.map((p, i) => {
 									if (selects[p?.id] !== "tank")
 										return (
-											<div key={"workselect" + i} className="hidden"></div>
+											<div key={"roleselect" + i} className="hidden"></div>
 										);
 									return (
 										<div
-											key={"workselect" + i}
+											key={"roleselect" + i}
 											className={`absolute top-0 h-5 w-5 ${
 												PLAYER_COLORS[i % PLAYER_COLORS.length]
 											} -translate-x-2 -translate-y-2 rotate-45`}
@@ -151,11 +151,11 @@ const RoleScreen = () => {
 								{scene?.players.map((p, i) => {
 									if (selects[p?.id] !== "support")
 										return (
-											<div key={"workselect" + i} className="hidden"></div>
+											<div key={"roleselect" + i} className="hidden"></div>
 										);
 									return (
 										<div
-											key={"workselect" + i}
+											key={"roleselect" + i}
 											className={`absolute top-0 h-5 w-5 ${
 												PLAYER_COLORS[i % PLAYER_COLORS.length]
 											} -translate-x-2 -translate-y-2 rotate-45`}
@@ -184,11 +184,11 @@ const RoleScreen = () => {
 								{scene?.players.map((p, i) => {
 									if (selects[p?.id] !== "dps")
 										return (
-											<div key={"workselect" + i} className="hidden"></div>
+											<div key={"roleselect" + i} className="hidden"></div>
 										);
 									return (
 										<div
-											key={"workselect" + i}
+											key={"roleselect" + i}
 											className={`absolute top-0 h-5 w-5 ${
 												PLAYER_COLORS[i % PLAYER_COLORS.length]
 											} -translate-x-2 -translate-y-2 rotate-45`}

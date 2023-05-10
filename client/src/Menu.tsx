@@ -30,8 +30,9 @@ function Menu() {
 		window.channel = channel;
 		setChannel(channel);
 		channel.on("lobby-joined", (data: any) => {
-			setLobbyId(data);
-			console.log(`You joined the room ${data}`);
+			setLobbyId(data.roomId);
+			if (window.playerIndex === undefined) window.playerIndex = data.id;
+			console.log(`You joined the room ${data.roomId} as index ${data.id}`);
 			navigate("/lobby");
 		});
 		channel.on("lobby-listing", (data: any) => {

@@ -39,8 +39,9 @@ function Game() {
 			channel = io(`http://${window.location.hostname}:3000`);
 			window.channel = channel;
 			channel.on("lobby-joined", (data: any) => {
-				setRoomId(data);
-				console.log(`You joined the room ${data}`);
+				setRoomId(data.roomId);
+				if (window.playerIndex === undefined) window.playerIndex = data.id;
+				console.log(`You joined the room ${data.roomId} as index ${data.id}`);
 			});
 			channel.emit("lobby-join", { roomId: "test-room" });
 		}

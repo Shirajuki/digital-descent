@@ -107,7 +107,9 @@ const BattleHUD = () => {
 											/>
 										))}
 									</div>
-									<p className="text-xs">LV.{player.stats.LEVEL}</p>
+									<p className="text-xs uppercase">{player.battleClass}</p>
+									<p className="text-xs">LV.{player.stats.LEVEL} </p>
+									<p className="text-xs">•</p>
 									<p>
 										{player.name}{" "}
 										{scene.player?.id === player?.id ? "(you)" : ""}

@@ -134,7 +134,7 @@ const WinScreen = () => {
 			>
 				<div className="bg-slate-800 w-full flex flex-col gap-4 p-4">
 					<h1 className="block w-full text-center text-3xl pb-2 [font-family:var(--font-normal)]">
-						Information log
+						Battle information log
 					</h1>
 					<div className="flex flex-col gap-3 pl-2 h-full">
 						{battle.players
@@ -247,6 +247,9 @@ const WinScreen = () => {
 				<div className="bg-slate-800 w-full flex flex-col gap-4 p-4">
 					<h1 className="block w-full text-center text-3xl pb-2 [font-family:var(--font-normal)]">
 						Level up
+						<p className="text-xs italic font-normal opacity-90">
+							(pick stats to expend your points on)
+						</p>
 					</h1>
 					<div className="flex flex-col gap-10 h-full">
 						<div className="flex [font-family:var(--font-normal)] gap-5 justify-center pt-3">
