@@ -17,15 +17,19 @@ function Chat({
 	const chatRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (channel && setChat && chatRef.current && !channel.messageLoaded) {
-			channel.messageLoaded = true;
+		if (channel && setChat && chatRef.current) {
 			channel.on("message-update", (data: any) => {
 				setChat((ochat) => [...ochat, data]);
 				setTimeout(() => {
-					chatRef?.current?.scrollTo({ top: 100000000000 });
+					chatRef?.current?.scrollTo({ top: 1000000000 });
 				}, 100);
 			});
 		}
+		return () => {
+			if (channel) {
+				channel.off("message-update");
+			}
+		};
 	}, [channel, setChat, chatRef.current]);
 
 	useEffect(() => {

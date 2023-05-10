@@ -218,7 +218,7 @@ const BattleHUD = () => {
 					>
 						<img
 							className="-rotate-45 w-10/12"
-							src={`http://localhost:5173/${player?.skills?.special?.icon}`}
+							src={`/${player?.skills?.special?.icon}`}
 							alt="special attack icon"
 						/>
 					</button>
@@ -248,7 +248,7 @@ const BattleHUD = () => {
 					>
 						<img
 							className="-rotate-45 w-10/12"
-							src={`http://localhost:5173/${player?.skills?.charge?.icon}`}
+							src={`/${player?.skills?.charge?.icon}`}
 							alt="charge attack icon"
 						/>
 					</button>
@@ -278,7 +278,7 @@ const BattleHUD = () => {
 					>
 						<img
 							className="-rotate-45 w-10/12"
-							src={`http://localhost:5173/${player?.skills?.normal?.icon}`}
+							src={`/${player?.skills?.normal?.icon}`}
 							alt="normal attack icon"
 						/>
 					</button>
