@@ -60,6 +60,8 @@ const BattleHUD = () => {
 
 	const toggleAttackInfo = useCallback(() => {
 		console.log("toggle attack info");
+		scene.help.display = true;
+		scene.observable.notify();
 	}, [battle]);
 
 	if (!player || !player?.stats || !player?.battleStats || !battle)
@@ -185,8 +187,14 @@ const BattleHUD = () => {
 								: ""
 						}`}
 						onClick={() => healthPotion()}
-						title="Health Potion"
-					></button>
+						title="Energy drink"
+					>
+						<img
+							className="-rotate-45 w-11/12"
+							src={`/${player?.skills?.normal?.icon}`}
+							alt="energy drink icon"
+						/>
+					</button>
 					<button
 						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]
 						${
@@ -195,8 +203,14 @@ const BattleHUD = () => {
 								: ""
 						}`}
 						onClick={() => staminaPotion()}
-						title="Stamina Potion"
-					></button>
+						title="Energy drink"
+					>
+						<img
+							className="-rotate-45 w-11/12"
+							src={`/${player?.skills?.normal?.icon}`}
+							alt="energy drink icon"
+						/>
+					</button>
 
 					<button
 						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]
@@ -293,7 +307,14 @@ const BattleHUD = () => {
 					<button
 						className="rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[0rem]"
 						onClick={() => toggleAttackInfo()}
-					></button>
+						title="toggle help"
+					>
+						<img
+							className="-rotate-45 w-11/12"
+							src={`/${player?.skills?.normal?.icon}`}
+							alt="question mark icon"
+						/>
+					</button>
 				</div>
 			</div>
 

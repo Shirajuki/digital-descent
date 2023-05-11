@@ -54,6 +54,11 @@ export default class BattleScene extends Scene {
 		{ x: -290, y: 35 },
 	];
 
+	public help = {
+		display: false,
+		ready: false,
+	};
+
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
 		observable: Observable

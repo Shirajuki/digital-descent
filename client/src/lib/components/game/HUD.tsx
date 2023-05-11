@@ -12,6 +12,7 @@ import RoleScreen from "./RoleScreen";
 import DigitalWorldHUD from "./DigitalWorldHUD";
 import ExplorationHUD from "./ExplorationHUD";
 import DaysScreen from "./DaysScreen";
+import BattleHelpScreen from "./BattleHelpScreen";
 
 function HUD({ engine }: { engine: PhaserEngine | null }) {
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -51,6 +52,7 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 			) : (
 				<></>
 			)}
+			{engine?.game.currentScene === "battle" ? <BattleHelpScreen /> : <></>}
 			<DialogueScreen />
 			<CursorScreen />
 		</>
