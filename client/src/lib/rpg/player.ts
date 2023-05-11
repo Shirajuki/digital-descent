@@ -162,7 +162,7 @@ export const initializePlayer = (
 		this.setDepth(this.y);
 		this.nameEntity.x = this.x;
 		this.nameEntity.y = this.y - 40;
-		this.nameEntity.setDepth(this.y + 1);
+		this.nameEntity.setDepth(this.y + 20000);
 	};
 	const channel = window.channel;
 	if (channel) player.id = channel.id;

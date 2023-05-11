@@ -132,7 +132,7 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		}
 		player.nameEntity.x = player.x;
 		player.nameEntity.y = player.y - 40;
-		player.nameEntity.setDepth(player.y + 1);
+		player.nameEntity.setDepth(player.y + 20000);
 		player.index = i;
 	}
 };

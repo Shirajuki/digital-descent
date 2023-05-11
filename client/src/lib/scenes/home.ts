@@ -26,8 +26,8 @@ export default class HomeScene extends Scene {
 		});
 		// Load bg sprite
 		this.load.spritesheet("officeBg", "sprites/officeBg.png", {
-			frameWidth: 1600,
-			frameHeight: 1100,
+			frameWidth: 1700,
+			frameHeight: 1200,
 		});
 	}
 	create() {

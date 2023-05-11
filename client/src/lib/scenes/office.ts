@@ -34,8 +34,16 @@ export default class OfficeScene extends Scene {
 		});
 		// Load bg sprite
 		this.load.spritesheet("officeBg", "sprites/officeBg.png", {
-			frameWidth: 1600,
-			frameHeight: 1100,
+			frameWidth: 1700,
+			frameHeight: 1200,
+		});
+		this.load.spritesheet("officeBgOverlay", "sprites/officeBgOverlay.png", {
+			frameWidth: 1700,
+			frameHeight: 1200,
+		});
+		this.load.spritesheet("table", "sprites/table.png", {
+			frameWidth: 360,
+			frameHeight: 360,
 		});
 	}
 	create() {
@@ -79,6 +87,9 @@ export default class OfficeScene extends Scene {
 
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
+		this.add.sprite(0, 0, "officeBgOverlay").setDepth(10000).setScale(0.5);
+
+		this.add.sprite(194, -52, "table").setDepth(-30).setScale(0.5);
 		// Move player to starting position
 		this.player.setPosition(-250, 140);
 		this.player.flipX = false;
