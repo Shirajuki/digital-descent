@@ -28,12 +28,10 @@ function Lobby() {
 	// Load geckos channel and initialize listeners for geckos
 	useEffect(() => {
 		if (!navigate || !setPlayer) return;
-		if ((window as any)?.lobbyInitialized) return;
 
 		const channel = window.channel;
 		if (channel) {
-			(window as any).lobbyInitialized = true;
-			console.log(channel.id, lobbyId);
+			console.log(channel.id, lobbyId, (window as any).lobbyInitialized);
 			channel.on("lobby-update", (data: any) => {
 				console.log(data);
 				setPlayers(data);
@@ -46,21 +44,32 @@ function Lobby() {
 			channel.on("lobby-startgame", () => {
 				console.log("starting game...");
 				window.playerIndex = players.findIndex((p) => p.id === channel.id);
+				window.playerName = NAMES[window.playerIndex];
+				console.log(window.playerIndex, window.playerName);
 				navigate("/game");
 			});
 
-			const player = {
-				id: channel.id,
-				name: NAMES[Math.max(0, players.length - 1)] || "Player",
-				customization: {},
-				ready: false,
-				host: false,
-			};
-			setPlayer(player);
-			channel.emit("lobby-update", { player });
+			if (!(window as any)?.lobbyInitialized) {
+				(window as any).lobbyInitialized = true;
+				const player = {
+					id: channel.id,
+					name: NAMES[Math.max(0, players.length)] || "Player",
+					customization: {},
+					ready: false,
+					host: false,
+				};
+				setPlayer(player);
+				channel.emit("lobby-update", { player });
+			}
 		}
 		if (!lobbyId) navigate("/");
-	}, [navigate, setPlayer]);
+		return () => {
+			if (channel) {
+				channel.off("lobby-update");
+				channel.off("lobby-startgame");
+			}
+		};
+	}, [navigate, setPlayer, players]);
 
 	const updateLobby = useCallback(
 		(player: any) => {
@@ -79,12 +88,6 @@ function Lobby() {
 		window?.channel?.emit("lobby-startgame", {});
 		console.log("start game");
 	}, []);
-
-	for (let i = 0; i < players.length; i++) {
-		if (players[i].id == window?.channel?.id) {
-			window.playerName = NAMES[i];
-		}
-	}
 
 	return (
 		<main className="flex flex-col items-center w-screen">

@@ -35,7 +35,7 @@ export default class HomeScene extends Scene {
 
 		// Create player
 		const oldPlayer = this.player;
-		this.player = initializePlayer(this, "Player 1");
+		this.player = initializePlayer(this, "Player 1", oldPlayer);
 		this.players = [
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
@@ -88,7 +88,7 @@ export default class HomeScene extends Scene {
 			channel.emit("game-update", { player: this.player.getData() });
 		}
 
-		this.switch("digitalworld");
-		// this.switch("office");
+		// this.switch("digitalworld");
+		this.switch("office");
 	}
 }

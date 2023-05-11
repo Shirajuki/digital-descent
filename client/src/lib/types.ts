@@ -42,6 +42,7 @@ declare global {
 		channel: any;
 		exploration: any;
 		engine: any; // For testing and debugging purposes
+		oldPlayer: any;
 		playerBattleClass: string | null;
 		playerName: string;
 		playerIndex: number;

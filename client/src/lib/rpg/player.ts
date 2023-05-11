@@ -77,10 +77,26 @@ export const initializePlayer = (
 	player.effects = [];
 	player.name = window.playerName || name;
 
+	// Old player from same scene
 	if (oldPlayer) {
 		player.stats = oldPlayer.stats;
 		player.battleStats = oldPlayer.battleStats;
+		player.inventory = oldPlayer.inventory;
+		player.equipment = oldPlayer.equipment;
+	}
+	// Old player from saved data in window object
+	if (window.oldPlayer) {
+		player.stats = window.oldPlayer.stats;
+		player.battleStats = window.oldPlayer.battleStats;
+		player.inventory = window.oldPlayer.inventory;
+		player.equipment = window.oldPlayer.equipment;
+		window.oldPlayer.destroy();
+		window.oldPlayer?.nameEntity?.destroy();
+		window.oldPlayer = undefined;
+	}
+	if (oldPlayer) {
 		oldPlayer.destroy();
+		oldPlayer?.nameEntity?.destroy();
 	}
 
 	player.getData = function () {

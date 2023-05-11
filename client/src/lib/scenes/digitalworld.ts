@@ -130,7 +130,7 @@ export default class DigitalWorldScene extends Scene {
 
 		// Create player
 		const oldPlayer = this.player;
-		this.player = initializePlayer(this, "Player 1");
+		this.player = initializePlayer(this, "Player 1", oldPlayer);
 		this.players = [
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,

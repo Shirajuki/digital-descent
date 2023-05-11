@@ -55,7 +55,6 @@ function Game() {
 		});
 		// Dialogue syncing
 		channel.on("dialogue", (data: any) => {
-			return;
 			const scene = engine.game.scene.getScene(
 				engine.game.currentScene
 			) as Scene;

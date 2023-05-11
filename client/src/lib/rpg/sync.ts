@@ -59,7 +59,21 @@ export const addPlayers = (
 			scene.players.push(player);
 			console.log(window.channel.id, data.id, data.name, scene.players);
 			scene.observable.notify();
-			// console.log("ADDING PLAYER", player);
+
+			// Make player clickable if current scene is nattle
+			if (scene.game.currentScene == "battle") {
+				// Set players to be clickable
+				player.setInteractive();
+				player.on("pointerup", () => {
+					if (!scene.battle.state.running && !player.battleStats.dead) {
+						scene.battle.state.target = scene.battle.players[i];
+						scene.observable.notify();
+					}
+				});
+				setTimeout(() => {
+					scene.observable.notify();
+				}, 1000);
+			}
 		}
 	}
 	// console.log(clientPlayers, serverPlayers);
@@ -98,10 +112,13 @@ export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
 					p?.nameEntity?.destroy();
 					p?.shadow?.destroy();
 					scene.players[i] = scene.player;
+					scene.player = NAMES[window.playerIndex || 0];
 				}
 			});
 		}
+		return false;
 	}
+	return true;
 };
 
 export const updatePlayers = (scene: any, playerData: any) => {
@@ -112,6 +129,7 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		if (!scene.player?.id || !player?.id) continue;
 		if (!player) {
 			scene.players[i] = scene.player;
+			scene.player.name = NAMES[window.playerIndex || 0];
 			continue;
 		}
 

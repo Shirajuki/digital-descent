@@ -8,7 +8,11 @@ import BattleSystem from "../rpg/systems/battleSystem";
 import Scene from "./scene";
 import Observable from "../observable";
 import { initializePlayer } from "../rpg/player";
-import { removeDuplicatePlayers, reorderPlayers } from "../rpg/sync";
+import {
+	addPlayers,
+	removeDuplicatePlayers,
+	reorderPlayers,
+} from "../rpg/sync";
 import { animateSingleAttack, animateStandingAttack } from "../rpg/animation";
 import { weightedRandom } from "../utils";
 import { randomInt } from "../utils";
@@ -23,6 +27,7 @@ export default class BattleScene extends Scene {
 	public pointerSprite: any;
 	public battle = new BattleSystem([], []); // Battle System
 	public monsters: any;
+	public newBattle = true;
 
 	// Attack animation variables
 	public currentAttackDelay = 0;
@@ -148,6 +153,7 @@ export default class BattleScene extends Scene {
 				}),
 			});
 		}
+		this.newBattle = true;
 
 		// Create pointer on top of first monster
 		this.battle.state.target = this.battle.monsters[0];
@@ -199,6 +205,7 @@ export default class BattleScene extends Scene {
 			});
 		} else if (data.type === "leveling-end") {
 			// Reset all players by changing out the id
+			window.oldPlayer = this.player;
 			for (let i = 0; i < this.players.length; i++) {
 				const player = this.players[i];
 				player.id = "entityKill" + i;
@@ -411,6 +418,13 @@ export default class BattleScene extends Scene {
 			this.battle = new BattleSystem(this.players, this.monsters);
 			// Set monster to be clickable
 			this.monsters.forEach((monster: any, index: number) => {
+				// Recheck duplicate and remove
+				this.children.list.forEach((e: any, i: number) => {
+					if (e?.id === monster.id && e !== monster) {
+						this.children.remove(e);
+					}
+				});
+
 				monster.setInteractive();
 				monster.on("pointerup", () => {
 					if (!this.battle.state.running && !monster.battleStats.dead) {
@@ -429,38 +443,16 @@ export default class BattleScene extends Scene {
 
 			removeDuplicatePlayers(this, serverPlayers);
 
-			// Add new players if found
-			const clientPlayers = this.players.map((player: any) => player.id);
-			for (let i = 0; i < serverPlayers.length; i++) {
-				if (!clientPlayers.includes(serverPlayers[i])) {
-					const player: any = initializePlayer(this, serverPlayersData[i].id);
-					player.id = serverPlayersData[i].id;
-					player.name = serverPlayersData[i].id;
-					this.players.push(player);
-
-					// Set players to be clickable
-					player.setInteractive();
-					player.on("pointerup", () => {
-						if (!this.battle.state.running && !player.battleStats.dead) {
-							this.battle.state.target = this.battle.players[i];
-							this.observable.notify();
-						}
-					});
-					setTimeout(() => {
-						this.observable.notify();
-					}, 1000);
-				}
-			}
-
-			reorderPlayers(this, serverPlayers);
+			addPlayers(this, serverPlayers, serverPlayersData);
 
 			// Update player position
 			for (let i = 0; i < this.players.length; i++) {
 				const player = this.players[i];
 				// Relocate player starting position
 				if (player.id === this.player?.id) {
-					this.player.x = this.playerLocations[i].x;
-					this.player.y = this.playerLocations[i].y;
+					this.player.x = this.playerLocations[window.playerIndex].x;
+					this.player.y = this.playerLocations[window.playerIndex].y;
+					this.player.name = NAMES[window.playerIndex];
 					continue;
 				}
 				player.x = data.players[player.id].x;
@@ -470,8 +462,11 @@ export default class BattleScene extends Scene {
 				player.setDepth(player.y);
 			}
 
+			const isOrdered = reorderPlayers(this, serverPlayers);
+
 			// Update BattleHUD
-			if (clientPlayers.join() !== serverPlayers.join()) {
+			if (!isOrdered || this.newBattle) {
+				this.newBattle = false;
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-initialize", {

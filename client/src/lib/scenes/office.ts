@@ -69,7 +69,7 @@ export default class OfficeScene extends Scene {
 
 		// Create player
 		const oldPlayer = this.player;
-		this.player = initializePlayer(this, window.playerName ?? "Player");
+		this.player = initializePlayer(this, "Player 1", oldPlayer);
 		this.players = [
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,

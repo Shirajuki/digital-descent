@@ -85,6 +85,7 @@ io.on("connection", (channel) => {
 	channel.on("dialogue", (data) => {
 		const roomId = channel.roomId;
 		if (!roomId || !data?.scenario) return;
+		if (!rooms[roomId].players) return;
 
 		// Check if dialogue is done
 		const count =
@@ -107,6 +108,7 @@ io.on("connection", (channel) => {
 	channel.on("dialogue-end", (data) => {
 		const roomId = channel.roomId;
 		if (!roomId || !data?.scenario) return;
+		if (!rooms[roomId].players) return;
 
 		// Update dialogue ended
 		rooms[roomId].dialogues.push(data.scenario);
@@ -417,10 +419,13 @@ io.on("connection", (channel) => {
 	// Battle listeners
 	channel.on("battle-initialize", (data) => {
 		if (rooms[channel.roomId] && data) {
+			// TODO: fix battle initialization
+
 			// Initialize new battle if not found
 			const players = Object.values(rooms[channel.roomId].players).filter(
 				(p) => p.stats
 			);
+
 			if (rooms[channel.roomId].status !== "battling") {
 				const monsters = data.monsters;
 				rooms[channel.roomId].status = "battling";

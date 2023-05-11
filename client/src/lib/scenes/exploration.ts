@@ -221,7 +221,7 @@ export default class ExplorationScene extends Scene {
 	}
 
 	checkSteps() {
-		if (this.game.data.steps > this.game.data.maxSteps) {
+		if (this.game.data.steps >= this.game.data.maxSteps) {
 			this.game.data.steps = 0;
 			if (this.game.data.days % 5 === 0) {
 				this.game.data.displayDays = this.game.data.days;
