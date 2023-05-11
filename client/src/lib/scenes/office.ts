@@ -87,9 +87,17 @@ export default class OfficeScene extends Scene {
 
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
-		this.add.sprite(0, 0, "officeBgOverlay").setDepth(10000).setScale(0.5);
+		this.add
+			.sprite(0, 0, "officeBgOverlay")
+			.setDepth(10000)
+			.setScale(0.5)
+			.setAlpha(0.9);
 
-		this.add.sprite(194, -52, "table").setDepth(-30).setScale(0.5);
+		this.add
+			.sprite(194, -52, "table")
+			.setDepth(-30)
+			.setScale(0.5)
+			.setAlpha(0.9);
 		// Move player to starting position
 		this.player.setPosition(-250, 140);
 		this.player.flipX = false;

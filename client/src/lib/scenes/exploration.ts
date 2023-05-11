@@ -122,7 +122,10 @@ export default class ExplorationScene extends Scene {
 		];
 		// Create background
 		this.add.sprite(0, 0, "explorationBg").setDepth(-10000);
-		this.add.sprite(150, -110, "signPost").setDepth(-110 + 62);
+		this.add
+			.sprite(150, -110, "signPost")
+			.setDepth(-110 + 62)
+			.setAlpha(0.9);
 		// Set player to starting position
 		this.player.setPosition(0, 0);
 		this.player.flipX = false;
