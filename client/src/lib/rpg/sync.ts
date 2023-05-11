@@ -14,8 +14,8 @@ export const removeDuplicatePlayers = (scene: any, serverPlayers: any[]) => {
 		) {
 			console.log("REMOVING PLAYER", player);
 			player.setAlpha(0);
-			player.nameEntity.setAlpha(0);
 			player.nameEntity.destroy();
+			player.shadow.destroy();
 			player.destroy();
 			scene.players.splice(i, 1);
 		}
@@ -96,6 +96,7 @@ export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
 				if (p?.id === scene.player?.id || p === undefined) {
 					p?.destroy();
 					p?.nameEntity?.destroy();
+					p?.shadow?.destroy();
 					scene.players[i] = scene.player;
 				}
 			});
@@ -133,6 +134,12 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.nameEntity.x = player.x;
 		player.nameEntity.y = player.y - 40;
 		player.nameEntity.setDepth(player.y + 20000);
+
+		player.shadow.x = player.x;
+		player.shadow.y = player.y + 35;
+		player.shadow.setDepth(player.y - 1);
+		if (playerData[player.id].shadowAlpha !== undefined)
+			player.shadow.setAlpha(playerData[player.id].shadowAlpha);
 		player.index = i;
 	}
 };

@@ -19,6 +19,11 @@ export const initializePlayer = (
 	playerName.setDepth(1000);
 	playerName.setOrigin(0.5, 0.5);
 	player.nameEntity = playerName;
+	const shadow = scene.add.ellipse(0, 0, 60, 25, 0x000);
+	shadow.setStrokeStyle(7, 0x000);
+	shadow.setOrigin(0.5, 0.5);
+	shadow.setAlpha(0);
+	player.shadow = shadow;
 
 	// General
 	player.setScale(SCALE);
@@ -94,6 +99,7 @@ export const initializePlayer = (
 			effects: this.effects,
 			inventory: this.inventory,
 			equipment: this.equipment,
+			shadowAlpha: this.shadow.alpha,
 		};
 	};
 	player.updatePlayerAnimation = function () {
@@ -163,6 +169,9 @@ export const initializePlayer = (
 		this.nameEntity.x = this.x;
 		this.nameEntity.y = this.y - 40;
 		this.nameEntity.setDepth(this.y + 20000);
+		this.shadow.x = this.x;
+		this.shadow.y = this.y + 35;
+		this.shadow.setDepth(this.y - 1);
 	};
 	const channel = window.channel;
 	if (channel) player.id = channel.id;

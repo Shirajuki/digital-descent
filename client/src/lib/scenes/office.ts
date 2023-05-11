@@ -11,6 +11,7 @@ import Scene from "./scene";
 import collisions from "../collisions/officeCollisions.json";
 import { DEBUG } from "../constants";
 import { generateTasks } from "../rpg/systems/taskSystem";
+import { lerp } from "../utils";
 
 export default class OfficeScene extends Scene {
 	public text: any;
@@ -254,6 +255,7 @@ export default class OfficeScene extends Scene {
 					this.eventCollisions[i].y + this.eventCollisions[i].height
 			) {
 				if (DEBUG) this.eventCollisions[i].setStrokeStyle(3, 0x00ff00);
+				this.player.shadow.setAlpha(lerp(this.player.shadow.alpha, 0.2, 0.1));
 				eventCollided = true;
 				if (this.player.eventCollision !== this.eventCollisions[i].name) {
 					this.player.eventCollision = this.eventCollisions[i].name;
@@ -292,6 +294,7 @@ export default class OfficeScene extends Scene {
 				if (DEBUG) {
 					this.eventCollisions[i].setStrokeStyle(3, 0x0000ff);
 				}
+				this.player.shadow.setAlpha(lerp(this.player.shadow.alpha, 0, 0.1));
 			}
 		}
 		if (!eventCollided && this.player.eventCollision !== "")

@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import BattleScene from "../../scenes/battle";
 import BattleSystem from "../../rpg/systems/battleSystem";
-import { ELEMENT, PLAYER_COLORS } from "../../constants";
+import { CURSOR_COLORS, ELEMENT, PLAYER_COLORS } from "../../constants";
 import EffectIcon from "./EffectIcon";
 import DigitalWorldScene from "../../scenes/digitalworld";
 
@@ -95,8 +95,12 @@ const DigitalWorldHUD = () => {
 					?.filter((player) => player?.stats && player?.battleStats)
 					.map((player, i) => (
 						<div
-							className={`relative flex flex-col items-end transition-all bg-[rgba(0,0,0,0.7)] py-2 px-3 rounded-md ${
-								player.id === scene.player.id ? "!bg-zinc-900" : ""
+							className={`relative flex flex-col items-end transition-all border-2 !border-opacity-50 border-transparent bg-[rgba(0,0,0,0.7)] py-2 px-3 rounded-md ${
+								player.id === scene.player.id
+									? `!bg-[rgba(0,0,0,1)] ${
+											CURSOR_COLORS[i % CURSOR_COLORS.length]
+									  }`
+									: ""
 							}`}
 							key={`${player.id}-${i}`}
 						>
