@@ -155,13 +155,19 @@ export default class BattleSystem {
 		}
 	}
 
+	checkValidAttack(attack: any, state: any) {
+		if (attack.targets.type === "monster") {
+			return state.target.type == "monster";
+		}
+		return true;
+	}
+
 	doAttack(type: "normal" | "charge" | "special", id: string) {
 		if (type === "normal") {
 			console.log("normal");
 			if (!this.state.attacker) {
 				const player = this.players.find((p) => p.id === id);
 				const attack = player.skills.normal;
-
 				const state = {
 					type: attack.animationType,
 					attacker: player,
@@ -171,6 +177,7 @@ export default class BattleSystem {
 					finished: false,
 					initialPosition: { x: player.x, y: player.y },
 				};
+				if (!this.checkValidAttack(attack, state)) return;
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
@@ -226,6 +233,7 @@ export default class BattleSystem {
 				} else {
 					return console.log("Nope");
 				}
+				if (!this.checkValidAttack(attack, state)) return;
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {
@@ -273,6 +281,7 @@ export default class BattleSystem {
 				} else {
 					return console.log("Nope");
 				}
+				if (!this.checkValidAttack(attack, state)) return;
 				const channel = window.channel;
 				if (channel) {
 					channel.emit("battle-turn", {

@@ -35,6 +35,7 @@ export const addPlayers = (
 		.filter((p: any) => p);
 	if (!scene.player?.id) return;
 	for (let i = 0; i < serverPlayers.length; i++) {
+		// If player is current player
 		if (serverPlayers[i] === scene.player?.id) {
 			const name = NAMES[window.playerIndex ?? i];
 			if (window.playerName !== name) {
@@ -44,6 +45,7 @@ export const addPlayers = (
 			}
 			continue;
 		}
+		// If player is not current player
 		if (!clientPlayers.includes(serverPlayers[i])) {
 			const data = serverPlayersData[i];
 			const name = data.name ?? NAMES[i];
@@ -112,7 +114,7 @@ export const reorderPlayers = (scene: any, serverPlayers: any[]) => {
 					p?.nameEntity?.destroy();
 					p?.shadow?.destroy();
 					scene.players[i] = scene.player;
-					scene.player = NAMES[window.playerIndex || 0];
+					scene.player = window.playerName || NAMES[window.playerIndex || 0];
 				}
 			});
 		}
@@ -129,14 +131,16 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		if (!scene.player?.id || !player?.id) continue;
 		if (!player) {
 			scene.players[i] = scene.player;
-			scene.player.name = NAMES[window.playerIndex || 0];
+			scene.player.name = window.playerName || NAMES[window.playerIndex || 0];
 			continue;
 		}
 
-		// Update player name
+		// Skip if player is current player
+		if (player.id === scene.player?.id) continue;
+		// Skip if player name is not set
 		if (!player?.name || !playerData[player.id]?.name) continue;
 
-		if (player.id === scene.player?.id) continue;
+		// Update player position and attributes
 		player.x = playerData[player.id].x;
 		player.y = playerData[player.id].y;
 		player.movement = playerData[player.id].movement;
@@ -145,6 +149,8 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.battleClass = playerData[player.id].battleClass;
 		if (player.movement) player.updatePlayerAnimation();
 		player.setDepth(player.y);
+
+		// Update player name
 		if (player.nameEntity.name != playerData[player.id].name) {
 			player.name = playerData[player.id].name;
 			player.nameEntity.setText(player.name);
@@ -153,11 +159,13 @@ export const updatePlayers = (scene: any, playerData: any) => {
 		player.nameEntity.y = player.y - 40;
 		player.nameEntity.setDepth(player.y + 20000);
 
+		// Update player shadow
 		player.shadow.x = player.x;
 		player.shadow.y = player.y + 35;
 		player.shadow.setDepth(player.y - 1);
-		if (playerData[player.id].shadowAlpha !== undefined)
+		if (playerData[player.id].shadowAlpha !== undefined) {
 			player.shadow.setAlpha(playerData[player.id].shadowAlpha);
+		}
 		player.index = i;
 	}
 };

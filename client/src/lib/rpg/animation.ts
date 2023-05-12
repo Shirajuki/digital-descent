@@ -1,4 +1,5 @@
 import BattleScene from "../scenes/battle";
+import { lerp } from "../utils";
 
 export const spawnTextAtEntity = (
 	scene: BattleScene,

@@ -14,7 +14,7 @@ import {
 	reorderPlayers,
 } from "../rpg/sync";
 import { animateSingleAttack, animateStandingAttack } from "../rpg/animation";
-import { weightedRandom } from "../utils";
+import { lerp, weightedRandom } from "../utils";
 import { randomInt } from "../utils";
 
 /*
@@ -53,6 +53,10 @@ export default class BattleScene extends Scene {
 		{ x: -270, y: -35 },
 		{ x: -290, y: 35 },
 	];
+
+	// Tween garbage collect timer
+	public tweenTimer = 0;
+	public tweenTimerMax = 500;
 
 	public help = {
 		display: false,
@@ -426,6 +430,7 @@ export default class BattleScene extends Scene {
 				// Recheck duplicate and remove
 				this.children.list.forEach((e: any, i: number) => {
 					if (e?.id === monster.id && e !== monster) {
+						e.hp.destroy();
 						this.children.remove(e);
 					}
 				});
@@ -457,7 +462,8 @@ export default class BattleScene extends Scene {
 				if (player.id === this.player?.id) {
 					this.player.x = this.playerLocations[window.playerIndex].x;
 					this.player.y = this.playerLocations[window.playerIndex].y;
-					this.player.name = NAMES[window.playerIndex];
+					this.player.name =
+						window.playerName || NAMES[window.playerIndex || 0];
 					continue;
 				}
 				player.x = data.players[player.id].x;
@@ -468,7 +474,6 @@ export default class BattleScene extends Scene {
 			}
 
 			const isOrdered = reorderPlayers(this, serverPlayers);
-
 			// Update BattleHUD
 			if (!isOrdered || this.newBattle) {
 				this.newBattle = false;
@@ -630,18 +635,40 @@ export default class BattleScene extends Scene {
 		if (monsterHasEffects) this.observable.notify("effect");
 		// Render depth of player
 		this.player.setDepth(this.player.y);
+
 		// Update name entity to player position
+		// Update shadow color and move to player position
 		for (let i = 0; i < this.players.length; i++) {
 			const player = this.players[i];
-			if (player.name !== NAMES[i]) player.name = NAMES[i];
-			if (player.nameEntity.text !== player.name)
-				player.nameEntity.setText(player.name);
 			player.nameEntity.x = player.x;
 			player.nameEntity.y = player.y - 40;
 			player.nameEntity.setDepth(player.y + 1);
+
+			if (player.shadow.fillColor !== 0xffffff) {
+				player.shadow.fillColor = 0xffffff;
+				player.shadow.strokeColor = 0xffffff;
+			}
+			player.shadow.x = player.x;
+			player.shadow.y = player.y + 35;
+			player.shadow.setDepth(player.y - 1);
+			if (this.battle.turnQueue[0] === player) {
+				player.shadow.setAlpha(lerp(player.shadow.alpha, 0.05, 0.05));
+			} else {
+				player.shadow.setAlpha(lerp(player.shadow.alpha, 0, 0.05));
+			}
 		}
 
-		// Multiplayer test
+		// If tween timer is over, remove all tweens
+		if (
+			this.tweenTimer > this.tweenTimerMax &&
+			this.battle.actionQueue.length === 0
+		) {
+			this.tweens.killAll();
+			this.tweenTimer = 0;
+		} else {
+			this.tweenTimer++;
+		}
+
 		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;

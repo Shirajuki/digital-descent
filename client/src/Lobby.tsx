@@ -89,6 +89,12 @@ function Lobby() {
 		console.log("start game");
 	}, []);
 
+	for (let i = 0; i < players.length; i++) {
+		if (players[i].id == window?.channel?.id) {
+			window.playerName = NAMES[i];
+		}
+	}
+
 	return (
 		<main className="flex flex-col items-center w-screen">
 			{/* <div className="flex w-full max-w-5xl gap-4 p-2">{lobbyId}</div> */}
