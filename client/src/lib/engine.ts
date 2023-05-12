@@ -112,6 +112,9 @@ export default class PhaserEngine {
 				},
 			],
 			solvedTasks: [],
+			exploration: {
+				type: "STARTING",
+			},
 			customerBattle: {
 				status: "battling",
 				enemy: "customer",

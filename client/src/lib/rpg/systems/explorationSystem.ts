@@ -58,7 +58,7 @@ export const AREAS = {
 	CHALLENGE: { area: challengeArea, weight: 30 },
 	BATTLE: { area: battleArea, weight: 60 },
 	// SUBQUEST: { area: subQuestArea, weight: 15 },
-	SHOP: { area: shopArea, weight: 15 },
+	// SHOP: { area: shopArea, weight: 15 },
 };
 
 export const generateAvailableAreas = () => {

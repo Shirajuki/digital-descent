@@ -31,6 +31,7 @@ export default class ExplorationScene extends Scene {
 		SUBQUEST: "subquestDisplay",
 		SHOP: "shopDisplay",
 	};
+	public teleported = false;
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -181,6 +182,7 @@ export default class ExplorationScene extends Scene {
 				});
 			}
 		}, 1000);
+		this.teleported = false;
 
 		// Check steps
 		this.checkSteps();
@@ -263,21 +265,49 @@ export default class ExplorationScene extends Scene {
 		else this.player.onTeleportingPad.standingTime = 0;
 
 		// Trigger teleporting pad if enough players
+		const channel = window.channel;
 		if (
 			this.players.every(
 				(player) => player.onTeleportingPad.standingTime >= 150
-			)
+			) &&
+			!this.teleported
 		) {
 			// Get area data
 			const area = this.areas[this.player.onTeleportingPad.teleporter];
 			console.log(this.areas, area, this.player.onTeleportingPad);
+			console.log(this.players.map((p) => p.onTeleportingPad.standingTime));
+			this.teleported = true;
 			// Load area data
-			this.switch("battle");
-			this.game.data.steps++;
+			setTimeout(() => {
+				this.game.data.exploration.type = area.type;
+				// Generate new ares
+				this.areas = generateAvailableAreas();
+				if (area.type === "BATTLE") {
+					this.switch("battle");
+				} else if (area.type === "RESTING") {
+					// TODO: Resting
+					this.switch("exploration");
+					channel.emit("exploration-force-initialize", {
+						exploration: { steps: 0, danger: 0, areas: this.areas },
+					});
+				} else if (area.type === "TREASURE") {
+					// TODO: Treasure
+					this.switch("exploration");
+					channel.emit("exploration-force-initialize", {
+						exploration: { steps: 0, danger: 0, areas: this.areas },
+					});
+				} else if (area.type === "CHALLENGE") {
+					// TODO: Challenge
+					this.switch("exploration");
+					channel.emit("exploration-force-initialize", {
+						exploration: { steps: 0, danger: 0, areas: this.areas },
+					});
+				}
+				this.game.data.steps++;
+			}, 500);
 		}
 
 		// Send player data to server
-		const channel = window.channel;
 		if (channel) {
 			if (!this.player.id) this.player.id = channel.id;
 			channel.emit("game-update", {

@@ -415,6 +415,22 @@ io.on("connection", (channel) => {
 			});
 		}
 	});
+	channel.on("exploration-initialize", (data) => {
+		if (rooms[channel.roomId] && data) {
+			// Initialize new exploration area if not found
+			const players = Object.values(rooms[channel.roomId].players).filter(
+				(p) => p.stats
+			);
+			const areas = data.exploration.areas;
+			rooms[channel.roomId].status = "exploring";
+			rooms[channel.roomId].exploration = new ExplorationSystem(players, areas);
+
+			io.to(channel.roomId).emit("exploration-initialize", {
+				exploration: rooms[channel.roomId].exploration,
+				type: "exploration-initialize",
+			});
+		}
+	});
 
 	// Battle listeners
 	channel.on("battle-initialize", (data) => {
