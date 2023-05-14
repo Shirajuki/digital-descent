@@ -57,7 +57,7 @@ export default class BattleScene extends Scene {
 
 	// Tween garbage collect timer
 	public tweenTimer = 0;
-	public tweenTimerMax = 500;
+	public tweenTimerMax = 200;
 
 	public help = {
 		display: false,
@@ -71,6 +71,12 @@ export default class BattleScene extends Scene {
 		super(config, observable);
 	}
 	preload() {
+		// Load pointer
+		this.load.spritesheet("pointer", "sprites/pointer.png", {
+			frameWidth: 320,
+			frameHeight: 320,
+		});
+
 		// Load all monster sprites
 		this.load.spritesheet("monsterBug", "sprites/bug.png", {
 			frameWidth: 320,
@@ -87,6 +93,14 @@ export default class BattleScene extends Scene {
 			}),
 			duration: 200,
 			frameRate: 4,
+			repeat: -1,
+		});
+		this.anims.create({
+			key: "pointerIdle",
+			frames: this.anims.generateFrameNumbers("pointer", {
+				frames: [0, 0, 1, 1],
+			}),
+			frameRate: 10,
 			repeat: -1,
 		});
 
@@ -192,13 +206,13 @@ export default class BattleScene extends Scene {
 		// Create pointer on top of first monster
 		this.battle.state.target = this.battle.monsters[0];
 		if (this.pointerSprite) this.pointerSprite.destroy();
-		this.pointerSprite = this.add.rectangle(
+		this.pointerSprite = this.add.sprite(
 			this.monsterLocations[0].x,
 			this.monsterLocations[0].y - 50,
-			25,
-			15,
-			0xffffff
+			"pointer"
 		) as any;
+		this.pointerSprite.play("pointerIdle");
+		this.pointerSprite.setScale(0.15);
 		this.observable.notify();
 		setTimeout(() => {
 			this.observable.notify();
@@ -323,6 +337,18 @@ export default class BattleScene extends Scene {
 		} else if (data.type === "battle-pointer") {
 			this.battle.updatePointer();
 		} else if (data.type === "battle-turn") {
+			// Sync monsters
+			const monsters = data.battle.monsters;
+			for (let i = 0; i < this.monsters.length; i++) {
+				const monster = this.monsters[i];
+				const m = monsters.find((m: any) => m.id === monster.id);
+				if (m) {
+					monster.stats = m.stats;
+					monster.battleStats = m.battleStats;
+				}
+			}
+
+			// Execute turn
 			const state = data.state;
 			const attacker =
 				this.players.find((p) => p.id === data.state.attacker) ||

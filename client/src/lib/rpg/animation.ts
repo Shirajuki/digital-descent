@@ -8,7 +8,7 @@ export const spawnTextAtEntity = (
 	target: { x: number; y: number }
 ) => {
 	const textEntity = scene.add.text(pos.x, pos.y, text, {
-		fontFamily: "Arial",
+		fontFamily: "DynaPuff",
 		fontSize: "24px",
 		color: "#ffffff",
 		stroke: "#000000",

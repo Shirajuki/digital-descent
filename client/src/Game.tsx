@@ -136,6 +136,14 @@ function Game() {
 				);
 			}
 		});
+		// Quiz syncing
+		channel.on("quiz", (data: any) => {
+			if (engine.game.currentScene === "exploration") {
+				(engine.game.scene.getScene(engine.game.currentScene) as Scene).sync(
+					data
+				);
+			}
+		});
 	}, [engine, setRoomId]);
 
 	return (

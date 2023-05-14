@@ -6,6 +6,7 @@ import api from "./routes/api.js";
 import BattleSystem from "./system/battleSystem.js";
 import ExplorationSystem from "./system/explorationSystem.js";
 import { DIALOGUES } from "./system/dialogues.js";
+import { QUIZ, getRandomQuiz } from "./system/quizes.js";
 
 const rooms = {};
 
@@ -238,6 +239,7 @@ io.on("connection", (channel) => {
 				dialogues: [],
 				actions: {},
 				selects: {},
+				quiz: QUIZ(),
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -307,6 +309,7 @@ io.on("connection", (channel) => {
 				dialogues: [],
 				actions: {},
 				selects: {},
+				quiz: QUIZ(),
 			};
 			rooms[roomId].players[channel.id] = {
 				id: channel.id,
@@ -756,6 +759,61 @@ io.on("connection", (channel) => {
 				openTasks: data.openTasks,
 				currentTasks: data.currentTasks,
 			});
+		}
+	});
+
+	// Quiz listeners
+	channel.on("quiz-initialize", () => {
+		if (rooms[channel.roomId]) {
+			const quiz = rooms[channel.roomId].quiz;
+
+			rooms[channel.roomId].currentQuiz = getRandomQuiz(quiz);
+
+			io.to(channel.roomId).emit("quiz", {
+				quiz: quiz[rooms[channel.roomId].currentQuiz].quiz,
+				type: "quiz-initialize",
+			});
+		}
+	});
+	channel.on("quiz-update", (data) => {
+		if (rooms[channel.roomId] && data?.answer) {
+			const currentQuiz = rooms[channel.roomId]?.currentQuiz;
+			if (!currentQuiz) return;
+
+			if (!rooms[channel.roomId]?.readyQuiz)
+				rooms[channel.roomId].readyQuiz = {};
+			const players = Object.values(rooms[channel.roomId].players).filter(
+				(p) => p.stats
+			);
+			// Check if all players are ready before continueing
+			rooms[channel.roomId].readyQuiz[channel.id] =
+				rooms[channel.roomId].selects[channel.id];
+			const readies = Object.values(rooms[channel.roomId].readyQuiz).filter(
+				(r) => r
+			);
+
+			console.log(222, readies, players.length);
+			if (readies.length !== players.length) return;
+
+			console.log("QUIZ ANSWERED");
+			// Reset ready quiz
+			rooms[channel.roomId].readyQuiz = {};
+			const checkQuiz = rooms[channel.roomId]?.quiz[currentQuiz];
+			const answer = checkQuiz.quiz.choices[parseInt(readies[0])];
+			if (answer === checkQuiz.quiz.answer) {
+				console.log("QUIZ CORRECT", answer, checkQuiz.quiz.answer);
+				checkQuiz.weight = Math.max(1, checkQuiz.weight - 1);
+				io.to(channel.roomId).emit("quiz-correct", {
+					quiz: checkQuiz.quiz,
+					type: "quiz-correct",
+				});
+			} else {
+				console.log("QUIZ INCORRECT", answer, checkQuiz.quiz.answer);
+				io.to(channel.roomId).emit("quiz-wrong", {
+					quiz: checkQuiz.quiz,
+					type: "quiz-wrong",
+				});
+			}
 		}
 	});
 });

@@ -66,7 +66,8 @@ const CursorScreen = () => {
 			className={`absolute pointer-events-none top-0 left-0 z-30 w-full h-full [font-family:var(--font-hud)] rounded-md overflow-hidden flex justify-center items-center transition-all ${
 				(scene.taskboard?.display ||
 					scene.portal?.display ||
-					scene.shop?.display) &&
+					scene.shop?.display ||
+					scene.quiz?.display) &&
 				!scene.dialogue?.display
 					? "opacity-1"
 					: "opacity-0"

@@ -8,7 +8,7 @@ export const initializePlayer = (
 ) => {
 	const player = scene.add.sprite(0, 0, "player");
 	const playerName = scene.add.text(0, 0, window.playerName || name, {
-		fontFamily: "Arial",
+		fontFamily: "DynaPuff",
 		fontSize: "16px",
 		color: "#ffffff",
 		stroke: "#000000",

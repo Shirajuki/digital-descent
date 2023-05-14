@@ -65,7 +65,7 @@ const bug = () => {
 		sprite: "./spritesheet.png",
 		stats: {
 			HP: 20,
-			ATK: 20,
+			ATK: 30,
 			DEF: 10,
 			LUCK: 5,
 			SPEED: 5,
@@ -88,8 +88,8 @@ export const customer = () => {
 		monsterType: "CUSTOMER",
 		sprite: "./spritesheet.png",
 		stats: {
-			HP: 50,
-			ATK: 30,
+			HP: 60,
+			ATK: 50,
 			DEF: 15,
 			LUCK: 5,
 			SPEED: 5,
@@ -97,7 +97,7 @@ export const customer = () => {
 			LEVEL: 1,
 		},
 		battleStats: {
-			HP: 50,
+			HP: 60,
 			dead: false,
 		},
 		effects: [],

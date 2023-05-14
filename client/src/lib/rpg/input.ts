@@ -9,7 +9,8 @@ export const inputInitPlayerMovement = (scene: Scene) => {
 			(scene as any)?.shop?.display ||
 			(scene as any)?.taskboard?.display ||
 			(scene as any)?.portal?.display ||
-			(scene as any)?.role?.display
+			(scene as any)?.role?.display ||
+			(scene as any)?.quiz?.display
 		)
 			return;
 		const { key } = event;

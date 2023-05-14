@@ -97,7 +97,7 @@ export const firewall = () => {
 		},
 		power: 0.5,
 		effects: {
-			attacker: ["single-defenceBoost", "single-taunt", "single-fire"],
+			attacker: ["single-defenceBoost", "single-taunt"],
 		},
 	};
 };
@@ -190,7 +190,5 @@ export const refactoring = () => {
 		},
 	};
 };
-
-// Enemies
 
 // Customer

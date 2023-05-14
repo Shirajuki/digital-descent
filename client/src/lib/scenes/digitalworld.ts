@@ -9,7 +9,7 @@ import {
 } from "../rpg/sync";
 import Scene from "./scene";
 import collisions from "../collisions/digitalWorldCollisions.json";
-import { DEBUG } from "../constants";
+import { DEBUG, POPUPS } from "../constants";
 import { lerp } from "../utils";
 
 export default class DigitalWorldScene extends Scene {
@@ -43,6 +43,8 @@ export default class DigitalWorldScene extends Scene {
 		display: false,
 		ready: false,
 	};
+
+	public popup: any = null;
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -206,6 +208,25 @@ export default class DigitalWorldScene extends Scene {
 
 		// Setup camera to follow player
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
+
+		// Initialize popup text centered
+		if (this.popup) this.popup.destroy();
+		this.popup = this.add.text(
+			240,
+			480,
+			POPUPS[Math.floor(Math.random() * POPUPS.length)],
+			{
+				fontFamily: "DynaPuff",
+				fontSize: "16px",
+				color: "#000000",
+				stroke: "#000000",
+				strokeThickness: 0.5,
+				align: "center",
+				wordWrap: { width: 380, useAdvancedWrap: true },
+			}
+		);
+		this.popup.setOrigin(0.5, 0.5);
+		this.popup.setDepth(100000);
 
 		setTimeout(() => {
 			if (this.game.data.days % 5 === 0 && this.game.data.days > 0) {

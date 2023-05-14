@@ -52,3 +52,14 @@ export const PLAYER_COLORS = [
 	"!bg-green-400",
 	"!bg-blue-400",
 ];
+export const POPUPS = [
+	"Did you know that one of the core principles of agile software development is to prioritize customer satisfaction through continuous delivery?",
+	"By breaking down work into smaller, manageable pieces and delivering working software frequently, you can ensure that the customer is always involved in the development process and that their needs are being met.",
+	"Remember to regularly review and adapt your processes to continuously improve the quality and efficiency of your work.",
+	"Agile Manifesto is a set of guiding values and principles for agile software development. One of the four values in the manifesto is responding to change over following a plan.",
+	"Agile Manifesto is a set of guiding values and principles for agile software development. One of the four values in the manifesto is customer collaboration over contract negotiation.",
+	"Tools like taskboards can support agile practices, but it's up to the team to truly embody the agile mindset and principles for success.",
+	"Did you know that iterative development and incremental design are essential parts of Agile methodology?",
+	"Continuously improve: Keep an open mind to change and improvement, and constantly look for ways to enhance your Agile approach.",
+	"Agile is not just a methodology, it’s a mindset. Remember, Agile is not a one-time implementation, it’s a journey towards excellence.",
+];

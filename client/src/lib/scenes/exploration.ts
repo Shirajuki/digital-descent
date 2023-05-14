@@ -32,6 +32,13 @@ export default class ExplorationScene extends Scene {
 		SHOP: "shopDisplay",
 	};
 	public teleported = false;
+	public quiz = {
+		display: false,
+		ready: false,
+		answers: ["a", "b", "c", "d"],
+		question: "test",
+		rewards: 100,
+	};
 
 	constructor(
 		config: string | Phaser.Types.Scenes.SettingsConfig,
@@ -309,7 +316,21 @@ export default class ExplorationScene extends Scene {
 	}
 
 	sync(data: any) {
-		if (data.type === "exploration-initialize") {
+		if (data.type === "quiz-initialize") {
+			console.log(111, data);
+			const quiz = data.quiz;
+			this.quiz = {
+				display: true,
+				ready: false,
+				answers: quiz.choices,
+				question: quiz.question,
+				rewards: 100,
+			};
+			this.observable.notify();
+			setTimeout(() => {
+				this.observable.notify();
+			}, 1000);
+		} else if (data.type === "exploration-initialize") {
 			this.areas = data.exploration.areas;
 			this.generateDisplays();
 		} else if (data.type === "game-update") {
@@ -332,6 +353,8 @@ export default class ExplorationScene extends Scene {
 	}
 
 	checkSteps() {
+		if (this.quiz.display === true) return;
+
 		if (this.game.data.steps >= this.game.data.maxSteps) {
 			this.game.data.steps = 0;
 			if (this.game.data.days % 5 === 0) {
@@ -420,7 +443,7 @@ export default class ExplorationScene extends Scene {
 						},
 					});
 				} else if (area.type === "CHALLENGE") {
-					// TODO: Challenge
+					channel.emit("quiz-initialize");
 					this.switch("exploration");
 					channel.emit("exploration-force-initialize", {
 						exploration: {

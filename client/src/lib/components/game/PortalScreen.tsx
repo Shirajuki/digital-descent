@@ -80,6 +80,7 @@ const PortalScreen = () => {
 				}, 1000);
 
 				setTimeout(() => {
+					scene.game.data.exploration.type = "STARTING";
 					scene.switch("exploration");
 				}, 500);
 			} else {
