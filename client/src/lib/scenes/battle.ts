@@ -110,7 +110,11 @@ export default class BattleScene extends Scene {
 
 		// Setup background
 		this.cameras.main.setBackgroundColor(0x1f1f1f);
-		if (this.scrollingBackground.length === 0) {
+		for (let i = 0; i < this.scrollingBackground.length; i++) {
+			this.scrollingBackground[i].destroy();
+		}
+		this.scrollingBackground = [];
+		setTimeout(() => {
 			const colors = [0x888888, 0x888888, 0x888888, 0x888888];
 			for (let i = 0; i < 20; i++) {
 				const bg = this.add.rectangle(
@@ -126,13 +130,12 @@ export default class BattleScene extends Scene {
 				(bg as any).scrollSpeed = 0.5;
 				this.scrollingBackground.push(bg);
 			}
-		}
+		}, 500);
 
 		// Create center point for camera lock on
-		if (!this.centerPoint) {
-			this.centerPoint = this.add.rectangle(0, 50, 50, 50, 0xffffff);
-			this.centerPoint.setVisible(false);
-		}
+		if (this.centerPoint) this.centerPoint.destroy();
+		this.centerPoint = this.add.rectangle(0, 50, 50, 50, 0xffffff);
+		this.centerPoint.setVisible(false);
 
 		// Create player
 		const oldPlayer = this.player;
@@ -188,15 +191,14 @@ export default class BattleScene extends Scene {
 
 		// Create pointer on top of first monster
 		this.battle.state.target = this.battle.monsters[0];
-		if (!this.pointerSprite)
-			this.pointerSprite = this.add.rectangle(
-				this.monsterLocations[0].x,
-				this.monsterLocations[0].y - 50,
-				25,
-				15,
-				0xffffff
-			) as any;
-
+		if (this.pointerSprite) this.pointerSprite.destroy();
+		this.pointerSprite = this.add.rectangle(
+			this.monsterLocations[0].x,
+			this.monsterLocations[0].y - 50,
+			25,
+			15,
+			0xffffff
+		) as any;
 		this.observable.notify();
 		setTimeout(() => {
 			this.observable.notify();

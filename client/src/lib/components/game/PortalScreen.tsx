@@ -63,6 +63,7 @@ const PortalScreen = () => {
 		if (scene?.players.length === sel.length && selSet.size === 1) {
 			if (selSet.has("work")) {
 				togglePortal();
+				setSelects(null);
 				setTimeout(() => {
 					scene.observable.notify();
 					window.channel.emit("selects-reset", {
