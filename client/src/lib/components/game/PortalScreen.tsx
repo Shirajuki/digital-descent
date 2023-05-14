@@ -63,14 +63,25 @@ const PortalScreen = () => {
 		if (scene?.players.length === sel.length && selSet.size === 1) {
 			if (selSet.has("work")) {
 				togglePortal();
-				setSelects(null);
+				// Mannally reset selects after teleporting
+				setSelects((oldSelects: any) => {
+					const newSelects = { ...oldSelects };
+					Object.keys(newSelects).forEach((key) => {
+						newSelects[key] = null;
+					});
+					return newSelects;
+				});
+
 				setTimeout(() => {
 					scene.observable.notify();
 					window.channel.emit("selects-reset", {
 						id: player.id,
 					});
 				}, 1000);
-				scene.switch("exploration");
+
+				setTimeout(() => {
+					scene.switch("exploration");
+				}, 500);
 			} else {
 				togglePortal();
 			}
