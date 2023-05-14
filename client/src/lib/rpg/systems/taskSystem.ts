@@ -6,11 +6,9 @@ const squashBugs = () => {
 		type: "BUGS",
 		id: "" + Math.random(),
 		task: `Squash ${count} bugs`,
-		check: function () {
-			const ncount = count;
-			this.progress += Math.ceil(100 / ncount);
-		},
-		rewards: { money: 10 * count, exp: 10 * count },
+		count: count,
+		currentCount: 0,
+		rewards: { money: 10 * count, exp: 1 * count },
 		progress: 0,
 		energy: Math.floor(Math.random() * 4) + 1,
 		priority: 1,

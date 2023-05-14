@@ -35,27 +35,28 @@ export default class BattleSystem {
 			return ["Bug Bite", "Error", "Crash"][Math.floor(Math.random() * 3)];
 		}
 		if (monster.monsterType === "CUSTOMER") {
-			return [
-				"Unclear Requirements",
-				"Feature Request",
-				"Customer Dissatisfaction",
-			][Math.floor(Math.random() * 3)];
+			return ["Unclear Requirements", "Feature Request", "Dissatisfaction"][
+				Math.floor(Math.random() * 3)
+			];
 		}
 		return "Bash";
 	}
 
-	calculateDamage(attacker, target) {
-		// TODO: Take into account player and monster stats
-		// TODO: Take into account player and monster status effects
+	calculateDamage(attacker, target, attack = null) {
+		// Calculate damage
+		let attackModifier = 1;
 		const atkbuff =
-			attacker?.effects?.some((e) => e.type === "attackBoost") || undefined;
+			attacker?.effects?.some((e) => e.type === "attackBoost") || false;
+		if (attack?.power) attackModifier += attack.power;
+		if (atkbuff) attackModifier += 0.3;
+
 		const defbuff =
-			target?.effects?.some((e) => e.type === "defenceBoost") || undefined;
+			target?.effects?.some((e) => e.type === "defenceBoost") || false;
+		const defenceModifier = defbuff ? 1.5 : 1;
 		const damage =
 			(((((2 * attacker.stats.LEVEL) / 5 + 2) *
-				(attacker.stats.ATK * (atkbuff ? 1.2 : 1))) /
-				target.stats.DEF) *
-				(defbuff ? 1.2 : 1) *
+				(attacker.stats.ATK * attackModifier)) /
+				(target.stats.DEF * defenceModifier)) *
 				randomInt(217, 255)) /
 			255;
 		return { damage: Math.max(damage, 1), elementEffectiveness: 1 };
@@ -72,7 +73,7 @@ export default class BattleSystem {
 
 	calculateLevelUp(player) {
 		const experienceToNextLevel = Math.floor(
-			(4 * Math.pow(player.stats.LEVEL, 3)) / 5
+			(4 * Math.pow(player.stats.LEVEL, 2)) / 6 + 10
 		);
 		if (player.stats.EXP >= experienceToNextLevel) {
 			player.stats.LEVEL++;
@@ -80,7 +81,6 @@ export default class BattleSystem {
 			player.stats.HP += 10;
 			player.stats.SP += 10;
 			player.battleStats.HP += player.stats.HP;
-			player.battleStats.SP += player.stats.SP;
 			player.stats.ATK += 1;
 			player.stats.DEF += 1;
 			player.stats.LUCK += 1;

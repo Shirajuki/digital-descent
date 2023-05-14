@@ -93,8 +93,8 @@ export default class HomeScene extends Scene {
 			channel.emit("game-update", { player: this.player.getData() });
 		}
 
-		this.switch("digitalworld");
-		// this.switch("office");
+		// this.switch("digitalworld");
+		this.switch("office");
 		// this.switch("exploration");
 	}
 }

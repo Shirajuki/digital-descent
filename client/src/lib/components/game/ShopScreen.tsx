@@ -12,6 +12,25 @@ function useAutoAnimate(options = {}) {
 	return [setElement];
 }
 
+const shopItems = [
+	{
+		name: "Mechanical Keyboard",
+		price: 300,
+	},
+	{
+		name: "Ergonomic Mouse",
+		price: 100,
+	},
+	{
+		name: "4K Monitor",
+		price: 1000,
+	},
+	{
+		name: "Gaming Headset",
+		price: 200,
+	},
+];
+
 const ShopScreen = () => {
 	const [engine, _setEngine] = useAtom(engineAtom);
 	const [scaling, setScaling] = useState(1);
@@ -71,7 +90,7 @@ const ShopScreen = () => {
 						<button
 							className={`bg-gray-700 text-sm py-[0.70rem] px-5 rounded-md text-center transition-all duration-500`}
 						>
-							123 Workcredits
+							{scene?.game?.data?.money} Workcredits
 						</button>
 					</div>
 					<div className="flex gap-3 pl-2 h-full">
@@ -79,14 +98,21 @@ const ShopScreen = () => {
 							<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
 								Workshop
 							</div>
-							<div className="bg-gray-500 m-3 h-[20.75rem] overflow-y-auto rounded-md gap-3 p-2">
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
+							<div className="my-2 h-[20.75rem] overflow-y-auto rounded-md gap-3 p-2">
+								{shopItems.map((item) => (
+									<div
+										key={item.name}
+										className="flex justify-between items-center bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"
+									>
+										<div className="flex items-center">
+											<div className="bg-white h-8 w-8 m-2 rounded-sm"></div>
+											<div className="">{item.name}</div>
+										</div>
+										<div className="flex w-32">
+											<button className="w-full">Buy {item.price}$</button>
+										</div>
+									</div>
+								))}
 							</div>
 						</div>
 						<div className="flex flex-col w-full h-full gap-3">

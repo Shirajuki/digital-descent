@@ -552,13 +552,21 @@ io.on("connection", (channel) => {
 						monster.battleStats.HP > 0
 					) {
 						// Attack is targeted to one specific monsters
-						damage = battle.calculateDamage(data.state.attacker, monster);
+						damage = battle.calculateDamage(
+							data.state.attacker,
+							monster,
+							attack
+						);
 					} else if (
 						attack.targets.type === "player" &&
 						monster.battleStats.HP > 0
 					) {
 						// Attack is targeted to all monsters
-						damage = battle.calculateDamage(data.state.attacker, monster);
+						damage = battle.calculateDamage(
+							data.state.attacker,
+							monster,
+							attack
+						);
 					}
 					damages.push(damage);
 
@@ -625,6 +633,8 @@ io.on("connection", (channel) => {
 				});
 				battle.initializeQueue();
 
+				console.log("BATTLE WIN");
+
 				io.to(channel.roomId).emit("battle", {
 					battle: rooms[channel.roomId].battle,
 					players: players.map((p) => {
@@ -647,10 +657,11 @@ io.on("connection", (channel) => {
 				return;
 			}
 			// Check if all players are dead
-			if (battle.players.every((p) => p.battleStats.HP <= 0)) {
+			if (players.every((p) => p.battleStats.HP <= 0)) {
 				io.to(channel.roomId).emit("battle", {
 					type: "battle-lose",
 				});
+				console.log("BATTLE LOST");
 				return;
 			}
 

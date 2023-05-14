@@ -120,6 +120,7 @@ export default class PhaserEngine {
 				enemy: "customer",
 			},
 			returnBackTo: "digitalworld",
+			money: 0,
 		};
 	}
 

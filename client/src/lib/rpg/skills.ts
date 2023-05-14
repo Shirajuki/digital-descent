@@ -14,10 +14,10 @@ export const inspire = () => {
 			type: "monster",
 			amount: "single",
 		},
-		power: 1,
+		power: 0,
 		effects: {
 			attacker: ["all-smallHeal", "all-attackBoost"],
-			attackerAccuracy: 100,
+			attackerAccuracy: 30,
 		},
 	};
 };
@@ -35,7 +35,7 @@ export const delegate = () => {
 			type: "player",
 			amount: "self",
 		},
-		power: 2,
+		power: 0.5,
 		effects: {
 			attacker: ["all-attackBoost", "all-defenceBoost", "all-smallHeal"],
 		},
@@ -55,7 +55,7 @@ export const systemRestore = () => {
 			type: "player",
 			amount: "single",
 		},
-		power: 2,
+		power: 1.5,
 		effects: {
 			attacker: ["all-largeHeal", "all-clear"],
 			target: ["all-memoryLeak"],
@@ -78,7 +78,7 @@ export const debugging = () => {
 			type: "monster",
 			amount: "single",
 		},
-		power: 1,
+		power: 0,
 	};
 };
 export const firewall = () => {
@@ -95,7 +95,7 @@ export const firewall = () => {
 			type: "player",
 			amount: "self",
 		},
-		power: 2,
+		power: 0.5,
 		effects: {
 			attacker: ["single-defenceBoost", "single-taunt", "single-fire"],
 		},
@@ -115,7 +115,7 @@ export const codeReview = () => {
 			type: "player",
 			amount: "self",
 		},
-		power: 3,
+		power: 1.5,
 		effects: {
 			attacker: ["all-defenceBoost", "self-mediumHeal"],
 			target: ["all-lag"],
@@ -138,7 +138,7 @@ export const patch = () => {
 			type: "monster",
 			amount: "single",
 		},
-		power: 2,
+		power: 0.5,
 		effects: {
 			target: ["single-nervous"],
 			targetAccuracy: 30,
@@ -162,7 +162,7 @@ export const testSuite = () => {
 			type: "monster",
 			amount: "single",
 		},
-		power: 4,
+		power: 1.5,
 		effects: {
 			target: [randomStatus],
 			targetAccuracy: 100,
@@ -183,7 +183,7 @@ export const refactoring = () => {
 			type: "player",
 			amount: "self",
 		},
-		power: 5,
+		power: 2.5,
 		effects: {
 			attacker: ["all-attackBoost", "all-defenceBoost", "self-smallHeal"],
 			target: ["all-lag", "all-nervous"],

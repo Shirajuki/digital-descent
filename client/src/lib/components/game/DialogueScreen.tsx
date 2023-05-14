@@ -63,6 +63,13 @@ const DialogueScreen = () => {
 			}`}
 			style={{ zoom: scaling }}
 		>
+			{/* Image tutorial */}
+			<div
+				className={`absolute overflow-hidden top-7 left-7 rounded-md bg-slate-900 w-[40rem] h-72 flex flex-col gap-3 px-6 text-center text-lg pl-2 items-center justify-center
+				${scene.dialogue.texts[0]?.image ? "" : "hidden"}`}
+			>
+				<img src={scene.dialogue.texts[0]?.image} alt="dialogue tutorial" />
+			</div>
 			{/* Info modal */}
 			<div
 				className="absolute bottom-7 bg-slate-900 w-[calc(100%-3.5rem)] h-44 [user-select:none] flex gap-4 rounded-md p-4"

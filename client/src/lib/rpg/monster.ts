@@ -64,8 +64,8 @@ const bug = () => {
 		monsterType: "BUG",
 		sprite: "./spritesheet.png",
 		stats: {
-			HP: 10,
-			ATK: 10,
+			HP: 20,
+			ATK: 20,
 			DEF: 10,
 			LUCK: 5,
 			SPEED: 5,
@@ -73,7 +73,7 @@ const bug = () => {
 			LEVEL: 1,
 		},
 		battleStats: {
-			HP: 10,
+			HP: 20,
 			dead: false,
 		},
 		effects: [],
@@ -88,8 +88,8 @@ export const customer = () => {
 		monsterType: "CUSTOMER",
 		sprite: "./spritesheet.png",
 		stats: {
-			HP: 10,
-			ATK: 20,
+			HP: 50,
+			ATK: 30,
 			DEF: 15,
 			LUCK: 5,
 			SPEED: 5,
@@ -97,7 +97,31 @@ export const customer = () => {
 			LEVEL: 1,
 		},
 		battleStats: {
-			HP: 10,
+			HP: 50,
+			dead: false,
+		},
+		effects: [],
+		itemDrop: [],
+	};
+};
+
+export const deliveryCustomer = () => {
+	return {
+		name: "Customer",
+		type: "monster",
+		monsterType: "CUSTOMER",
+		sprite: "./spritesheet.png",
+		stats: {
+			HP: 200,
+			ATK: 120,
+			DEF: 25,
+			LUCK: 5,
+			SPEED: 20,
+			ELEMENT: ELEMENT.WATER,
+			LEVEL: 1,
+		},
+		battleStats: {
+			HP: 200,
 			dead: false,
 		},
 		effects: [],

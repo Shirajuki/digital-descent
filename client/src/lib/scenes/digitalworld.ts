@@ -264,6 +264,7 @@ export default class DigitalWorldScene extends Scene {
 			this.game.data.solvedTasks.push(
 				this.game.data.currentTasks.splice(taskIndex, 1)[0]
 			);
+			this.game.data.money += 100;
 
 			if (
 				this.dialogue.ended.filter((d) =>
@@ -286,6 +287,7 @@ export default class DigitalWorldScene extends Scene {
 			this.game.data.solvedTasks.push(
 				this.game.data.currentTasks.splice(taskIndex, 1)[0]
 			);
+			this.game.data.money += 100;
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)
@@ -307,6 +309,7 @@ export default class DigitalWorldScene extends Scene {
 			this.game.data.solvedTasks.push(
 				this.game.data.currentTasks.splice(taskIndex, 1)[0]
 			);
+			this.game.data.money += 100;
 			if (
 				this.dialogue.ended.filter((d) =>
 					["TASKBOARD_INTRO", "PORTAL_INTRO", "SHOP_INTRO"].includes(d)

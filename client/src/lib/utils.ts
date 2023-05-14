@@ -27,5 +27,5 @@ export const weightedRandom = (arr: any) => {
 };
 
 export const calculateExpToNextLevel = (player: any) => {
-	return Math.floor((4 * Math.pow(player.stats.LEVEL, 3)) / 5);
+	return Math.floor((4 * Math.pow(player.stats.LEVEL, 2)) / 6 + 10);
 };

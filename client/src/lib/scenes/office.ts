@@ -67,6 +67,14 @@ export default class OfficeScene extends Scene {
 			repeat: -1,
 		});
 
+		this.preloaded = true;
+		this.initialize();
+	}
+
+	initialize(): void {
+		if (!this.preloaded) return;
+		super.initialize();
+
 		// Create player
 		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1", oldPlayer);
@@ -81,10 +89,12 @@ export default class OfficeScene extends Scene {
 		console.log(this.players);
 
 		// Create customer
-		this.customer = initializePlayer(this, "Customer");
-		this.customer.name = "Customer";
-		this.customer.nameEntity.setText("Customer");
-		this.customer.setPosition(195, -140);
+		if (!this.customer) {
+			this.customer = initializePlayer(this, "Customer");
+			this.customer.name = "Customer";
+			this.customer.nameEntity.setText("Customer");
+			this.customer.setPosition(195, -140);
+		}
 
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
@@ -153,14 +163,6 @@ export default class OfficeScene extends Scene {
 		this.cameras.main.startFollow(this.player, true, 0.03, 0.03);
 
 		inputInitPlayerMovement(this);
-
-		this.preloaded = true;
-		this.initialize();
-	}
-
-	initialize(): void {
-		if (!this.preloaded) return;
-		super.initialize();
 
 		if (this.game.currentScene === "office") {
 			setTimeout(() => {

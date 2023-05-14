@@ -272,7 +272,10 @@ export default class BattleScene extends Scene {
 						for (let j = 0; j < this.monsters.length; j++) {
 							const m = this.monsters[j];
 							if (m.monsterType === "BUG") {
-								if (task.check) task?.check();
+								task.currentCount++;
+								task.progress = Math.ceil(
+									(100 / task.count) * task.currentCount
+								);
 							}
 						}
 						console.log(task);
@@ -282,9 +285,8 @@ export default class BattleScene extends Scene {
 							this.game.data.solvedTasks.push(task);
 
 							// Reward players
-							// TODO: move this to serverside
 							const rewards = task.rewards;
-							this.player.stats.gold += rewards.money;
+							this.game.data.money += rewards.money;
 							this.player.stats.exp += rewards.exp;
 						}
 					}
@@ -326,6 +328,50 @@ export default class BattleScene extends Scene {
 			const target =
 				this.players.find((p) => p.id === data.state.target) ||
 				this.monsters.find((m: any) => m.id === data.state.target);
+			if (attacker?.effects?.some((e: any) => e.type === "memoryleak")) {
+				this.battle.addActionQueue({
+					type: "text-update",
+					attacker: null,
+					target: target,
+					text: `${attacker.name} is leaking memory, taking damage`,
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 100 },
+				});
+				this.battle.addActionQueue({
+					type: "skip",
+					attacker: null,
+					target: target,
+					text: "",
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 50 },
+				});
+				this.battle.addActionQueue({
+					type: "text-update",
+					attacker: null,
+					target: target,
+					text: "",
+					running: true,
+					finished: false,
+					initialPosition: this.battle.state.initialPosition,
+					attack: {
+						effects: {},
+						damage: [{ damage: 0, elementEffectiveness: 1 }],
+					},
+					timer: { current: 0, end: 50 },
+				});
+			}
 			if (attacker?.effects?.some((e: any) => e.type === "lag")) {
 				this.battle.addActionQueue({
 					type: "text-update",

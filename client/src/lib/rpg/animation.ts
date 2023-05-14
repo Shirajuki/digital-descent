@@ -408,7 +408,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 				}
 				if (scene.currentWaitDelay < 0 && scene.battle.state.finished) {
 					camera.x = 0;
-					scene.cameras.cameras[0].x = 12;
+					// scene.cameras.main.x = 12;
 					scene.battle.state.running = false;
 					scene.battle.state.finished = false;
 					scene.battle.state.attacker = null;

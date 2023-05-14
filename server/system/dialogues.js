@@ -4,6 +4,7 @@ export const DIALOGUES = {
 		{
 			text: "Welcome, everyone! I'm glad you could join us today. I will be your team lead in this project. I am here to tell you everything you need to know.",
 			speaker: "Team lead",
+			image: "/sprites/teamleadPortrait.png",
 			side: "right",
 		},
 		{
