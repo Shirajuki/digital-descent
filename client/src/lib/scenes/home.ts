@@ -29,6 +29,11 @@ export default class HomeScene extends Scene {
 			frameWidth: 1700,
 			frameHeight: 1200,
 		});
+		// Load all monster sprites
+		this.load.spritesheet("monsterBug", "sprites/bug.png", {
+			frameWidth: 320,
+			frameHeight: 320,
+		});
 	}
 	create() {
 		super.create();
@@ -88,7 +93,8 @@ export default class HomeScene extends Scene {
 			channel.emit("game-update", { player: this.player.getData() });
 		}
 
-		// this.switch("digitalworld");
-		this.switch("office");
+		this.switch("digitalworld");
+		// this.switch("office");
+		// this.switch("exploration");
 	}
 }

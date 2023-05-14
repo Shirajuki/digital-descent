@@ -46,32 +46,94 @@ export default class ExplorationScene extends Scene {
 			frameHeight: 200,
 		});
 
-		// Teleporting pad displays
+		// Monument displays
 		this.load.spritesheet(
-			"towerOfTrialsDisplay",
-			"sprites/towerOfTrialsDisplay.png",
+			"monumentBattle",
+			"sprites/monument/monumentBattle.png",
 			{
 				frameWidth: 400,
 				frameHeight: 400,
 			}
 		);
-		this.load.spritesheet("battleDisplay", "sprites/battleDisplay.png", {
+		this.load.spritesheet(
+			"monumentResting1",
+			"sprites/monument/monumentResting1.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet(
+			"monumentResting2",
+			"sprites/monument/monumentResting2.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet(
+			"monumentResting3",
+			"sprites/monument/monumentResting3.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet(
+			"monumentTreasure",
+			"sprites/monument/monumentTreasure.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet(
+			"monumentChallenge",
+			"sprites/monument/monumentChallenge.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+
+		// Teleporting pad displays
+		this.load.spritesheet(
+			"towerOfTrialsDisplay",
+			"sprites/display/towerOfTrialsDisplay.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet(
+			"battleDisplay",
+			"sprites/display/battleDisplay.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet(
+			"subquestDisplay",
+			"sprites/display/subquestDisplay.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet("shopDisplay", "sprites/display/shopDisplay.png", {
 			frameWidth: 400,
 			frameHeight: 400,
 		});
-		this.load.spritesheet("subquestDisplay", "sprites/subquestDisplay.png", {
-			frameWidth: 400,
-			frameHeight: 400,
-		});
-		this.load.spritesheet("shopDisplay", "sprites/shopDisplay.png", {
-			frameWidth: 400,
-			frameHeight: 400,
-		});
-		this.load.spritesheet("treasureDisplay", "sprites/treasureDisplay.png", {
-			frameWidth: 400,
-			frameHeight: 400,
-		});
-		this.load.spritesheet("restDisplay", "sprites/restDisplay.png", {
+		this.load.spritesheet(
+			"treasureDisplay",
+			"sprites/display/treasureDisplay.png",
+			{
+				frameWidth: 400,
+				frameHeight: 400,
+			}
+		);
+		this.load.spritesheet("restDisplay", "sprites/display/restDisplay.png", {
 			frameWidth: 400,
 			frameHeight: 400,
 		});
@@ -185,8 +247,55 @@ export default class ExplorationScene extends Scene {
 		this.teleported = false;
 
 		// Check steps
-		this.checkSteps();
+		setTimeout(() => this.checkSteps(), 1000);
 		this.game.data.returnBackTo = "exploration";
+
+		// Delete old monuments if any
+		this.children.list.forEach((child) => {
+			if (child.name === "monument") child.destroy();
+		});
+		// Draw monuments depending on exploration type
+		if (this.game.data.exploration.type === "BATTLE") {
+			const monument = this.add
+				.sprite(-290, -190, "monumentBattle")
+				.setDepth(-150)
+				.setScale(0.6)
+				.setAlpha(0.9);
+			monument.name = "monument";
+		} else if (this.game.data.exploration.type === "RESTING") {
+			const monument1 = this.add
+				.sprite(-250, -150, "monumentResting1")
+				.setDepth(-170)
+				.setScale(0.8)
+				.setAlpha(0.9);
+			const monument2 = this.add
+				.sprite(-250, -150, "monumentResting2")
+				.setDepth(-140)
+				.setScale(0.8)
+				.setAlpha(0.9);
+			const monument3 = this.add
+				.sprite(-250, -150, "monumentResting3")
+				.setDepth(-130)
+				.setScale(0.8)
+				.setAlpha(0.9);
+			monument1.name = "monument";
+			monument2.name = "monument";
+			monument3.name = "monument";
+		} else if (this.game.data.exploration.type === "TREASURE") {
+			const monument = this.add
+				.sprite(-290, -190, "monumentTreasure")
+				.setDepth(-190)
+				.setScale(0.5)
+				.setAlpha(0.9);
+			monument.name = "monument";
+		} else if (this.game.data.exploration.type === "CHALLENGE") {
+			const monument = this.add
+				.sprite(-270, -170, "monumentChallenge")
+				.setDepth(-155)
+				.setScale(0.4)
+				.setAlpha(0.9);
+			monument.name = "monument";
+		}
 
 		// First time exploration intro
 		if (this.game.currentScene === "exploration") {
@@ -285,22 +394,41 @@ export default class ExplorationScene extends Scene {
 				if (area.type === "BATTLE") {
 					this.switch("battle");
 				} else if (area.type === "RESTING") {
-					// TODO: Resting
+					if (this.player)
+						this.player.battleStats.HP = Math.min(
+							this.player.battleStats.HP + 20,
+							this.player.stats.HP
+						);
 					this.switch("exploration");
 					channel.emit("exploration-force-initialize", {
-						exploration: { steps: 0, danger: 0, areas: this.areas },
+						exploration: {
+							steps: 0,
+							danger: 0,
+							areas: this.areas,
+							type: "RESTING",
+						},
 					});
 				} else if (area.type === "TREASURE") {
 					// TODO: Treasure
 					this.switch("exploration");
 					channel.emit("exploration-force-initialize", {
-						exploration: { steps: 0, danger: 0, areas: this.areas },
+						exploration: {
+							steps: 0,
+							danger: 0,
+							areas: this.areas,
+							type: "TREASURE",
+						},
 					});
 				} else if (area.type === "CHALLENGE") {
 					// TODO: Challenge
 					this.switch("exploration");
 					channel.emit("exploration-force-initialize", {
-						exploration: { steps: 0, danger: 0, areas: this.areas },
+						exploration: {
+							steps: 0,
+							danger: 0,
+							areas: this.areas,
+							type: "CHALLENGE",
+						},
 					});
 				}
 				this.game.data.steps++;

@@ -1,4 +1,4 @@
-import { NAMES, SCALE } from "../constants";
+import { CANVAS_HEIGHT, NAMES, SCALE } from "../constants";
 import {
 	MONSTER_PRESET_BY_RISKLEVEL,
 	customer,
@@ -28,6 +28,7 @@ export default class BattleScene extends Scene {
 	public battle = new BattleSystem([], []); // Battle System
 	public monsters: any;
 	public newBattle = true;
+	public scrollingBackground: any[] = [];
 
 	// Attack animation variables
 	public currentAttackDelay = 0;
@@ -71,9 +72,9 @@ export default class BattleScene extends Scene {
 	}
 	preload() {
 		// Load all monster sprites
-		this.load.spritesheet("monster", "sprites/bug.png", {
-			frameWidth: 32,
-			frameHeight: 32,
+		this.load.spritesheet("monsterBug", "sprites/bug.png", {
+			frameWidth: 320,
+			frameHeight: 320,
 		});
 	}
 	create() {
@@ -90,11 +91,10 @@ export default class BattleScene extends Scene {
 		});
 
 		// Monster idle animations
-		// TODO: add correct animation for all the monster types
 		this.anims.create({
-			key: "idle",
-			frames: this.anims.generateFrameNumbers("monster", {
-				frames: [0, 1],
+			key: "monsterBugIdle",
+			frames: this.anims.generateFrameNumbers("monsterBug", {
+				frames: [0, 0, 1, 1],
 			}),
 			frameRate: 10,
 			repeat: -1,
@@ -108,9 +108,31 @@ export default class BattleScene extends Scene {
 		if (!this.preloaded) return;
 		super.initialize();
 
+		// Setup background
+		this.cameras.main.setBackgroundColor(0x1f1f1f);
+		if (this.scrollingBackground.length === 0) {
+			const colors = [0x888888, 0x888888, 0x888888, 0x888888];
+			for (let i = 0; i < 20; i++) {
+				const bg = this.add.rectangle(
+					-750 + i * 75,
+					-750 + i * 75,
+					50,
+					CANVAS_HEIGHT * 3,
+					colors[i % colors.length]
+				);
+				bg.setRotation(Math.PI / 4);
+				bg.setDepth(-10000);
+				bg.setAlpha(0.05);
+				(bg as any).scrollSpeed = 0.5;
+				this.scrollingBackground.push(bg);
+			}
+		}
+
 		// Create center point for camera lock on
-		this.centerPoint = this.add.rectangle(0, 50, 50, 50, 0xffffff);
-		this.centerPoint.setVisible(false);
+		if (!this.centerPoint) {
+			this.centerPoint = this.add.rectangle(0, 50, 50, 50, 0xffffff);
+			this.centerPoint.setVisible(false);
+		}
 
 		// Create player
 		const oldPlayer = this.player;
@@ -166,13 +188,14 @@ export default class BattleScene extends Scene {
 
 		// Create pointer on top of first monster
 		this.battle.state.target = this.battle.monsters[0];
-		this.pointerSprite = this.add.rectangle(
-			this.monsterLocations[0].x,
-			this.monsterLocations[0].y - 50,
-			25,
-			15,
-			0xffffff
-		) as any;
+		if (!this.pointerSprite)
+			this.pointerSprite = this.add.rectangle(
+				this.monsterLocations[0].x,
+				this.monsterLocations[0].y - 50,
+				25,
+				15,
+				0xffffff
+			) as any;
 
 		this.observable.notify();
 		setTimeout(() => {
@@ -187,6 +210,11 @@ export default class BattleScene extends Scene {
 				}
 			}, 500);
 		}
+	}
+
+	getMonsterSprite(type: string) {
+		if (type === "BUG") return ["monsterBug", 0.3];
+		return ["player", 1];
 	}
 
 	sync(data: any) {
@@ -392,15 +420,28 @@ export default class BattleScene extends Scene {
 			this.monsters = [];
 			for (let index = 0; index < data.battle.monsters.length; index++) {
 				const monster = data.battle.monsters[index];
-				console.log(monster.monsterType === "BUG");
+				const [spriteType, scaling] = this.getMonsterSprite(
+					monster.monsterType
+				);
+				console.log(
+					monster.monsterType === "BUG",
+					monster.monsterType,
+					spriteType
+				);
 				const monsterSprite = this.add.sprite(
 					this.monsterLocations[index].x,
 					this.monsterLocations[index].y,
-					monster.monsterType === "BUG" ? "monster" : "player"
+					spriteType as string
 				) as any;
+
 				monsterSprite.setScale(SCALE);
-				monsterSprite.play("idle");
+				if (monster.monsterType === "BUG") {
+					monsterSprite.play(spriteType + "Idle");
+				} else {
+					monsterSprite.play("idle");
+				}
 				monsterSprite.setDepth(monsterSprite.y);
+				monsterSprite.setScale(scaling);
 				monsterSprite.flipX = false;
 				monsterSprite.animationState = "idle";
 				monsterSprite.name = monster.name;
@@ -655,6 +696,17 @@ export default class BattleScene extends Scene {
 				player.shadow.setAlpha(lerp(player.shadow.alpha, 0.05, 0.05));
 			} else {
 				player.shadow.setAlpha(lerp(player.shadow.alpha, 0, 0.05));
+			}
+		}
+
+		// Update scrolling background
+		for (let i = 0; i < this.scrollingBackground.length; i++) {
+			const bg = this.scrollingBackground[i];
+			bg.x += bg.scrollSpeed;
+			bg.y += bg.scrollSpeed;
+			if (bg.x > 750) {
+				bg.x = -750;
+				bg.y = -750;
 			}
 		}
 

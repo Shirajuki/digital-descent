@@ -25,6 +25,12 @@ export const spawnTextAtEntity = (
 export const animateSingleAttack = (scene: BattleScene) => {
 	const attacker = scene.battle?.state?.attacker;
 	const target = scene.battle?.state?.target;
+	let [idle, jump] = ["idle", "jump"];
+	if (attacker?.monsterType === "BUG") {
+		const texture = attacker.texture.key;
+		[idle, jump] = [texture + "Idle", texture + "Idle"];
+	}
+
 	if (attacker && target) {
 		const attack = scene.battle.state.attack;
 		if (!scene.battle.state.finished) {
@@ -39,9 +45,9 @@ export const animateSingleAttack = (scene: BattleScene) => {
 				repeat: -1,
 			});
 			// Animate player to start jumping
-			if (attacker?.animationState === "idle") {
-				attacker.play("jump");
-				attacker.animationState = "jump";
+			if (attacker?.animationState === idle) {
+				attacker.play(jump);
+				attacker.animationState = jump;
 			}
 			// If attacker is near target
 			if (
@@ -50,9 +56,9 @@ export const animateSingleAttack = (scene: BattleScene) => {
 			) {
 				if (!scene.battle.state.finished) {
 					// Animate player to stop jumping
-					if (attacker?.animationState === "jump") {
-						attacker.play("idle");
-						attacker.animationState = "idle";
+					if (attacker?.animationState === jump) {
+						attacker.play(idle);
+						attacker.animationState = idle;
 						scene.currentAttackDelay = scene.attackDelay;
 						if (Object.keys(attack.effects).length > 0) {
 							scene.currentWaitDelay = scene.waitDelay;
@@ -109,9 +115,9 @@ export const animateSingleAttack = (scene: BattleScene) => {
 			// Do a quick pause
 			scene.currentAttackDelay--;
 			if (scene.currentAttackDelay == -1) {
-				if (attacker?.animationState === "idle") {
-					attacker.play("jump");
-					attacker.animationState = "jump";
+				if (attacker?.animationState === idle) {
+					attacker.play(jump);
+					attacker.animationState = jump;
 					attacker.flipX = !attacker.flipX;
 				}
 			} else if (scene.currentAttackDelay < 0) {
@@ -133,9 +139,9 @@ export const animateSingleAttack = (scene: BattleScene) => {
 				scene.currentBuffDelay--;
 				if (scene.currentBuffDelay == -1) {
 					// Reset attacker movement
-					if (attacker?.animationState === "jump") {
-						attacker.play("idle");
-						attacker.animationState = "idle";
+					if (attacker?.animationState === jump) {
+						attacker.play(idle);
+						attacker.animationState = idle;
 						attacker.flipX = !attacker.flipX;
 					}
 
@@ -245,6 +251,12 @@ export const animateStandingAttack = (scene: BattleScene) => {
 	const attacker = scene.battle?.state?.attacker;
 	const target = scene.battle?.state?.target;
 	const camera = scene.centerPoint;
+	let [idle, jump] = ["idle", "jump"];
+	if (attacker?.monsterType === "BUG") {
+		const texture = attacker.texture.key;
+		[idle, jump] = [texture + "Idle", texture + "Idle"];
+	}
+
 	if (attacker && target && camera) {
 		const attack = scene.battle.state.attack;
 		if (!scene.battle.state.finished) {
@@ -256,15 +268,15 @@ export const animateStandingAttack = (scene: BattleScene) => {
 				delay: 400,
 				repeat: -1,
 			});
-			if (attacker?.animationState === "idle") {
-				attacker.play("jump");
-				attacker.animationState = "jump";
+			if (attacker?.animationState === idle) {
+				attacker.play(jump);
+				attacker.animationState = jump;
 			}
 			if (Math.abs(camera.x - attacker.x) < 1) {
 				if (!scene.battle.state.finished) {
-					if (attacker?.animationState === "jump") {
-						attacker.play("idle");
-						attacker.animationState = "idle";
+					if (attacker?.animationState === jump) {
+						attacker.play(idle);
+						attacker.animationState = idle;
 						scene.currentAttackDelay = scene.attackDelay;
 						if (Object.keys(attack.effects).length > 0) {
 							scene.currentWaitDelay = scene.waitDelay;

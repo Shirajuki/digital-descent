@@ -30,6 +30,20 @@ export default class BattleSystem {
 		this.turnQueue = this.turnQueue.filter((e) => e.id != entity.id);
 	}
 
+	getAttack(monster) {
+		if (monster.monsterType === "BUG") {
+			return ["Bug Bite", "Error", "Crash"][Math.floor(Math.random() * 3)];
+		}
+		if (monster.monsterType === "CUSTOMER") {
+			return [
+				"Unclear Requirements",
+				"Feature Request",
+				"Customer Dissatisfaction",
+			][Math.floor(Math.random() * 3)];
+		}
+		return "Bash";
+	}
+
 	calculateDamage(attacker, target) {
 		// TODO: Take into account player and monster stats
 		// TODO: Take into account player and monster status effects
@@ -127,6 +141,41 @@ export default class BattleSystem {
 		});
 
 		console.log("[...] Applying", effect, "on", entity.name || entity.id);
+	}
+
+	updateEffects(entity) {
+		if (entity.effects) {
+			entity.effects.forEach((e) => {
+				if (e.type === "burn") {
+					entity.battleStats.HP = Math.max(
+						entity.battleStats.HP - entity.stats.HP * 0.1,
+						0
+					);
+				} else if (e.type === "memoryLeak") {
+					entity.battleStats.HP = Math.max(
+						entity.battleStats.HP - entity.stats.HP * 0.1,
+						0
+					);
+				}
+				e.duration--;
+			});
+			entity.effects = entity.effects.filter((e) => e.duration > 0);
+		}
+	}
+
+	pickPlayerByWeighting(players) {
+		// Calculate players weight
+		const playersWeight = players.map((p) => {
+			let weight = p.battleStats.HP;
+			if (p.effects.find((e) => e.type === "nervous")) weight *= 0.5;
+			if (p.effects.find((e) => e.type === "taunt")) weight += 400;
+			return { player: p, weight };
+		});
+		// Pick player by highest weight
+		const player = playersWeight.reduce((prev, current) =>
+			prev.weight > current.weight ? prev : current
+		);
+		return player.player;
 	}
 
 	updateTurn() {

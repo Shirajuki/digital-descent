@@ -85,7 +85,7 @@ io.on("connection", (channel) => {
 	channel.on("dialogue", (data) => {
 		const roomId = channel.roomId;
 		if (!roomId || !data?.scenario) return;
-		if (!rooms[roomId].players) return;
+		if (!rooms[roomId]?.players) return;
 
 		// Check if dialogue is done
 		const count =
@@ -108,7 +108,7 @@ io.on("connection", (channel) => {
 	channel.on("dialogue-end", (data) => {
 		const roomId = channel.roomId;
 		if (!roomId || !data?.scenario) return;
-		if (!rooms[roomId].players) return;
+		if (!rooms[roomId]?.players) return;
 
 		// Update dialogue ended
 		rooms[roomId].dialogues.push(data.scenario);
@@ -415,12 +415,23 @@ io.on("connection", (channel) => {
 			});
 		}
 	});
-	channel.on("exploration-initialize", (data) => {
+	channel.on("exploration-force-initialize", (data) => {
 		if (rooms[channel.roomId] && data) {
 			// Initialize new exploration area if not found
 			const players = Object.values(rooms[channel.roomId].players).filter(
 				(p) => p.stats
 			);
+			const type = data.type;
+			if (type === "RESTING") {
+				rooms[channel.roomId].players?.forEach((p) => {
+					if (p.stats)
+						p.battleStats.HP = Math.min(p.battleStats.HP + 20, p.stats.HP);
+				});
+			} else if (type === "TREASURE") {
+			} else if (type === "CHALLENGE") {
+			}
+
+			// Generate new exploration area
 			const areas = data.exploration.areas;
 			rooms[channel.roomId].status = "exploring";
 			rooms[channel.roomId].exploration = new ExplorationSystem(players, areas);
@@ -635,7 +646,7 @@ io.on("connection", (channel) => {
 				});
 				return;
 			}
-			// Check if all monsters are dead
+			// Check if all players are dead
 			if (battle.players.every((p) => p.battleStats.HP <= 0)) {
 				io.to(channel.roomId).emit("battle", {
 					type: "battle-lose",
@@ -646,22 +657,25 @@ io.on("connection", (channel) => {
 			if (battle.turnQueue[0].type === "monster") {
 				// Calculate monsters's damage and emit updated state to all clients
 				const monster = battle.turnQueue[0];
+
+				// Update effects
+				battle.updateEffects(monster);
+
 				// TODO: pick random player by weighting
-				const player = players[0];
+				const player = battle.pickPlayerByWeighting(players);
 
 				let extraInfo = "";
 				const damages = [];
 				rooms[channel.roomId].battle.state = data.state;
 				if (monster?.effects?.some((e) => e.type === "lag")) {
 					extraInfo = `${monster.name} is lagging, turn skipped`;
-				} else {
-					for (let i = 0; i < players.length; i++) {
-						let damage = { damage: 0, elementEffectiveness: 1 };
-						if (players[i].battleStats.HP > 0 && player.id === players[i].id) {
-							damage = battle.calculateDamage(monster, player);
-						}
-						damages.push(damage);
+				}
+				for (let i = 0; i < players.length; i++) {
+					let damage = { damage: 0, elementEffectiveness: 1 };
+					if (players[i].battleStats.HP > 0 && player.id === players[i].id) {
+						damage = battle.calculateDamage(monster, player);
 					}
+					damages.push(damage);
 				}
 
 				io.to(channel.roomId).emit("battle", {
@@ -673,11 +687,11 @@ io.on("connection", (channel) => {
 						attacker: monster.id,
 						target: player.id,
 						running: true,
-						text: "quick attack",
+						text: battle.getAttack(monster),
 						finished: false,
 						initialPosition: { x: 0, y: 0 },
 					},
-					extra: "",
+					extra: extraInfo,
 					type: "battle-turn",
 				});
 				battle.updateTurn();
@@ -690,6 +704,7 @@ io.on("connection", (channel) => {
 			}
 		}
 	});
+
 	// Leveling listeners
 	channel.on("leveling-ready", () => {
 		if (rooms[channel.roomId]) {
