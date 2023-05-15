@@ -222,6 +222,7 @@ export default class OfficeScene extends Scene {
 		} else if (this.game.currentScene === "newoffice") {
 			if (action === "INITIALIZE_CUSTOMER_BATTLE") {
 				this.game.data.returnBackTo = "newoffice";
+				this.game.data.battleType = "meeting";
 				if (this.game.data.days % 5 === 0)
 					this.game.data.displayDays = this.game.data.days;
 				this.game.data.days++;
@@ -230,6 +231,12 @@ export default class OfficeScene extends Scene {
 				this.switch("digitalworld");
 			} else if (action === "CUSTOMER_MEETING_LOSE") {
 				this.switch("digitalworld");
+			}
+		} else if (this.game.currentScene === "deliveryoffice") {
+			if (action === "INITIALIZE_PROJECT_DELIVERY_BATTLE") {
+				this.game.data.returnBackTo = "newoffice";
+				this.game.data.battleType = "projectdelivery";
+				this.switch("battle");
 			} else if (action === "PROJECT_DELIVERY_WIN") {
 				// Game over!
 				this.switch("partyoffice");
@@ -285,6 +292,16 @@ export default class OfficeScene extends Scene {
 								if (channel) {
 									channel.emit("dialogue", {
 										scenario: "CUSTOMER_MEETING",
+										forceall: true,
+									});
+								}
+							}, 1000);
+						} else if (this.game.currentScene === "deliveryoffice") {
+							setTimeout(() => {
+								const channel = window.channel;
+								if (channel) {
+									channel.emit("dialogue", {
+										scenario: "CUSTOMER_PROJECT_DELIVERY",
 										forceall: true,
 									});
 								}

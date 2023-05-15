@@ -84,6 +84,10 @@ const PortalScreen = () => {
 					scene.switch("exploration");
 				}, 500);
 			} else {
+				// Delivery!!!
+				window.channel.emit("dialogue", {
+					scenario: "PROJECT_DELIVERY_TIME",
+				});
 				togglePortal();
 			}
 		}

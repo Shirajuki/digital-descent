@@ -2,6 +2,7 @@ import { CANVAS_HEIGHT, NAMES, SCALE } from "../constants";
 import {
 	MONSTER_PRESET_BY_RISKLEVEL,
 	customer,
+	deliveryCustomer,
 	generateMonstersByPreset,
 } from "../rpg/monster";
 import BattleSystem from "../rpg/systems/battleSystem";
@@ -179,7 +180,11 @@ export default class BattleScene extends Scene {
 		);
 		// monsters = generateMonstersByPreset(["easy"]); // TEST
 		if (this.game.data.returnBackTo === "newoffice") {
-			monsters = [customer()];
+			if (this.game.data.battleType == "meeting") {
+				monsters = [customer()];
+			} else if (this.game.data.battleType == "projectdelivery") {
+				monsters = [deliveryCustomer()];
+			}
 		}
 		this.monsters = [];
 
@@ -230,6 +235,8 @@ export default class BattleScene extends Scene {
 
 	getMonsterSprite(type: string) {
 		if (type === "BUG") return ["monsterBug", 0.3];
+		else if (type === "CUSTOMER") return ["monsterBug", 1];
+		else if (type === "CUSTOMER_DELIVERY") return ["monsterBug", 1.2];
 		return ["player", 1];
 	}
 
@@ -508,7 +515,6 @@ export default class BattleScene extends Scene {
 					spriteType as string
 				) as any;
 
-				monsterSprite.setScale(SCALE);
 				if (monster.monsterType === "BUG") {
 					monsterSprite.play(spriteType + "Idle");
 				} else {

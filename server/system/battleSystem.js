@@ -34,7 +34,7 @@ export default class BattleSystem {
 		if (monster.monsterType === "BUG") {
 			return ["Bug Bite", "Error", "Crash"][Math.floor(Math.random() * 3)];
 		}
-		if (monster.monsterType === "CUSTOMER") {
+		if (monster.monsterType.startsWith("CUSTOMER")) {
 			return ["Unclear Requirements", "Feature Request", "Dissatisfaction"][
 				Math.floor(Math.random() * 3)
 			];

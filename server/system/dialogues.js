@@ -246,7 +246,7 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Now it's time to meet with the customer to show them what we've accomplished so far. Head to the portal and I'll send you on your way to the customer.",
+			text: "Now it's time to meet with the customer to show them what we've accomplished so far. I'll send you on your way to the customer.",
 			speaker: "Team lead",
 			side: "right",
 			action: "INITIALIZE_MEETING",
@@ -316,6 +316,21 @@ export const DIALOGUES = {
 	// 12 - Project delivery time!
 	PROJECT_DELIVERY_TIME: [
 		{
+			text: "Hello again team. So you're ready to deliver the project now yeah? I hope you've all been working hard and making progress. The customer is waiting to see the results.",
+			speaker: "Team lead",
+			side: "right",
+		},
+		{
+			text: "Now it's time to meet with the customer to show them what we've accomplished. I'll send you on your way to the customer.",
+			speaker: "Team lead",
+			side: "right",
+			action: "INITIALIZE_PROJECT_DELIVERY",
+		},
+	],
+
+	// 12.5 - Project delivery customer!
+	CUSTOMER_PROJECT_DELIVERY: [
+		{
 			text: "I see that you feel ready to deliver the project. But, first you have to complete a last challenge. Are you ready?",
 			speaker: "Customer",
 			side: "right",
@@ -324,7 +339,7 @@ export const DIALOGUES = {
 			text: "Ready as we'll ever be!",
 			speaker: "Player",
 			side: "left",
-			action: "INITIALIZE_PROJECT_DELIVERY",
+			action: "INITIALIZE_PROJECT_DELIVERY_BATTLE",
 		},
 	],
 

@@ -255,7 +255,9 @@ export default class DigitalWorldScene extends Scene {
 	triggerAction(action: string): void {
 		console.log(action);
 		const channel = window.channel;
-		if (action === "INITIALIZE_MEETING") {
+		if (action === "INITIALIZE_PROJECT_DELIVERY") {
+			this.switch("deliveryoffice");
+		} else if (action === "INITIALIZE_MEETING") {
 			this.switch("newoffice");
 		} else if (action === "OPEN_TASKBOARD") {
 			this.togglePopup("taskboard", { force: true });

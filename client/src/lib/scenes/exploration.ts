@@ -415,6 +415,7 @@ export default class ExplorationScene extends Scene {
 				// Generate new ares
 				this.areas = generateAvailableAreas();
 				if (area.type === "BATTLE") {
+					this.game.data.battleType = "exploration";
 					this.switch("battle");
 				} else if (area.type === "RESTING") {
 					if (this.player)

@@ -44,7 +44,7 @@ export default class PhaserEngine {
 				queue: true,
 			} as Phaser.Types.Core.InputConfig,
 			// transparent: true,
-			backgroundColor: "rgba(26,26,26)",
+			backgroundColor: "#1a1a1a",
 			scene: [
 				new HomeScene({ key: "home" }, this.observable),
 
@@ -53,6 +53,8 @@ export default class PhaserEngine {
 				new BattleScene({ key: "battle" }, this.observable),
 				new OfficeScene({ key: "office" }, this.observable),
 				new OfficeScene({ key: "newoffice" }, this.observable),
+				new OfficeScene({ key: "deliveryoffice" }, this.observable),
+
 				new OfficeScene({ key: "partyoffice" }, this.observable),
 			],
 			render: { pixelArt: true, antialias: true },
