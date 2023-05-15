@@ -95,6 +95,7 @@ const PortalScreen = () => {
 
 	const togglePortal = () => {
 		if (scene?.portal?.display) {
+			window.sfx.closePopup.play();
 			window.channel.emit("selects-reset", {
 				id: player.id,
 			});
@@ -136,6 +137,7 @@ const PortalScreen = () => {
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
+								window.sfx.btnClick.play();
 								window.channel.emit("selects-update", {
 									id: player.id,
 									select: select === "work" ? null : "work",
@@ -164,6 +166,7 @@ const PortalScreen = () => {
 								false ? "!bg-green-700 !bg-opacity-70" : ""
 							}`}
 							onClick={() => {
+								window.sfx.btnClick.play();
 								window.channel.emit("selects-update", {
 									id: player.id,
 									select: select === "delivery" ? null : "delivery",

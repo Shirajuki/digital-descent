@@ -122,6 +122,10 @@ export default class BattleScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
+		if (window.sfx.background.volume() === 0.1) {
+			window.sfx.background.fade(0.1, 0, 2000);
+			window.sfx.battleBackground.fade(0, 0.1, 2000);
+		}
 
 		// Setup background
 		this.cameras.main.setBackgroundColor(0x1f1f1f);

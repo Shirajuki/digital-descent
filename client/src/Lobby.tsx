@@ -154,7 +154,10 @@ function Lobby() {
 					{player.host && players?.every((p) => p.ready) ? (
 						<button
 							className={`w-full h-20 text-3xl bg-green-400 bg-opacity-50`}
-							onClick={() => startGame()}
+							onClick={() => {
+								startGame();
+								window.sfx.btnClick.play();
+							}}
 						>
 							Start game
 						</button>
@@ -165,7 +168,10 @@ function Lobby() {
 									? "bg-red-400 bg-opacity-20"
 									: "bg-green-400 bg-opacity-50"
 							}`}
-							onClick={() => toggleReady()}
+							onClick={() => {
+								toggleReady();
+								window.sfx.btnClick.play();
+							}}
 						>
 							{player.ready ? "not ready" : "ready"}
 						</button>

@@ -70,6 +70,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 					}
 					// Do damage to target
 					console.log(attack);
+					window.sfx.battleHit.play();
 					const targetEntities =
 						attacker.type === "monster" ? scene.players : scene.monsters;
 					for (let i = 0; i < targetEntities.length; i++) {
@@ -147,6 +148,8 @@ export const animateSingleAttack = (scene: BattleScene) => {
 
 					// Apply attack effects
 					if (attack.effects.attacker) {
+						if (attack.effects.attacker.length > 0)
+							window.sfx.battleEffect.play();
 						for (let i = 0; i < attack.effects.attacker.length; i++) {
 							const effect = attack.effects.attacker[i];
 							const buff = effect.split("-");
@@ -181,6 +184,8 @@ export const animateSingleAttack = (scene: BattleScene) => {
 						}
 					}
 					if (attack.effects.target) {
+						if (attack.effects.target.length > 0)
+							window.sfx.battleEffect.play();
 						for (let i = 0; i < attack.effects.target.length; i++) {
 							const effect = attack.effects.target[i];
 							const buff = effect.split("-");
@@ -289,6 +294,8 @@ export const animateStandingAttack = (scene: BattleScene) => {
 
 					// Apply attack effects
 					if (attack.effects.attacker) {
+						if (attack.effects.attacker.length > 0)
+							window.sfx.battleEffect.play();
 						for (let i = 0; i < attack.effects.attacker.length; i++) {
 							const effect = attack.effects.attacker[i];
 							const buff = effect.split("-");
@@ -323,6 +330,8 @@ export const animateStandingAttack = (scene: BattleScene) => {
 						}
 					}
 					if (attack.effects.target) {
+						if (attack.effects.target.length > 0)
+							window.sfx.battleEffect.play();
 						for (let i = 0; i < attack.effects.target.length; i++) {
 							const effect = attack.effects.target[i];
 							const buff = effect.split("-");
@@ -387,6 +396,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 								scene.battle.state.attack.damage[i].damage,
 							0
 						);
+						window.sfx.battleHit.play();
 						const dmg =
 							"" +
 							Math.floor(scene.battle.state.attack.damage[i].damage * 100) /

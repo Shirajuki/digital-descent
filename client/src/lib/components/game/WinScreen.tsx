@@ -107,6 +107,7 @@ const WinScreen = () => {
 	const toggleReady = () => {
 		const channel = window.channel;
 		if (channel) {
+			window.sfx.btnClick.play();
 			channel.emit("leveling-ready", {
 				id: player.id,
 			});
@@ -259,7 +260,10 @@ const WinScreen = () => {
 										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
 										: ""
 								}`}
-								onClick={() => setLevelSelect("HP")}
+								onClick={() => {
+									setLevelSelect("HP");
+									window.sfx.btnClick.play();
+								}}
 							>
 								HP
 							</button>
@@ -269,7 +273,10 @@ const WinScreen = () => {
 										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
 										: ""
 								}`}
-								onClick={() => setLevelSelect("ATK")}
+								onClick={() => {
+									setLevelSelect("ATK");
+									window.sfx.btnClick.play();
+								}}
 							>
 								Attack
 							</button>
@@ -279,7 +286,10 @@ const WinScreen = () => {
 										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
 										: ""
 								}`}
-								onClick={() => setLevelSelect("DEF")}
+								onClick={() => {
+									setLevelSelect("DEF");
+									window.sfx.btnClick.play();
+								}}
 							>
 								Defence
 							</button>
@@ -289,7 +299,10 @@ const WinScreen = () => {
 										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
 										: ""
 								}`}
-								onClick={() => setLevelSelect("LUCK")}
+								onClick={() => {
+									setLevelSelect("LUCK");
+									window.sfx.btnClick.play();
+								}}
 							>
 								Luck
 							</button>
@@ -323,7 +336,10 @@ const WinScreen = () => {
 								levelSelect === "" ? "opacity-50 cursor-not-allowed" : ""
 							}`}
 							onClick={() => {
-								if (levelSelect !== "") levelUp();
+								if (levelSelect !== "") {
+									window.sfx.btnClick.play();
+									levelUp();
+								}
 							}}
 						>
 							OK

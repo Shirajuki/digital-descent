@@ -43,6 +43,7 @@ const RoleScreen = () => {
 		const channel = window.channel;
 		if (channel) {
 			scene.role.ready = !scene.role.ready;
+			window.sfx.btnClick.play();
 			window.playerBattleClass = role;
 			if (scene.role.ready) {
 				channel.emit("action-ready", {
@@ -108,6 +109,7 @@ const RoleScreen = () => {
 							<button
 								className="relative bg-gray-900 w-full text-center transition-all duration-500"
 								onClick={() => {
+									window.sfx.btnClick.play();
 									window.channel.emit("selects-update", {
 										id: player.id,
 										select: "tank",
@@ -141,6 +143,7 @@ const RoleScreen = () => {
 							<button
 								className="relative bg-gray-900 w-full text-center transition-all duration-500"
 								onClick={() => {
+									window.sfx.btnClick.play();
 									window.channel.emit("selects-update", {
 										id: player.id,
 										select: "support",
@@ -174,6 +177,7 @@ const RoleScreen = () => {
 							<button
 								className="relative bg-gray-900 w-full text-center transition-all duration-500"
 								onClick={() => {
+									window.sfx.btnClick.play();
 									window.channel.emit("selects-update", {
 										id: player.id,
 										select: "dps",

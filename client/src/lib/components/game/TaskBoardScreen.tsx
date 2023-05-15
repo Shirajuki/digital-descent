@@ -38,6 +38,7 @@ const TaskBoardScreen = () => {
 
 	const toggleTaskboard = () => {
 		if (scene?.taskboard?.display) {
+			window.sfx.closePopup.play();
 			scene.taskboard.display = false;
 		}
 		forceUpdate();

@@ -53,6 +53,7 @@ export default class Scene extends Phaser.Scene {
 	}
 	dialogueSync() {
 		if (this.dialogue.texts.length > 0) {
+			window.sfx.toggleDialogue.play();
 			this.dialogue.display = true;
 		}
 		this.observable.notify();
@@ -66,6 +67,7 @@ export default class Scene extends Phaser.Scene {
 		else if ((window as any).frameTime <= 16.5) return;
 	}
 	switch(scene: string) {
+		window.sfx.teleport.play();
 		console.log(this.game.currentScene, "->", scene);
 		// Cleanup scene
 		(this.game.scene.getScene(this.game.currentScene) as Scene).destroy();

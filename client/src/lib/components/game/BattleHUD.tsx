@@ -43,23 +43,30 @@ const BattleHUD = () => {
 
 	const normalAttack = useCallback(() => {
 		battle?.doAttack("normal", player.id);
+		window.sfx.btnClick.play();
 	}, [battle]);
 	const chargeAttack = useCallback(() => {
 		battle?.doAttack("charge", player.id);
+		window.sfx.btnClick.play();
 	}, [battle]);
 	const specialAttack = useCallback(() => {
 		battle?.doAttack("special", player.id);
+		window.sfx.btnClick.play();
 	}, [battle]);
 
 	const healthPotion = useCallback(() => {
 		console.log("health potion");
+		window.sfx.btnClick.play();
 	}, [battle]);
 	const staminaPotion = useCallback(() => {
 		console.log("stamina potion");
+		window.sfx.btnClick.play();
 	}, [battle]);
 
 	const toggleAttackInfo = useCallback(() => {
 		console.log("toggle attack info");
+		window.sfx.btnClick.play();
+		window.sfx.togglePopup.play();
 		scene.help.display = true;
 		scene.observable.notify();
 	}, [battle]);

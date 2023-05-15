@@ -37,6 +37,7 @@ const DialogueScreen = () => {
 
 	const nextDialogue = () => {
 		if (scene.dialogue.texts.length > 0) {
+			window.sfx.btnClick.play();
 			const lastDialogue = scene.dialogue.texts.shift();
 			scene.dialogue.action = lastDialogue?.action || "";
 
@@ -51,6 +52,9 @@ const DialogueScreen = () => {
 			}
 
 			forceUpdate();
+			setTimeout(() => {
+				window.sfx.nextDialogue.play();
+			}, 200);
 		}
 	};
 

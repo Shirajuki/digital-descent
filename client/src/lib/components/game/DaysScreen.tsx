@@ -36,6 +36,7 @@ const DaysScreen = () => {
 
 	const toggleDays = () => {
 		if (scene?.days?.display) {
+			window.sfx.closePopup.play();
 			scene.days.display = false;
 		}
 		forceUpdate();

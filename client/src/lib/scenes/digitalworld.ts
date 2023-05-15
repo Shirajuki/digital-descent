@@ -55,10 +55,13 @@ export default class DigitalWorldScene extends Scene {
 	togglePopup(data: any, force: any = null): void {
 		if (data === "taskboard") {
 			this.taskboard.display = force ? force.force : !this.taskboard.display;
+			window.sfx.togglePopup.play();
 		} else if (data === "portal") {
 			this.portal.display = force ? force.force : !this.portal.display;
+			window.sfx.togglePopup.play();
 		} else if (data === "shop") {
 			this.shop.display = force ? force.force : !this.shop.display;
+			window.sfx.togglePopup.play();
 		}
 		setTimeout(() => {
 			this.observable.notify();
@@ -129,6 +132,10 @@ export default class DigitalWorldScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
+		if (window.sfx.battleBackground.volume() === 0.1) {
+			window.sfx.background.fade(0, 0.1, 2000);
+			window.sfx.battleBackground.fade(0.1, 0, 2000);
+		}
 
 		// Create player
 		const oldPlayer = this.player;
@@ -137,6 +144,9 @@ export default class DigitalWorldScene extends Scene {
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
 		];
+		// Reset HP
+		this.player.battleStats.HP = this.player.stats.HP;
+		this.player.effects = [];
 
 		// Load bg
 		this.add.sprite(0, 0, "digitalWorldBg").setDepth(-10000).setScale(0.5);

@@ -4,11 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const testLobbies = [
-	{ id: "test-room", name: "A dummy lobby name :)", joined: 1 },
-	{ id: "ora", name: "OraOraOra", joined: 1 },
-];
-
 type LobbyType = {
 	id: string;
 	name: string;
@@ -47,8 +42,10 @@ function Menu() {
 		},
 		[channel]
 	);
+
 	const createLobby = useCallback(
 		(event: any) => {
+			window.sfx.btnClick.play();
 			event.preventDefault();
 			const roomName = event.target.lobbyId.value;
 			channel?.emit("lobby-create", {
@@ -69,7 +66,9 @@ function Menu() {
 			) : (
 				<div
 					className="cursor-pointer absolute top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 mb-6 [zoom:0.5]"
-					onClick={() => setLobbyState("menu")}
+					onClick={() => {
+						setLobbyState("menu");
+					}}
 				>
 					<h1 className="text-6xl font-bold">Digital Descent</h1>
 					<h2 className="text-2xl">Managing the Agile Realm</h2>
@@ -77,20 +76,38 @@ function Menu() {
 			)}
 			{lobbyState === "menu" ? (
 				<div className="flex flex-col w-full max-w-xl gap-2">
-					<button className="w-full" onClick={() => setLobbyState("play")}>
+					<button
+						className="w-full"
+						onClick={() => {
+							window.sfx.btnClick.play();
+							setLobbyState("play");
+						}}
+					>
 						Play
 					</button>
 					<span className="text-[#a6a6a6] m-2 text-center text-xs">• • •</span>
 					{/* <button className="w-full" onClick={() => setLobbyState("login")}>
 						Login
 					</button> */}
-					<button className="w-full" onClick={() => setLobbyState("highscore")}>
+					{/* <button
+						className="w-full"
+						onClick={() => {
+							setLobbyState("highscore");
+							window.sfx.btnClick.play();
+						}}
+					>
 						Highscore
-					</button>
+					</button> */}
 					{/* <button className="w-full" onClick={() => setLobbyState("options")}>
 						Options
 					</button> */}
-					<button className="w-full" onClick={() => setLobbyState("credits")}>
+					<button
+						className="w-full"
+						onClick={() => {
+							setLobbyState("credits");
+							window.sfx.btnClick.play();
+						}}
+					>
 						Credits
 					</button>
 				</div>
@@ -118,7 +135,10 @@ function Menu() {
 							lobbies.map((l) => (
 								<button
 									className="w-full flex justify-between"
-									onClick={() => joinLobby(l.id)}
+									onClick={() => {
+										joinLobby(l.id);
+										window.sfx.btnClick.play();
+									}}
 									key={l.id}
 								>
 									<span>{l.name}</span>
@@ -150,7 +170,10 @@ function Menu() {
 			{lobbyState !== "menu" ? (
 				<button
 					className="absolute top-5 left-5"
-					onClick={() => setLobbyState("menu")}
+					onClick={() => {
+						setLobbyState("menu");
+						window.sfx.btnClick.play();
+					}}
 				>
 					← Back
 				</button>

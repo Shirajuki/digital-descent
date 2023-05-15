@@ -36,6 +36,7 @@ const BattleHelpScreen = () => {
 
 	const toggleHelp = () => {
 		if (scene?.help?.display) {
+			window.sfx.closePopup.play();
 			scene.help.display = false;
 		}
 		forceUpdate();

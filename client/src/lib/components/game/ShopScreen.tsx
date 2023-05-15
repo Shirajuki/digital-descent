@@ -55,6 +55,7 @@ const ShopScreen = () => {
 
 	const toggleShop = () => {
 		if (scene?.shop?.display) {
+			window.sfx.closePopup.play();
 			scene.shop.display = false;
 		}
 		forceUpdate();

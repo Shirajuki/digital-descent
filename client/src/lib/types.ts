@@ -39,6 +39,7 @@ export type SkillTargetType = "all" | "single" | "self";
 // Use window object to globally share data between modules and components
 declare global {
 	interface Window {
+		sfx: any;
 		channel: any;
 		exploration: any;
 		engine: any; // For testing and debugging purposes

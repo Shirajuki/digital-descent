@@ -52,7 +52,9 @@ export default class BattleSystem {
 
 		const defbuff =
 			target?.effects?.some((e) => e.type === "defenceBoost") || false;
-		const defenceModifier = defbuff ? 1.5 : 1;
+		const nervous = target?.effects?.some((e) => e.type === "nervous") || false;
+		let defenceModifier = defbuff ? 1.5 : 1;
+		if (nervous) defenceModifier -= 0.3;
 		const damage =
 			(((((2 * attacker.stats.LEVEL) / 5 + 2) *
 				(attacker.stats.ATK * attackModifier)) /

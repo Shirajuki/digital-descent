@@ -54,6 +54,7 @@ const QuizScreen = () => {
 		channel.on("quiz-correct", () => {
 			if (!pause) return;
 			console.log("correct!");
+			window.sfx.quizCorrect.play();
 			setPause(false);
 			toggleQuiz();
 			scene.game.data.money += scene?.quiz?.rewards;
@@ -69,6 +70,7 @@ const QuizScreen = () => {
 		channel.on("quiz-wrong", () => {
 			if (!pause) return;
 			console.log("wrong!");
+			window.sfx.quizWrong.play();
 			setPause(false);
 			if (scene?.quiz?.rewards) {
 				scene.quiz.rewards -= 10;
@@ -121,6 +123,7 @@ const QuizScreen = () => {
 				id: window.channel.id,
 			});
 
+			window.sfx.closePopup.play();
 			scene.quiz.display = false;
 			scene.checkSteps();
 		}
@@ -156,6 +159,7 @@ const QuizScreen = () => {
 								<button
 									className="relative bg-gray-900 w-full text-center transition-all duration-500"
 									onClick={() => {
+										window.sfx.btnClick.play();
 										window.channel.emit("selects-update", {
 											id: player.id,
 											select: "" + index,

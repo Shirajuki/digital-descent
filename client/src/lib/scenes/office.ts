@@ -74,6 +74,10 @@ export default class OfficeScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
+		if (window.sfx.battleBackground.volume() === 0.1) {
+			window.sfx.background.fade(0, 0.1, 2000);
+			window.sfx.battleBackground.fade(0.1, 0, 2000);
+		}
 
 		// Create player
 		const oldPlayer = this.player;
@@ -89,12 +93,14 @@ export default class OfficeScene extends Scene {
 		console.log(this.players);
 
 		// Create customer
-		if (!this.customer) {
-			this.customer = initializePlayer(this, "Customer");
-			this.customer.name = "Customer";
-			this.customer.nameEntity.setText("Customer");
-			this.customer.setPosition(195, -140);
+		if (this.customer) {
+			this.customer?.nameEntity?.destroy();
+			this.customer?.destroy();
 		}
+		this.customer = initializePlayer(this, "Customer");
+		this.customer.name = "Customer";
+		this.customer.nameEntity.setText("Customer");
+		this.customer.setPosition(195, -140);
 
 		// Load bg
 		this.add.sprite(0, 0, "officeBg").setDepth(-10000).setScale(0.5);
@@ -189,6 +195,7 @@ export default class OfficeScene extends Scene {
 		console.log(action);
 		if (this.game.currentScene === "office") {
 			if (action === "START_ROLE_SELECTION") {
+				window.sfx.togglePopup.play();
 				this.role.display = true;
 				this.observable.notify();
 			} else if (action === "END_ROLE_SELECTION") {

@@ -183,6 +183,11 @@ export default class ExplorationScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
+		if (window.sfx.battleBackground.volume() === 0.1) {
+			window.sfx.background.fade(0, 0.1, 2000);
+			window.sfx.battleBackground.fade(0.1, 0, 2000);
+		}
+
 		// Create player
 		const oldPlayer = this.player;
 		this.player = initializePlayer(this, "Player 1", oldPlayer);
