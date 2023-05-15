@@ -54,7 +54,7 @@ const shopArea = () => {
 export const AREAS = {
 	STARTING: { area: startingArea, weight: 0 },
 	RESTING: { area: restingArea, weight: 20 },
-	TREASURE: { area: treasureArea, weight: 10 },
+	// TREASURE: { area: treasureArea, weight: 10 },
 	CHALLENGE: { area: challengeArea, weight: 30 },
 	BATTLE: { area: battleArea, weight: 60 },
 	// SUBQUEST: { area: subQuestArea, weight: 15 },

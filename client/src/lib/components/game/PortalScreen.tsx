@@ -83,7 +83,7 @@ const PortalScreen = () => {
 					scene.game.data.exploration.type = "STARTING";
 					scene.switch("exploration");
 				}, 500);
-			} else {
+			} else if (selSet.has("delivery")) {
 				// Delivery!!!
 				window.channel.emit("dialogue", {
 					scenario: "PROJECT_DELIVERY_TIME",

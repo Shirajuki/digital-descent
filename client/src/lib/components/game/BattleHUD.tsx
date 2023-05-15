@@ -186,7 +186,7 @@ const BattleHUD = () => {
 			{/* Button Groups for Items and Attacks */}
 			<div className="absolute right-5 bottom-5 w-4/12 h-2/6 text-right">
 				<div className="relative w-full h-full">
-					<button
+					{/* <button
 						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[2.75rem] right-[11.5rem]
 						${
 							battle.turnQueue[0]?.id !== player.id
@@ -201,8 +201,8 @@ const BattleHUD = () => {
 							src={`/${player?.skills?.normal?.icon}`}
 							alt="energy drink icon"
 						/>
-					</button>
-					<button
+					</button> */}
+					{/* <button
 						className={`rotate-45 w-8 h-8 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[1rem] right-[9.75rem]
 						${
 							battle.turnQueue[0]?.id !== player.id
@@ -217,7 +217,7 @@ const BattleHUD = () => {
 							src={`/${player?.skills?.normal?.icon}`}
 							alt="energy drink icon"
 						/>
-					</button>
+					</button> */}
 
 					<button
 						className={`flex justify-center items-center rotate-45 w-16 h-16 bg-slate-500 text-[0px] hover:bg-slate-800 transition-all absolute bottom-[3.75rem] right-[0.75rem]
@@ -317,8 +317,8 @@ const BattleHUD = () => {
 						title="toggle help"
 					>
 						<img
-							className="-rotate-45 w-11/12"
-							src={`/${player?.skills?.normal?.icon}`}
+							className="-rotate-45 w-11/12 translate-x-[2px]"
+							src={"/sprites/skills/questionMark.png"}
 							alt="question mark icon"
 						/>
 					</button>

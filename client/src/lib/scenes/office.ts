@@ -241,7 +241,7 @@ export default class OfficeScene extends Scene {
 			}
 		} else if (this.game.currentScene === "deliveryoffice") {
 			if (action === "INITIALIZE_PROJECT_DELIVERY_BATTLE") {
-				this.game.data.returnBackTo = "newoffice";
+				this.game.data.returnBackTo = "deliveryoffice";
 				this.game.data.battleType = "projectdelivery";
 				this.switch("battle");
 			} else if (action === "PROJECT_DELIVERY_WIN") {

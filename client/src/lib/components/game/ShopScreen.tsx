@@ -88,63 +88,74 @@ const ShopScreen = () => {
 						</button>
 					</div>
 					<div className="absolute left-10 top-8">
-						<button
+						<div
 							className={`bg-gray-700 text-sm py-[0.70rem] px-5 rounded-md text-center transition-all duration-500`}
 						>
 							{scene?.game?.data?.money} Workcredits
-						</button>
-					</div>
-					<div className="flex gap-3 pl-2 h-full">
-						<div className="flex flex-col bg-gray-700 rounded-md w-full">
-							<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
-								Workshop
-							</div>
-							<div className="my-2 h-[20.75rem] overflow-y-auto rounded-md gap-3 p-2">
-								{shopItems.map((item) => (
-									<div
-										key={item.name}
-										className="flex justify-between items-center bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"
-									>
-										<div className="flex items-center">
-											<div className="bg-white h-8 w-8 m-2 rounded-sm"></div>
-											<div className="">{item.name}</div>
-										</div>
-										<div className="flex w-32">
-											<button className="w-full">Buy {item.price}$</button>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
-						<div className="flex flex-col w-full h-full gap-3">
-							<div className="bg-gray-700 rounded-md w-full h-24">
-								<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
-									Equipment
-								</div>
-								<div className="flex justify-between m-3 h-[calc(100%-2.75rem)] rounded-md">
-									<div className="flex w-full gap-2 items-end">
-										<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
-										<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
-										<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
-									</div>
-									{/* Drink slots */}
-									<div className="flex w-full gap-2 justify-end items-end">
-										<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
-										<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
-									</div>
-								</div>
-							</div>
-							<div className="bg-gray-700 rounded-md w-full">
-								<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
-									Inventory
-								</div>
-								<div className="bg-gray-500 m-3 h-[14rem] overflow-y-auto rounded-md gap-3 p-2">
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-									<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
-								</div>
-							</div>
 						</div>
 					</div>
+
+					{true ? (
+						<div className="flex gap-3 pl-2 h-full">
+							<div className="flex justify-center items-center h-full w-full">
+								<p className="[font-family:var(--font-normal)] text-6xl">
+									Out of order
+								</p>
+							</div>
+						</div>
+					) : (
+						<div className="flex gap-3 pl-2 h-full">
+							<div className="flex flex-col bg-gray-700 rounded-md w-full">
+								<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
+									Workshop
+								</div>
+								<div className="my-2 h-[20.75rem] overflow-y-auto rounded-md gap-3 p-2">
+									{shopItems.map((item) => (
+										<div
+											key={item.name}
+											className="flex justify-between items-center bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"
+										>
+											<div className="flex items-center">
+												<div className="bg-white h-8 w-8 m-2 rounded-sm"></div>
+												<div className="">{item.name}</div>
+											</div>
+											<div className="flex w-32">
+												<button className="w-full">Buy {item.price}$</button>
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="flex flex-col w-full h-full gap-3">
+								<div className="bg-gray-700 rounded-md w-full h-24">
+									<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
+										Equipment
+									</div>
+									<div className="flex justify-between m-3 h-[calc(100%-2.75rem)] rounded-md">
+										<div className="flex w-full gap-2 items-end">
+											<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
+											<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
+											<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
+										</div>
+										{/* Drink slots */}
+										<div className="flex w-full gap-2 justify-end items-end">
+											<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
+											<div className="bg-slate-800 w-12 h-12 rounded-md"></div>
+										</div>
+									</div>
+								</div>
+								<div className="bg-gray-700 rounded-md w-full">
+									<div className="text-sm bg-slate-600 rounded-md rounded-bl-none px-3 w-4/12 text-center">
+										Inventory
+									</div>
+									<div className="bg-gray-500 m-3 h-[14rem] overflow-y-auto rounded-md gap-3 p-2">
+										<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
+										<div className="bg-slate-800 w-full h-12 rounded-md mb-2 last:mb-0"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

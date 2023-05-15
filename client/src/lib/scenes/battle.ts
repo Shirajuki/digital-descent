@@ -186,7 +186,9 @@ export default class BattleScene extends Scene {
 		if (this.game.data.returnBackTo === "newoffice") {
 			if (this.game.data.battleType == "meeting") {
 				monsters = [customer()];
-			} else if (this.game.data.battleType == "projectdelivery") {
+			}
+		} else if (this.game.data.returnBackTo === "deliveryoffice") {
+			if (this.game.data.battleType == "projectdelivery") {
 				monsters = [deliveryCustomer()];
 			}
 		}
@@ -252,6 +254,11 @@ export default class BattleScene extends Scene {
 					scenario: "CUSTOMER_MEETING_LOSE",
 					forceall: true,
 				});
+			} else if (this.game.data.returnBackTo === "deliveryoffice") {
+				channel.emit("dialogue", {
+					scenario: "PROJECT_DELIVERY_LOSE",
+					forceall: true,
+				});
 			}
 			this.switch(this.game.data.returnBackTo);
 			channel?.emit("message-send", {
@@ -279,6 +286,11 @@ export default class BattleScene extends Scene {
 			if (this.game.data.returnBackTo === "newoffice") {
 				channel.emit("dialogue", {
 					scenario: "CUSTOMER_MEETING_WIN",
+					forceall: true,
+				});
+			} else if (this.game.data.returnBackTo === "deliveryoffice") {
+				channel.emit("dialogue", {
+					scenario: "PROJECT_DELIVERY_WIN",
 					forceall: true,
 				});
 			}

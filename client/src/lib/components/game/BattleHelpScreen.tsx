@@ -56,7 +56,7 @@ const BattleHelpScreen = () => {
 				className="absolute bg-slate-900 w-[calc(100%-8rem)] h-[calc(100%-3rem)] [user-select:none] flex gap-4 rounded-md p-4"
 				ref={infoPopup}
 			>
-				<div className="bg-slate-800 w-full flex flex-col gap-4 p-4">
+				<div className="bg-slate-800 w-full flex flex-col gap-1 p-4">
 					<h1 className="block w-full text-center text-3xl pb-2 [font-family:var(--font-normal)]">
 						Help
 					</h1>
@@ -70,7 +70,99 @@ const BattleHelpScreen = () => {
 					</div>
 
 					<div className="flex gap-3 pl-2 h-full">
-						<p>yo</p>
+						{/* Skills */}
+						<div className="flex flex-col gap-12 pl-4">
+							<div className="flex gap-10">
+								<div className="flex flex-col relative">
+									<div
+										className={`flex justify-center items-center rotate-45 w-[4.2rem] h-[4.2rem] bg-slate-500 text-[0px] transition-all rounded-md
+						`}
+										title={`${player?.skills?.normal?.name} (${player?.skills?.normal?.chargeCost} energy)`}
+									>
+										<img
+											className="-rotate-45 w-10/12"
+											src={`/${player?.skills?.normal?.icon}`}
+											alt="normal attack icon"
+										/>
+									</div>
+								</div>
+								<div className="flex flex-col gap-2 w-full pr-3 [font-family:var(--font-normal)]">
+									<div className="flex justify-between">
+										<p className="p-0 underline underline-offset-4">
+											{player?.skills?.normal?.name} (costs{" "}
+											{player?.skills?.normal?.chargeCost} energy)
+										</p>
+										<div className="flex gap-2">
+											<p>[{player?.skills?.normal?.icons?.join(", ")}]</p>
+											<p>Targets: {player?.skills?.normal?.targets?.type}</p>
+										</div>
+									</div>
+									<p className="text-sm">
+										{player?.skills?.normal?.description}
+									</p>
+								</div>
+							</div>
+							<div className="flex gap-10">
+								<div className="flex flex-col relative">
+									<div
+										className={`flex justify-center items-center rotate-45 w-[4.2rem] h-[4.2rem] bg-slate-500 text-[0px] transition-all rounded-md
+						`}
+										title={`${player?.skills?.charge?.name} (${player?.skills?.charge?.chargeCost} energy)`}
+									>
+										<img
+											className="-rotate-45 w-10/12"
+											src={`/${player?.skills?.charge?.icon}`}
+											alt="charge attack icon"
+										/>
+									</div>
+								</div>
+								<div className="flex flex-col gap-2 w-full pr-3 [font-family:var(--font-normal)]">
+									<div className="flex justify-between">
+										<p className="p-0 underline underline-offset-4">
+											{player?.skills?.charge?.name} (costs{" "}
+											{player?.skills?.charge?.chargeCost} energy)
+										</p>
+										<div className="flex gap-2">
+											<p>[{player?.skills?.charge?.icons?.join(", ")}]</p>
+											<p>Targets: {player?.skills?.charge?.targets?.type}</p>
+										</div>
+									</div>
+									<p className="text-sm">
+										{player?.skills?.charge?.description}
+									</p>
+								</div>
+							</div>
+							<div className="flex gap-10">
+								<div className="flex flex-col relative">
+									<div
+										className={`flex justify-center items-center rotate-45 w-[4.2rem] h-[4.2rem] bg-slate-500 text-[0px] transition-all rounded-md
+						`}
+										title={`${player?.skills?.special?.name} (${player?.skills?.special?.chargeCost} energy)`}
+									>
+										<img
+											className="-rotate-45 w-10/12"
+											src={`/${player?.skills?.special?.icon}`}
+											alt="special attack icon"
+										/>
+									</div>
+								</div>
+								<div className="flex flex-col gap-2 w-full pr-3 [font-family:var(--font-normal)]">
+									<div className="flex justify-between">
+										<p className="p-0 underline underline-offset-4">
+											{player?.skills?.special?.name} (costs{" "}
+											{player?.skills?.special?.chargeCost} energy)
+										</p>
+										<div className="flex gap-2">
+											<p>[{player?.skills?.special?.icons?.join(", ")}]</p>
+											<p>Targets: {player?.skills?.special?.targets?.type}</p>
+										</div>
+									</div>
+									<p className="text-sm">
+										{player?.skills?.special?.description}
+									</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
