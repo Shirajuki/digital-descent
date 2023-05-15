@@ -22,6 +22,9 @@ const router = createBrowserRouter([
 	},
 ]);
 
+(window as any).howler = Howler;
+Howler.volume(0.2);
+
 window.sfx = {};
 window.sfx.btnClick = new Howl({
 	src: ["/sfx/button-click.mp3"],

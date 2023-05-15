@@ -303,11 +303,15 @@ export default class BattleScene extends Scene {
 		} else if (data.type === "battle-end") {
 			console.log("Battle ended");
 			// Update quest clearing
+			const priorityTasks: string[] = [];
 			const currentTasks = this.game.data.currentTasks;
 			if (currentTasks) {
 				for (let i = currentTasks.length - 1; i >= 0; i--) {
 					const task = currentTasks[i];
+					if (priorityTasks.includes(task.type)) continue;
+
 					if (task?.type === "BUGS") {
+						priorityTasks.push(task.type);
 						for (let j = 0; j < this.monsters.length; j++) {
 							const m = this.monsters[j];
 							if (m.monsterType === "BUG") {
@@ -318,6 +322,7 @@ export default class BattleScene extends Scene {
 							}
 						}
 						console.log(task);
+
 						if (task.progress >= 100) {
 							task.progress = 100;
 							currentTasks.splice(i, 1);
@@ -359,7 +364,7 @@ export default class BattleScene extends Scene {
 			if (!this.battle.state.running) this.battle.updateActionQueue();
 		} else if (data.type === "battle-pointer") {
 			this.battle.updatePointer();
-		} else if (data.type === "battle-turn") {
+		} else if (data.type === "battle-turn-finished") {
 			// Sync monsters
 			const monsters = data.battle.monsters;
 			for (let i = 0; i < this.monsters.length; i++) {
@@ -370,7 +375,7 @@ export default class BattleScene extends Scene {
 					monster.battleStats = m.battleStats;
 				}
 			}
-
+		} else if (data.type === "battle-turn") {
 			// Execute turn
 			const state = data.state;
 			const attacker =
@@ -379,6 +384,7 @@ export default class BattleScene extends Scene {
 			const target =
 				this.players.find((p) => p.id === data.state.target) ||
 				this.monsters.find((m: any) => m.id === data.state.target);
+
 			if (attacker?.effects?.some((e: any) => e.type === "memoryleak")) {
 				this.battle.addActionQueue({
 					type: "text-update",
