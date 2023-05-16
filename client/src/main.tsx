@@ -22,6 +22,7 @@ const router = createBrowserRouter([
 	},
 ]);
 
+// Load volumes w/ Howler
 (window as any).howler = Howler;
 Howler.volume(0.2);
 
@@ -74,7 +75,7 @@ window.sfx.battleEffect = new Howl({
 
 window.sfx.background = new Howl({
 	src: ["/sfx/background-music.mp3"],
-	volume: 0.1,
+	volume: 0,
 	autoplay: true,
 	loop: true,
 });

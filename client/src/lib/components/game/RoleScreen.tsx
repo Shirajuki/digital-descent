@@ -138,6 +138,12 @@ const RoleScreen = () => {
 									Responsible for designing and building the foundational
 									systems that support the rest of the IT infrastructure.
 								</p>
+								<img
+									className="absolute top-1 right-1 w-6 h-6 cursor-help"
+									src={"/sprites/tankIcon.png"}
+									alt="tank icon"
+									title="Tank"
+								/>
 							</button>
 
 							<button
@@ -172,6 +178,12 @@ const RoleScreen = () => {
 									Responsible for ensuring that the systems and applications are
 									functioning properly and addressing any issues that arise.
 								</p>
+								<img
+									className="absolute top-1 right-1 w-6 h-6 cursor-help"
+									src={"/sprites/supportIcon.png"}
+									alt="support icon"
+									title="Support"
+								/>
 							</button>
 
 							<button
@@ -206,6 +218,12 @@ const RoleScreen = () => {
 									Responsible for building and maintaining the applications and
 									software that drive the organization forward.
 								</p>
+								<img
+									className="absolute top-1 right-1 w-6 h-6 cursor-help"
+									src={"/sprites/dpsIcon.png"}
+									alt="dps icon"
+									title="DPS"
+								/>
 							</button>
 						</div>
 					</div>

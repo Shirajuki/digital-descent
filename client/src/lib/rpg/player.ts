@@ -79,6 +79,7 @@ export const initializePlayer = (
 
 	// Old player from same scene
 	if (oldPlayer) {
+		console.log(123123, oldPlayer);
 		player.stats = oldPlayer.stats;
 		player.battleStats = oldPlayer.battleStats;
 		player.inventory = oldPlayer.inventory;

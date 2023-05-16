@@ -15,6 +15,7 @@ function Chat({
 	const [scaling, setScaling] = useState(1);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatRef = useRef<HTMLDivElement>(null);
+	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (channel && setChat && chatRef.current) {
@@ -22,6 +23,7 @@ function Chat({
 				setChat((ochat) => [...ochat, data]);
 				setTimeout(() => {
 					chatRef?.current?.scrollTo({ top: 1000000000 });
+					wrapperRef?.current?.classList?.add("trigger-animation");
 				}, 100);
 			});
 		}
@@ -30,7 +32,7 @@ function Chat({
 				channel.off("message-update");
 			}
 		};
-	}, [channel, setChat, chatRef.current]);
+	}, [channel, setChat, chatRef.current, wrapperRef.current]);
 
 	useEffect(() => {
 		setScaling((document.querySelector("canvas")?.clientWidth ?? 1157) / 1157);
@@ -57,8 +59,12 @@ function Chat({
 
 	return (
 		<div
+			ref={wrapperRef}
 			className={`bg-gray-800 z-20 bg-opacity-0 rounded-md p-4 max-w-md hover:bg-opacity-90 transition-all duration-300 ${wrapperClassName}`}
 			style={{ zoom: scale ? scaling : 1 }}
+			onAnimationEnd={() => {
+				wrapperRef?.current?.classList?.remove("trigger-animation");
+			}}
 		>
 			<div
 				ref={chatRef}

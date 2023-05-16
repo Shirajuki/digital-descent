@@ -113,6 +113,19 @@ button {
 	animation: glitch-animation-2 8s infinite linear alternate-reverse;
 }
 
+.trigger-animation {
+	animation: force-opacity 1s linear forwards;
+	--tw-bg-opacity: 0.9 !important;
+}
+@keyframes force-opacity {
+	0% {
+		--tw-bg-opacity: 0.9 !important;
+	}
+	100% {
+		--tw-bg-opacity: 0.9 !important;
+	}
+}
+
 @keyframes glitch-animation-1 {
 	0% {
 		clip-path: polygon(0 0%, 100% 0%, 100% 0%, 0% 0%);

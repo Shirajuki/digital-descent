@@ -69,11 +69,11 @@ const BattleHelpScreen = () => {
 						</button>
 					</div>
 
-					<div className="flex gap-3 pl-2 h-full">
+					<div className="flex gap-3 pl-2 mt-3 h-full">
 						{/* Skills */}
-						<div className="flex flex-col gap-12 pl-4">
-							<div className="flex gap-10">
-								<div className="flex flex-col relative">
+						<div className="grid grid-cols-3 gap-1 pl-4">
+							<div className="flex flex-col gap-6">
+								<div className="flex relative justify-between pr-10">
 									<div
 										className={`flex justify-center items-center rotate-45 w-[4.2rem] h-[4.2rem] bg-slate-500 text-[0px] transition-all rounded-md
 						`}
@@ -85,25 +85,26 @@ const BattleHelpScreen = () => {
 											alt="normal attack icon"
 										/>
 									</div>
+									<div className="flex flex-col items-end justify-start w-32">
+										<p className="p-0 underline underline-offset-4">
+											{player?.skills?.normal?.name}
+										</p>
+										Charge costs: {player?.skills?.normal?.chargeCost}
+									</div>
 								</div>
 								<div className="flex flex-col gap-2 w-full pr-3 [font-family:var(--font-normal)]">
-									<div className="flex justify-between">
-										<p className="p-0 underline underline-offset-4">
-											{player?.skills?.normal?.name} (costs{" "}
-											{player?.skills?.normal?.chargeCost} energy)
-										</p>
-										<div className="flex gap-2">
-											<p>[{player?.skills?.normal?.icons?.join(", ")}]</p>
-											<p>Targets: {player?.skills?.normal?.targets?.type}</p>
-										</div>
+									<div className="flex flex-col">
+										<p>[{player?.skills?.normal?.icons?.join(", ")}]</p>
+										<p>Targets: {player?.skills?.normal?.targets?.type}</p>
 									</div>
 									<p className="text-sm">
 										{player?.skills?.normal?.description}
 									</p>
 								</div>
 							</div>
-							<div className="flex gap-10">
-								<div className="flex flex-col relative">
+
+							<div className="flex flex-col gap-6">
+								<div className="flex relative justify-between pr-10">
 									<div
 										className={`flex justify-center items-center rotate-45 w-[4.2rem] h-[4.2rem] bg-slate-500 text-[0px] transition-all rounded-md
 						`}
@@ -115,25 +116,26 @@ const BattleHelpScreen = () => {
 											alt="charge attack icon"
 										/>
 									</div>
+									<div className="flex flex-col items-end justify-start w-32">
+										<p className="p-0 underline underline-offset-4">
+											{player?.skills?.charge?.name}
+										</p>
+										Charge costs: {player?.skills?.charge?.chargeCost}
+									</div>
 								</div>
 								<div className="flex flex-col gap-2 w-full pr-3 [font-family:var(--font-normal)]">
-									<div className="flex justify-between">
-										<p className="p-0 underline underline-offset-4">
-											{player?.skills?.charge?.name} (costs{" "}
-											{player?.skills?.charge?.chargeCost} energy)
-										</p>
-										<div className="flex gap-2">
-											<p>[{player?.skills?.charge?.icons?.join(", ")}]</p>
-											<p>Targets: {player?.skills?.charge?.targets?.type}</p>
-										</div>
+									<div className="flex flex-col">
+										<p>[{player?.skills?.charge?.icons?.join(", ")}]</p>
+										<p>Targets: {player?.skills?.charge?.targets?.type}</p>
 									</div>
 									<p className="text-sm">
 										{player?.skills?.charge?.description}
 									</p>
 								</div>
 							</div>
-							<div className="flex gap-10">
-								<div className="flex flex-col relative">
+
+							<div className="flex flex-col gap-6">
+								<div className="flex relative justify-between pr-10">
 									<div
 										className={`flex justify-center items-center rotate-45 w-[4.2rem] h-[4.2rem] bg-slate-500 text-[0px] transition-all rounded-md
 						`}
@@ -145,17 +147,17 @@ const BattleHelpScreen = () => {
 											alt="special attack icon"
 										/>
 									</div>
+									<div className="flex flex-col items-end justify-start w-32">
+										<p className="p-0 underline underline-offset-4">
+											{player?.skills?.special?.name}
+										</p>
+										Charge costs: {player?.skills?.special?.chargeCost}
+									</div>
 								</div>
 								<div className="flex flex-col gap-2 w-full pr-3 [font-family:var(--font-normal)]">
-									<div className="flex justify-between">
-										<p className="p-0 underline underline-offset-4">
-											{player?.skills?.special?.name} (costs{" "}
-											{player?.skills?.special?.chargeCost} energy)
-										</p>
-										<div className="flex gap-2">
-											<p>[{player?.skills?.special?.icons?.join(", ")}]</p>
-											<p>Targets: {player?.skills?.special?.targets?.type}</p>
-										</div>
+									<div className="flex flex-col">
+										<p>[{player?.skills?.special?.icons?.join(", ")}]</p>
+										<p>Targets: {player?.skills?.special?.targets?.type}</p>
 									</div>
 									<p className="text-sm">
 										{player?.skills?.special?.description}

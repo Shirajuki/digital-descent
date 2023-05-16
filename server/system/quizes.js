@@ -13,14 +13,16 @@ export const QUIZ = () => [
 		weight: 10,
 	},
 	{
-		question: "What is the purpose of the frequent (standup) meeting?",
-		answer: "To review the previous day's work and keep everyone in sync",
-		choices: [
-			"To discuss progress and roadblocks",
-			"To assign tasks to team members",
-			"To review the project backlog",
-			"To review the previous day's work and keep everyone in sync",
-		],
+		quiz: {
+			question: "What is the purpose of the frequent (standup) meeting?",
+			answer: "To review the previous day's work and keep everyone in sync",
+			choices: [
+				"To discuss progress and roadblocks",
+				"To assign tasks to team members",
+				"To review the project backlog",
+				"To review the previous day's work and keep everyone in sync",
+			],
+		},
 		weight: 10,
 	},
 	{

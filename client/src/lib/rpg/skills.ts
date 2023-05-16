@@ -4,7 +4,7 @@ export const inspire = () => {
 	return {
 		name: "Inspire",
 		description:
-			"A powerful and inspirational attack are launched against the targeted enemy, dealing moderate damage. In addition, this attack has a chance to boost a team member's morale and attack, as well as recovering a part of their HP",
+			"An inspirational attack against a targeted enemy. This attack has also a chance to boost the teams's morale and attack, as well as recovering a part of their HP",
 		icon: "sprites/skills/inspire.png",
 		icons: ["dps", "support"],
 		type: "normal",
@@ -25,7 +25,7 @@ export const delegate = () => {
 	return {
 		name: "Delegate",
 		description:
-			"The user takes a moment to delegate tasks to their team members, boosting their efficiency and morale. This charge skill restores a moderate amount of the team members HP and grants a temporary boost to the entire team's attack and defense. Additionally, the user unleashes a damaging attack that hits all enemies.",
+			"Delegate tasks to the team members, boosting their efficiency. This restores the team's HP and grants the whole team a temporary boost in attack and defense. Additionally, a damaging attack that hits all enemies are unleashed.",
 		icon: "sprites/skills/delegate.png",
 		icons: ["support", "disrupt"],
 		type: "charge",
@@ -37,7 +37,7 @@ export const delegate = () => {
 		},
 		power: 0.5,
 		effects: {
-			attacker: ["all-attackBoost", "all-defenceBoost", "all-smallHeal"],
+			attacker: ["all-attackBoost", "all-defenceBoost", "all-mediumHeal"],
 		},
 	};
 };
@@ -45,7 +45,7 @@ export const systemRestore = () => {
 	return {
 		name: "System Restore",
 		description:
-			"This skill allows the player to initiate a restart and restore on a team member's system, fully recovering their health and removing any negative status effects. In addition, the sudden jolt of energy from the restart overloads nearby enemies' systems, dealing moderate damage to all enemies making them leak memory. This skill is especially useful when a team member is critically injured or under the influence of a debilitating status effect.",
+			"Initiate a restart and restore on a team member's system, fully recovering their health and removing any negative status effects. The jolt of energy from the restart also deals damage to all enemies making them leak memory.",
 		icon: "sprites/skills/systemRestore.png",
 		icons: ["support", "disrupt"],
 		type: "special",
@@ -67,8 +67,7 @@ export const systemRestore = () => {
 export const debugging = () => {
 	return {
 		name: "Debugging",
-		description:
-			"This skill allows the player to launch a basic attack against the enemy, dealing minor damage. The attack targets the enemy's debugging process, causing them to waste resources and time. However, the attack's limited complexity also limits its potential damage output. This skill is useful in situations where the player needs to conserve resources or deal with weaker enemies.",
+		description: "Launches a basic debugging attack against a targeted enemy.",
 		icon: "sprites/skills/debugging.png",
 		icons: ["dps"],
 		type: "normal",
@@ -79,13 +78,16 @@ export const debugging = () => {
 			amount: "single",
 		},
 		power: 0,
+		effects: {
+			attacker: ["self-smallHeal"],
+		},
 	};
 };
 export const firewall = () => {
 	return {
 		name: "Firewall",
 		description:
-			"This skill allows the player to taunt enemies by creating a protective firewall around themselves. The firewall draws the attention of enemies and makes them more likely to target the player. In addition to taunting enemies, the firewall provides the player with temporary damage reduction while it's active, allowing them to absorb more damage. This skill can be useful in situations where the player needs to protect themselves or their team members from incoming attacks while still dealing damage to enemies.",
+			"Creates a protective firewall around the player. The firewall draws the attention of enemies and makes them more likely to target the player, as well as granting the player a temporary defence boost, allowing them to absorb more damage.",
 		icon: "sprites/skills/firewall.png",
 		icons: ["support"],
 		type: "charge",
@@ -105,7 +107,7 @@ export const codeReview = () => {
 	return {
 		name: "Code Review",
 		description:
-			"This skill allows the player to identify and eliminate bugs in the team's code, boosting all team members' defense for a set number of turns. In addition, the player gains insights into the enemy, exposing vulnerabilities and dealing moderate damage.",
+			"Identify and eliminate bugs in the team's code, temporary boosting all team members' defense. In addition, the player deals moderate damage to all enemies.",
 		icon: "sprites/skills/codeReview.png",
 		icons: ["support"],
 		type: "special",
@@ -128,7 +130,7 @@ export const patch = () => {
 	return {
 		name: "Patch",
 		description:
-			"Releases a patch to fix bugs in their code, dealing moderate damage to an enemy and also healing a portion of the DPS class's own health. Has a small chance to make enemy nervous.",
+			"Releases a patch to fix bugs in the codebase, dealing moderate damage to a targeted enemy. Has a small chance to make the enemy nervous, becoming weaker to further attacks.",
 		icon: "sprites/skills/patch.png",
 		icons: ["dps", "disrupt"],
 		type: "normal",
@@ -152,7 +154,7 @@ export const testSuite = () => {
 	return {
 		name: "Test Suite",
 		description:
-			"The character runs a comprehensive test suite, analyzing every aspect of the enemy and finding vulnerabilities to exploit. Deals moderate damage and applies a random debuff of either lag, nervous or memory-leak",
+			"Runs a comprehensive test suite, analyzing every aspect of the targeted enemy dealing massive damage. A random debuff of either lag, nervous or memory-leak are also applied to the targeted enemy.",
 		icon: "sprites/skills/testSuite.png",
 		icons: ["dps", "disrupt"],
 		type: "charge",
@@ -173,7 +175,7 @@ export const refactoring = () => {
 	return {
 		name: "Refactoring",
 		description:
-			"This skill allows the player to take a moment to refactor and optimize their own code, boosting their and the team members' attack power for a set number of turns. Additionally, the player leverages their knowledge of code optimization to target the enemy's weaknesses, dealing massive damage to all enemies. The enemy's code is temporarily disrupted for one turn.",
+			"The player takes a moment to refactor and optimize the codebase, boosting their and the team members' attack power for a set number of turns. Additionally, the player deals massive damage and applies lag to all enemies.",
 		icon: "sprites/skills/refactoring.png",
 		icons: ["dps", "disrupt"],
 		type: "charge",
@@ -185,7 +187,7 @@ export const refactoring = () => {
 		},
 		power: 2.5,
 		effects: {
-			attacker: ["all-attackBoost", "all-defenceBoost", "self-smallHeal"],
+			attacker: ["all-attackBoost", "self-mediumHeal"],
 			target: ["all-lag", "all-nervous"],
 		},
 	};

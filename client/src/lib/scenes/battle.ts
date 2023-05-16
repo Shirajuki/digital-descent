@@ -260,7 +260,12 @@ export default class BattleScene extends Scene {
 					forceall: true,
 				});
 			}
-			this.switch(this.game.data.returnBackTo);
+			this.player.battleStats.HP = Math.ceil(this.player.stats.HP / 2);
+			this.player.battleStats.CHARGE = 0;
+			window.oldPlayer = this.player;
+			setTimeout(() => {
+				this.switch(this.game.data.returnBackTo);
+			}, 100);
 			channel?.emit("message-send", {
 				sender: "[battle]",
 				message: "Battle lost",
@@ -373,8 +378,13 @@ export default class BattleScene extends Scene {
 				if (m) {
 					monster.stats = m.stats;
 					monster.battleStats = m.battleStats;
+					// If monster dead set to dead
+					if (monster.battleStats.HP <= 0) {
+						monster.battleStats.dead = true;
+					}
 				}
 			}
+			this.battle.updatePointer();
 		} else if (data.type === "battle-turn") {
 			// Execute turn
 			const state = data.state;

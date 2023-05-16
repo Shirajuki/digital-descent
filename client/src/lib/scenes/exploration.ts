@@ -15,6 +15,7 @@ import { AreaType } from "../types";
 import Scene from "./scene";
 import collisions from "../collisions/explorationCollisions.json";
 import { DEBUG } from "../constants";
+import { shuffle } from "../utils";
 
 export default class ExplorationScene extends Scene {
 	public teleportingPads: any[] = [];
@@ -324,10 +325,11 @@ export default class ExplorationScene extends Scene {
 		if (data.type === "quiz-initialize") {
 			console.log(111, data);
 			const quiz = data.quiz;
+			console.log(quiz);
 			this.quiz = {
 				display: true,
 				ready: false,
-				answers: quiz.choices,
+				answers: shuffle(quiz.choices),
 				question: quiz.question,
 				rewards: 100,
 			};
@@ -353,6 +355,7 @@ export default class ExplorationScene extends Scene {
 	triggerAction(action: string): void {
 		console.log(action);
 		if (action === "TELEPORT_TO_DIGITALWORLD") {
+			window.oldPlayer = this.player;
 			this.switch("digitalworld");
 		}
 	}

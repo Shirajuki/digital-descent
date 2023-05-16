@@ -449,8 +449,6 @@ io.on("connection", (channel) => {
 	// Battle listeners
 	channel.on("battle-initialize", (data) => {
 		if (rooms[channel.roomId] && data) {
-			// TODO: fix battle initialization
-
 			// Initialize new battle if not found
 			const players = Object.values(rooms[channel.roomId].players).filter(
 				(p) => p.stats
@@ -612,6 +610,12 @@ io.on("connection", (channel) => {
 			);
 			if (++battle.ready !== players.length) return;
 
+			// Sync monster stats
+			io.to(channel.roomId).emit("battle", {
+				battle: rooms[channel.roomId].battle,
+				type: "battle-turn-finished",
+			});
+
 			// Check if all monsters are dead
 			if (battle.monsters.every((m) => m.battleStats.HP <= 0)) {
 				const players = Object.values(rooms[channel.roomId].players).filter(
@@ -635,6 +639,14 @@ io.on("connection", (channel) => {
 					};
 				});
 				battle.initializeQueue();
+
+				// Reset player HP and charge on win if dead
+				players.forEach((p) => {
+					if (p.battleStats.HP <= 0) {
+						p.battleStats.HP = p.stats.HP;
+						p.battleStats.CHARGE = 0;
+					}
+				});
 
 				console.log("BATTLE WIN");
 
@@ -661,6 +673,11 @@ io.on("connection", (channel) => {
 			}
 			// Check if all players are dead
 			if (players.every((p) => p.battleStats.HP <= 0)) {
+				// Reset player HP to be half and charge on lose
+				players.forEach((p) => {
+					p.battleStats.HP = Math.ceil(p.stats.HP / 2);
+					p.battleStats.CHARGE = 0;
+				});
 				io.to(channel.roomId).emit("battle", {
 					type: "battle-lose",
 				});
@@ -675,7 +692,6 @@ io.on("connection", (channel) => {
 				// Update effects
 				battle.updateEffects(monster);
 
-				// TODO: pick random player by weighting
 				const player = battle.pickPlayerByWeighting(players);
 
 				let extraInfo = "";
@@ -766,8 +782,8 @@ io.on("connection", (channel) => {
 	channel.on("quiz-initialize", () => {
 		if (rooms[channel.roomId]) {
 			const quiz = rooms[channel.roomId].quiz;
-
-			rooms[channel.roomId].currentQuiz = getRandomQuiz(quiz);
+			const randomQuiz = getRandomQuiz(quiz);
+			rooms[channel.roomId].currentQuiz = randomQuiz;
 
 			io.to(channel.roomId).emit("quiz", {
 				quiz: quiz[rooms[channel.roomId].currentQuiz].quiz,

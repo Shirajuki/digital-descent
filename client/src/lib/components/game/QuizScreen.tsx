@@ -41,6 +41,9 @@ const QuizScreen = () => {
 		engine?.game.scene.getScene(engine.game.currentScene) as OfficeScene
 	)?.player;
 
+	(window as any).pause = pause;
+	(window as any).setPause = setPause;
+
 	useEffect(() => {
 		const channel = socket;
 		if (!channel) return;
@@ -51,11 +54,10 @@ const QuizScreen = () => {
 				forceUpdate();
 			}
 		});
+
 		channel.on("quiz-correct", () => {
-			if (!pause) return;
 			console.log("correct!");
 			window.sfx.quizCorrect.play();
-			setPause(false);
 			toggleQuiz();
 			scene.game.data.money += scene?.quiz?.rewards;
 
@@ -68,10 +70,8 @@ const QuizScreen = () => {
 			});
 		});
 		channel.on("quiz-wrong", () => {
-			if (!pause) return;
 			console.log("wrong!");
 			window.sfx.quizWrong.play();
-			setPause(false);
 			if (scene?.quiz?.rewards) {
 				scene.quiz.rewards -= 10;
 			}
@@ -90,7 +90,7 @@ const QuizScreen = () => {
 			channel.off("quiz-correct");
 			channel.off("quiz-wrong");
 		};
-	}, [socket, setPause, pause, setSelects, forceUpdate, player]);
+	}, [socket, setPause, setSelects, forceUpdate, player, scene?.quiz?.display]);
 
 	useEffect(() => {
 		if (answer === null || !setPause || pause) return;
@@ -102,17 +102,18 @@ const QuizScreen = () => {
 		if (scene?.players.length === sel.length && selSet.size === 1) {
 			const [first] = selSet;
 			if (first === null) return;
+			if (!["0", "1", "2", "3"].includes(first as string)) return;
 			// Mannally reset selects after teleporting
+			console.log("SELECTED", first);
+			window.channel.emit("quiz-update", {
+				id: player.id,
+				answer: scene?.quiz?.answers[answer],
+			});
 			setTimeout(() => {
 				window.channel.emit("selects-reset", {
 					id: player.id,
 				});
 			}, 200);
-			setPause(true);
-			window.channel.emit("quiz-update", {
-				id: player.id,
-				answer: scene?.quiz?.answers[answer],
-			});
 			scene.observable.notify();
 		}
 	}, [answer, selects, pause, setPause]);
@@ -124,6 +125,7 @@ const QuizScreen = () => {
 			});
 
 			window.sfx.closePopup.play();
+			setPause(false);
 			scene.quiz.display = false;
 			scene.checkSteps();
 		}

@@ -157,7 +157,10 @@ const BattleHUD = () => {
 			</div>
 
 			{/* Limit counter for Special attack */}
-			<div className="absolute right-[17rem] bottom-6 flex gap-3 items-center justify-center [user-select:none]">
+			<div
+				className="absolute right-[17rem] bottom-6 flex gap-3 items-center justify-center [user-select:none]"
+				title={"Currently " + player.battleStats.CHARGE + " charge"}
+			>
 				<div className="flex items-center gap-2">
 					<p className="text-2xl">{player.battleStats.CHARGE}</p>
 					<span className="opacity-80">/</span>
@@ -242,10 +245,10 @@ const BattleHUD = () => {
 						}
 						`}
 						onClick={() => specialAttack()}
-						title={`${player?.skills?.special?.name} (${player?.skills?.special?.chargeCost} energy)`}
+						title={`${player?.skills?.special?.name} (${player?.skills?.special?.chargeCost} charge)`}
 					>
 						<img
-							className="-rotate-45 w-10/12"
+							className="-rotate-45 w-10/12 [user-select:none]"
 							src={`/${player?.skills?.special?.icon}`}
 							alt="special attack icon"
 						/>
@@ -272,10 +275,10 @@ const BattleHUD = () => {
 								: ""
 						}`}
 						onClick={() => chargeAttack()}
-						title={`${player?.skills?.charge?.name} (${player?.skills?.charge?.chargeCost} energy)`}
+						title={`${player?.skills?.charge?.name} (${player?.skills?.charge?.chargeCost} charge)`}
 					>
 						<img
-							className="-rotate-45 w-10/12"
+							className="-rotate-45 w-10/12 [user-select:none]"
 							src={`/${player?.skills?.charge?.icon}`}
 							alt="charge attack icon"
 						/>
@@ -302,10 +305,10 @@ const BattleHUD = () => {
 								: ""
 						}`}
 						onClick={() => normalAttack()}
-						title={`${player?.skills?.normal?.name} (${player?.skills?.normal?.chargeCost} energy)`}
+						title={`${player?.skills?.normal?.name} (${player?.skills?.normal?.chargeCost} charge)`}
 					>
 						<img
-							className="-rotate-45 w-10/12"
+							className="-rotate-45 w-10/12 [user-select:none]"
 							src={`/${player?.skills?.normal?.icon}`}
 							alt="normal attack icon"
 						/>

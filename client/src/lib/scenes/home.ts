@@ -68,6 +68,10 @@ export default class HomeScene extends Scene {
 	initialize(): void {
 		if (!this.preloaded) return;
 		super.initialize();
+
+		if (window.sfx.background.volume() === 0) {
+			window.sfx.background.fade(0, 0.1, 2000);
+		}
 	}
 
 	sync(data: any) {
