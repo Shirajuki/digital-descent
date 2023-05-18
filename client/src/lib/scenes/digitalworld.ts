@@ -144,8 +144,11 @@ export default class DigitalWorldScene extends Scene {
 			...this.players.filter((p) => p?.id !== oldPlayer?.id),
 			this.player,
 		];
-		// Reset HP
-		this.player.battleStats.HP = this.player.stats.HP;
+		// Reset HP to half if less
+		this.player.battleStats.HP = Math.max(
+			this.player.battleStats.HP,
+			this.player.stats.HP / 2
+		);
 		this.player.effects = [];
 
 		// Load bg

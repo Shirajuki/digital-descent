@@ -372,6 +372,7 @@ export default class BattleScene extends Scene {
 				finished: false,
 				initialPosition: this.battle.state.initialPosition,
 				attack: {
+					type: "normal",
 					effects: {},
 					damage: [{ damage: 0, elementEffectiveness: 1 }],
 				},
@@ -418,6 +419,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -432,6 +434,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -446,6 +449,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -463,6 +467,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -477,6 +482,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -491,6 +497,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -506,6 +513,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
@@ -527,6 +535,7 @@ export default class BattleScene extends Scene {
 					finished: false,
 					initialPosition: this.battle.state.initialPosition,
 					attack: {
+						type: "normal",
 						effects: {},
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},

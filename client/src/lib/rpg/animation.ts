@@ -93,10 +93,11 @@ export const animateSingleAttack = (scene: BattleScene) => {
 							);
 						}
 					}
-					attacker.battleStats.CHARGE = Math.min(
-						attacker.battleStats.CHARGE + 1,
-						attacker.battleStats.MAXCHARGE
-					);
+					if (attack.type === "normal")
+						attacker.battleStats.CHARGE = Math.min(
+							attacker.battleStats.CHARGE + 1,
+							attacker.battleStats.MAXCHARGE
+						);
 				}
 				// Update attack state to finished
 				scene.battle.state.finished = true;

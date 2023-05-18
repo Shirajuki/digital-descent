@@ -16,6 +16,7 @@ type StateType = {
 	finished: boolean;
 	initialPosition: { x: number; y: number };
 	attack: {
+		type: "normal" | "charge" | "special";
 		effects: {
 			attacker?: string[];
 			attackerAccuracy?: number;
@@ -41,6 +42,7 @@ export default class BattleSystem {
 		finished: false,
 		initialPosition: { x: 0, y: 0 },
 		attack: {
+			type: "normal",
 			effects: {},
 			damage: [{ damage: 0, elementEffectiveness: 1 }],
 		},

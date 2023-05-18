@@ -92,9 +92,18 @@ const QuizScreen = () => {
 		return () => {
 			channel.off("selects");
 			channel.off("quiz-correct");
-			// channel.off("quiz-wrong");
+			channel.off("quiz-wrong");
 		};
-	}, [socket, setPause, setSelects, forceUpdate, player, scene?.quiz?.display]);
+	}, [
+		socket,
+		setPause,
+		setSelects,
+		forceUpdate,
+		player,
+		answer,
+		selects,
+		scene?.quiz?.display,
+	]);
 
 	useEffect(() => {
 		if (answer === null || !setPause || pause) return;
