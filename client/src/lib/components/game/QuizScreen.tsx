@@ -68,7 +68,9 @@ const QuizScreen = () => {
 				});
 				return newSelects;
 			});
+			forceUpdate();
 		});
+
 		channel.on("quiz-wrong", () => {
 			console.log("wrong!");
 			window.sfx.quizWrong.play();
@@ -82,13 +84,15 @@ const QuizScreen = () => {
 				});
 				return newSelects;
 			});
+			forceUpdate();
 		});
+
 		forceUpdate();
 
 		return () => {
 			channel.off("selects");
 			channel.off("quiz-correct");
-			channel.off("quiz-wrong");
+			// channel.off("quiz-wrong");
 		};
 	}, [socket, setPause, setSelects, forceUpdate, player, scene?.quiz?.display]);
 
@@ -104,16 +108,16 @@ const QuizScreen = () => {
 			if (first === null) return;
 			if (!["0", "1", "2", "3"].includes(first as string)) return;
 			// Mannally reset selects after teleporting
-			console.log("SELECTED", first);
+			console.log("SELECTED", Number(first));
 			window.channel.emit("quiz-update", {
 				id: player.id,
-				answer: scene?.quiz?.answers[answer],
+				answer: scene?.quiz?.answers[Number(first)],
 			});
 			setTimeout(() => {
 				window.channel.emit("selects-reset", {
 					id: player.id,
 				});
-			}, 200);
+			}, 500);
 			scene.observable.notify();
 		}
 	}, [answer, selects, pause, setPause]);

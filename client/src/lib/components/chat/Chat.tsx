@@ -23,7 +23,9 @@ function Chat({
 				setChat((ochat) => [...ochat, data]);
 				setTimeout(() => {
 					chatRef?.current?.scrollTo({ top: 1000000000 });
-					wrapperRef?.current?.classList?.add("trigger-animation");
+					if (!data.sender.includes("[")) {
+						wrapperRef?.current?.classList?.add("trigger-animation");
+					}
 				}, 100);
 			});
 		}

@@ -141,12 +141,12 @@ export default class BattleSystem {
 				if (e.type === "burn") {
 					entity.battleStats.HP = Math.max(
 						entity.battleStats.HP - entity.stats.HP * 0.1,
-						0
+						1
 					);
 				} else if (e.type === "memoryLeak") {
 					entity.battleStats.HP = Math.max(
 						entity.battleStats.HP - entity.stats.HP * 0.1,
-						0
+						1
 					);
 				}
 				e.duration--;

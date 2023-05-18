@@ -79,7 +79,7 @@ export const debugging = () => {
 		},
 		power: 0,
 		effects: {
-			attacker: ["self-smallHeal"],
+			attacker: ["single-smallHeal"],
 		},
 	};
 };
@@ -119,7 +119,7 @@ export const codeReview = () => {
 		},
 		power: 1.5,
 		effects: {
-			attacker: ["all-defenceBoost", "self-mediumHeal"],
+			attacker: ["all-defenceBoost", "single-mediumHeal"],
 			target: ["all-lag"],
 		},
 	};
@@ -187,7 +187,7 @@ export const refactoring = () => {
 		},
 		power: 2.5,
 		effects: {
-			attacker: ["all-attackBoost", "self-mediumHeal"],
+			attacker: ["all-attackBoost", "single-mediumHeal"],
 			target: ["all-lag", "all-nervous"],
 		},
 	};

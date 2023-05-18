@@ -616,6 +616,10 @@ io.on("connection", (channel) => {
 				type: "battle-turn-finished",
 			});
 
+			console.log(
+				123,
+				battle.monsters.map((m) => m.battleStats.HP)
+			);
 			// Check if all monsters are dead
 			if (battle.monsters.every((m) => m.battleStats.HP <= 0)) {
 				const players = Object.values(rooms[channel.roomId].players).filter(
@@ -792,6 +796,7 @@ io.on("connection", (channel) => {
 		}
 	});
 	channel.on("quiz-update", (data) => {
+		console.log("QUIZ UPDATE", data);
 		if (rooms[channel.roomId] && data?.answer) {
 			const currentQuiz = rooms[channel.roomId]?.currentQuiz;
 			if (!currentQuiz) return;

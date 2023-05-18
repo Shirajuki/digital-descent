@@ -311,33 +311,44 @@ export default class BattleScene extends Scene {
 			const priorityTasks: string[] = [];
 			const currentTasks = this.game.data.currentTasks;
 			if (currentTasks) {
-				for (let i = currentTasks.length - 1; i >= 0; i--) {
+				for (let i = 0; i < currentTasks.length; i++) {
 					const task = currentTasks[i];
-					if (priorityTasks.includes(task.type)) continue;
+					if (priorityTasks.includes(task?.type)) continue;
 
 					if (task?.type === "BUGS") {
-						priorityTasks.push(task.type);
 						for (let j = 0; j < this.monsters.length; j++) {
 							const m = this.monsters[j];
+							if (m.monsterTasked) continue;
 							if (m.monsterType === "BUG") {
+								m.monsterTasked = true;
 								task.currentCount++;
 								task.progress = Math.ceil(
 									(100 / task.count) * task.currentCount
 								);
+								if (task.progress >= 100) break;
 							}
 						}
 						console.log(task);
 
 						if (task.progress >= 100) {
 							task.progress = 100;
-							currentTasks.splice(i, 1);
 							this.game.data.solvedTasks.push(task);
 
 							// Reward players
 							const rewards = task.rewards;
 							this.game.data.money += rewards.money;
 							this.player.stats.exp += rewards.exp;
+						} else {
+							priorityTasks.push(task.type);
 						}
+					}
+				}
+
+				// Clean up if progress is 100
+				for (let i = currentTasks.length - 1; i >= 0; i--) {
+					const task = currentTasks[i];
+					if (task?.progress >= 100) {
+						currentTasks.splice(i, 1);
 					}
 				}
 			}
@@ -381,6 +392,8 @@ export default class BattleScene extends Scene {
 					// If monster dead set to dead
 					if (monster.battleStats.HP <= 0) {
 						monster.battleStats.dead = true;
+					} else {
+						monster.battleStats.dead = false;
 					}
 				}
 			}
@@ -395,7 +408,7 @@ export default class BattleScene extends Scene {
 				this.players.find((p) => p.id === data.state.target) ||
 				this.monsters.find((m: any) => m.id === data.state.target);
 
-			if (attacker?.effects?.some((e: any) => e.type === "memoryleak")) {
+			if (attacker?.effects?.some((e: any) => e.type === "memoryLeak")) {
 				this.battle.addActionQueue({
 					type: "text-update",
 					attacker: null,
@@ -439,6 +452,7 @@ export default class BattleScene extends Scene {
 					timer: { current: 0, end: 50 },
 				});
 			}
+
 			if (attacker?.effects?.some((e: any) => e.type === "lag")) {
 				this.battle.addActionQueue({
 					type: "text-update",
