@@ -20,6 +20,15 @@ const io = new Server(server, {
 		origin: "*",
 	},
 });
+
+const shuffle = (a) => {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]];
+	}
+	return a;
+};
+
 io.on("connection", (channel) => {
 	console.log(`${channel.id} connected`);
 	io.emit(
@@ -786,16 +795,19 @@ io.on("connection", (channel) => {
 			const quiz = rooms[channel.roomId].quiz;
 			const randomQuiz = getRandomQuiz(quiz);
 			rooms[channel.roomId].currentQuiz = randomQuiz;
-
+			const shuffledQuiz = {
+				...quiz[rooms[channel.roomId].currentQuiz].quiz,
+				choices: shuffle(quiz[rooms[channel.roomId].currentQuiz].quiz.choices),
+			};
 			io.to(channel.roomId).emit("quiz", {
-				quiz: quiz[rooms[channel.roomId].currentQuiz].quiz,
+				quiz: shuffledQuiz,
 				type: "quiz-initialize",
 			});
 		}
 	});
-	channel.on("quiz-fix", (data) => {
-		if (rooms[channel.roomId] && data?.answer) {
-			io.to(channel.roomId).emit("quiz-fix", {
+	channel.on("quiz-fix", () => {
+		if (rooms[channel.roomId]) {
+			io.to(channel.roomId).emit("quiz", {
 				type: "quiz-fix",
 			});
 			rooms[channel.roomId].readyQuiz = {};

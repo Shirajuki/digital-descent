@@ -54,6 +54,7 @@ const QuizScreen = () => {
 		const force = (window as any).forceQuiz;
 		if (!force) {
 			(window as any).forceQuiz = true;
+			console.log("Update quiz listening on correct and wrong");
 			channel.on("quiz-correct", () => {
 				console.log("correct!");
 				window.sfx.quizCorrect.play();
