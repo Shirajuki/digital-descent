@@ -794,6 +794,14 @@ io.on("connection", (channel) => {
 		}
 	});
 	channel.on("quiz-update", (data) => {
+		if (rooms[channel.roomId] && data?.answer) {
+			io.to(channel.roomId).emit("quiz-fix", {
+				type: "quiz-fix",
+			});
+			rooms[channel.roomId].readyQuiz = {};
+		}
+	});
+	channel.on("quiz-update", (data) => {
 		console.log("QUIZ UPDATE", data);
 		if (rooms[channel.roomId] && data?.answer) {
 			const currentQuiz = rooms[channel.roomId]?.currentQuiz;

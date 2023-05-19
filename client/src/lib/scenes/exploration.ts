@@ -322,7 +322,10 @@ export default class ExplorationScene extends Scene {
 	}
 
 	sync(data: any) {
-		if (data.type === "quiz-initialize") {
+		if (data.type === "quiz-fix") {
+			this.quiz.display = false;
+			window.sfx.quizWrong.play();
+		} else if (data.type === "quiz-initialize") {
 			console.log(111, data);
 			const quiz = data.quiz;
 			console.log(quiz);
