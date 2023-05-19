@@ -41,9 +41,6 @@ const QuizScreen = () => {
 		engine?.game.scene.getScene(engine.game.currentScene) as OfficeScene
 	)?.player;
 
-	(window as any).pause = pause;
-	(window as any).setPause = setPause;
-
 	useEffect(() => {
 		const channel = socket;
 		if (!channel) return;
@@ -102,6 +99,7 @@ const QuizScreen = () => {
 		player,
 		answer,
 		selects,
+		scene,
 		scene?.quiz?.display,
 	]);
 
@@ -126,10 +124,12 @@ const QuizScreen = () => {
 				window.channel.emit("selects-reset", {
 					id: player.id,
 				});
+				setAnswer(null);
+				scene.observable.notify();
+				forceUpdate();
 			}, 500);
-			scene.observable.notify();
 		}
-	}, [answer, selects, pause, setPause]);
+	}, [answer, selects, pause, setPause, setAnswer]);
 
 	const toggleQuiz = () => {
 		if (scene?.quiz?.display) {
@@ -141,8 +141,50 @@ const QuizScreen = () => {
 			setPause(false);
 			scene.quiz.display = false;
 			scene.checkSteps();
+
+			// Check if any tasks are completed
+			const priorityTasks: string[] = [];
+			const currentTasks = scene.game.data.currentTasks;
+			if (currentTasks) {
+				for (let i = 0; i < currentTasks.length; i++) {
+					const task = currentTasks[i];
+					if (priorityTasks.includes(task?.type)) continue;
+
+					if (task?.type === "QUIZES") {
+						task.currentCount++;
+						task.progress = Math.ceil((100 / task.count) * task.currentCount);
+
+						console.log(task);
+
+						if (task.progress >= 100) {
+							task.progress = 100;
+							task.done = scene.game.data.days;
+							scene.game.data.solvedTasks.push(task);
+
+							// Reward players
+							const rewards = task.rewards;
+							scene.game.data.money += rewards.money;
+							scene.player.stats.exp += rewards.exp;
+						} else {
+							priorityTasks.push(task.type);
+						}
+					}
+				}
+
+				// Clean up if progress is 100
+				for (let i = currentTasks.length - 1; i >= 0; i--) {
+					const task = currentTasks[i];
+					if (task?.progress >= 100) {
+						window.sfx.taskSolved.play();
+						currentTasks.splice(i, 1);
+					}
+				}
+			}
 		}
-		forceUpdate();
+		setTimeout(() => {
+			scene?.observable.notify();
+			forceUpdate();
+		}, 500);
 	};
 
 	if (!player || !scene) return <></>;

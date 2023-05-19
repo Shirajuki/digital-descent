@@ -81,6 +81,30 @@ const bug = () => {
 	};
 };
 
+const virus = () => {
+	return {
+		name: "Virus",
+		type: "monster",
+		monsterType: "VIRUS",
+		sprite: "./spritesheet.png",
+		stats: {
+			HP: 20,
+			ATK: 30,
+			DEF: 10,
+			LUCK: 5,
+			SPEED: 5,
+			ELEMENT: ELEMENT.WATER,
+			LEVEL: 1,
+		},
+		battleStats: {
+			HP: 20,
+			dead: false,
+		},
+		effects: [],
+		itemDrop: [],
+	};
+};
+
 export const customer = () => {
 	return {
 		name: "Customer",
@@ -130,12 +154,12 @@ export const deliveryCustomer = () => {
 };
 
 export const EASY_MONSTERS = [
-	{ monster: bug, weight: 1 },
-	{ monster: bug, weight: 20 },
+	{ monster: bug, weight: 80 },
+	{ monster: virus, weight: 20 },
 ];
 export const MEDIUM_MONSTERS = [
-	{ monster: bug, weight: 1 },
 	{ monster: bug, weight: 20 },
+	{ monster: virus, weight: 80 },
 ];
 export const HARD_MONSTERS = [
 	{ monster: bug, weight: 1 },

@@ -42,6 +42,10 @@ window.sfx.closePopup = new Howl({
 	src: ["/sfx/popup-close.mp3"],
 	volume: 0.7,
 });
+window.sfx.taskSolved = new Howl({
+	src: ["/sfx/task-solved.mp3"],
+	volume: 0.2,
+});
 
 // Dialogue
 window.sfx.toggleDialogue = new Howl({

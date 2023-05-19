@@ -83,6 +83,10 @@ export default class BattleScene extends Scene {
 			frameWidth: 320,
 			frameHeight: 320,
 		});
+		this.load.spritesheet("monsterVirus", "sprites/virus.png", {
+			frameWidth: 320,
+			frameHeight: 320,
+		});
 	}
 	create() {
 		super.create();
@@ -109,6 +113,14 @@ export default class BattleScene extends Scene {
 		this.anims.create({
 			key: "monsterBugIdle",
 			frames: this.anims.generateFrameNumbers("monsterBug", {
+				frames: [0, 0, 1, 1],
+			}),
+			frameRate: 10,
+			repeat: -1,
+		});
+		this.anims.create({
+			key: "monsterVirusIdle",
+			frames: this.anims.generateFrameNumbers("monsterVirus", {
 				frames: [0, 0, 1, 1],
 			}),
 			frameRate: 10,
@@ -241,8 +253,9 @@ export default class BattleScene extends Scene {
 
 	getMonsterSprite(type: string) {
 		if (type === "BUG") return ["monsterBug", 0.3];
-		else if (type === "CUSTOMER") return ["monsterBug", 1];
-		else if (type === "CUSTOMER_DELIVERY") return ["monsterBug", 1.2];
+		else if (type === "VIRUS") return ["monsterVirus", 0.3];
+		else if (type === "CUSTOMER") return ["player", 1];
+		else if (type === "CUSTOMER_DELIVERY") return ["player", 1.2];
 		return ["player", 1];
 	}
 
@@ -332,6 +345,34 @@ export default class BattleScene extends Scene {
 
 						if (task.progress >= 100) {
 							task.progress = 100;
+							task.done = this.game.data.days;
+							this.game.data.solvedTasks.push(task);
+
+							// Reward players
+							const rewards = task.rewards;
+							this.game.data.money += rewards.money;
+							this.player.stats.exp += rewards.exp;
+						} else {
+							priorityTasks.push(task.type);
+						}
+					} else if (task?.type === "VIRUSES") {
+						for (let j = 0; j < this.monsters.length; j++) {
+							const m = this.monsters[j];
+							if (m.monsterTasked) continue;
+							if (m.monsterType === "VIRUS") {
+								m.monsterTasked = true;
+								task.currentCount++;
+								task.progress = Math.ceil(
+									(100 / task.count) * task.currentCount
+								);
+								if (task.progress >= 100) break;
+							}
+						}
+						console.log(task);
+
+						if (task.progress >= 100) {
+							task.progress = 100;
+							task.done = this.game.data.days;
 							this.game.data.solvedTasks.push(task);
 
 							// Reward players
@@ -348,6 +389,7 @@ export default class BattleScene extends Scene {
 				for (let i = currentTasks.length - 1; i >= 0; i--) {
 					const task = currentTasks[i];
 					if (task?.progress >= 100) {
+						window.sfx.taskSolved.play();
 						currentTasks.splice(i, 1);
 					}
 				}
@@ -424,21 +466,6 @@ export default class BattleScene extends Scene {
 						damage: [{ damage: 0, elementEffectiveness: 1 }],
 					},
 					timer: { current: 0, end: 100 },
-				});
-				this.battle.addActionQueue({
-					type: "skip",
-					attacker: null,
-					target: target,
-					text: "",
-					running: true,
-					finished: false,
-					initialPosition: this.battle.state.initialPosition,
-					attack: {
-						type: "normal",
-						effects: {},
-						damage: [{ damage: 0, elementEffectiveness: 1 }],
-					},
-					timer: { current: 0, end: 50 },
 				});
 				this.battle.addActionQueue({
 					type: "text-update",
@@ -570,7 +597,7 @@ export default class BattleScene extends Scene {
 					spriteType as string
 				) as any;
 
-				if (monster.monsterType === "BUG") {
+				if (monster.monsterType === "BUG" || monster.monsterType === "VIRUS") {
 					monsterSprite.play(spriteType + "Idle");
 				} else {
 					monsterSprite.play("idle");

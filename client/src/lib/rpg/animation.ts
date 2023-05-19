@@ -26,7 +26,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 	const attacker = scene.battle?.state?.attacker;
 	const target = scene.battle?.state?.target;
 	let [idle, jump] = ["idle", "jump"];
-	if (attacker?.monsterType === "BUG") {
+	if (attacker?.monsterType === "BUG" || attacker?.monsterType === "VIRUS") {
 		const texture = attacker.texture.key;
 		[idle, jump] = [texture + "Idle", texture + "Idle"];
 	}
@@ -258,7 +258,7 @@ export const animateStandingAttack = (scene: BattleScene) => {
 	const target = scene.battle?.state?.target;
 	const camera = scene.centerPoint;
 	let [idle, jump] = ["idle", "jump"];
-	if (attacker?.monsterType === "BUG") {
+	if (attacker?.monsterType === "BUG" || attacker?.monsterType === "VIRUS") {
 		const texture = attacker.texture.key;
 		[idle, jump] = [texture + "Idle", texture + "Idle"];
 	}

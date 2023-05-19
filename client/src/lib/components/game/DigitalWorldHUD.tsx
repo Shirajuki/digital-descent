@@ -74,7 +74,7 @@ const DigitalWorldHUD = () => {
 						</div>
 					))}
 					{engine?.game.data.solvedTasks.map((solvedTask: any, i: number) => {
-						if (!solvedTask.done < engine?.game.data.days)
+						if (solvedTask.done < engine?.game.data.days)
 							return <p key={`sstask-${i}`} className="hidden absolute"></p>;
 						return (
 							<div

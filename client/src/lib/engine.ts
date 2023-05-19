@@ -92,6 +92,7 @@ export default class PhaserEngine {
 					progress: 0,
 					energy: 0,
 					locked: true,
+					done: 0,
 				},
 				{
 					id: "1",
@@ -100,6 +101,7 @@ export default class PhaserEngine {
 					progress: 0,
 					energy: 0,
 					locked: true,
+					done: 0,
 				},
 				{
 					id: "2",
@@ -108,6 +110,7 @@ export default class PhaserEngine {
 					progress: 0,
 					energy: 0,
 					locked: true,
+					done: 0,
 				},
 			],
 			solvedTasks: [],
