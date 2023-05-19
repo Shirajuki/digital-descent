@@ -793,7 +793,7 @@ io.on("connection", (channel) => {
 			});
 		}
 	});
-	channel.on("quiz-update", (data) => {
+	channel.on("quiz-fix", (data) => {
 		if (rooms[channel.roomId] && data?.answer) {
 			io.to(channel.roomId).emit("quiz-fix", {
 				type: "quiz-fix",
