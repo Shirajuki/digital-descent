@@ -51,46 +51,43 @@ const QuizScreen = () => {
 				forceUpdate();
 			}
 		});
+		const force = (window as any).forceQuiz;
+		if (!force) {
+			(window as any).forceQuiz = true;
+			channel.on("quiz-correct", () => {
+				console.log("correct!");
+				window.sfx.quizCorrect.play();
+				toggleQuiz();
+				scene.game.data.money += scene?.quiz?.rewards;
 
-		channel.on("quiz-correct", () => {
-			console.log("correct!");
-			window.sfx.quizCorrect.play();
-			toggleQuiz();
-			scene.game.data.money += scene?.quiz?.rewards;
-
-			setSelects((oldSelects: any) => {
-				const newSelects = { ...oldSelects };
-				Object.keys(newSelects).forEach((key) => {
-					newSelects[key] = null;
+				setSelects((oldSelects: any) => {
+					const newSelects = { ...oldSelects };
+					Object.keys(newSelects).forEach((key) => {
+						newSelects[key] = null;
+					});
+					return newSelects;
 				});
-				return newSelects;
+				forceUpdate();
 			});
-			forceUpdate();
-		});
 
-		channel.on("quiz-wrong", () => {
-			console.log("wrong!");
-			window.sfx.quizWrong.play();
-			if (scene?.quiz?.rewards) {
-				scene.quiz.rewards -= 10;
-			}
-			setSelects((oldSelects: any) => {
-				const newSelects = { ...oldSelects };
-				Object.keys(newSelects).forEach((key) => {
-					newSelects[key] = null;
+			channel.on("quiz-wrong", () => {
+				console.log("wrong!");
+				window.sfx.quizWrong.play();
+				if (scene?.quiz?.rewards) {
+					scene.quiz.rewards -= 10;
+				}
+				setSelects((oldSelects: any) => {
+					const newSelects = { ...oldSelects };
+					Object.keys(newSelects).forEach((key) => {
+						newSelects[key] = null;
+					});
+					return newSelects;
 				});
-				return newSelects;
+				forceUpdate();
 			});
-			forceUpdate();
-		});
+		}
 
 		forceUpdate();
-
-		return () => {
-			channel.off("selects");
-			channel.off("quiz-correct");
-			channel.off("quiz-wrong");
-		};
 	}, [
 		socket,
 		setPause,

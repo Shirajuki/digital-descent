@@ -329,7 +329,7 @@ export default class ExplorationScene extends Scene {
 			this.quiz = {
 				display: true,
 				ready: false,
-				answers: shuffle(quiz.choices),
+				answers: quiz.choices,
 				question: quiz.question,
 				rewards: 100,
 			};
