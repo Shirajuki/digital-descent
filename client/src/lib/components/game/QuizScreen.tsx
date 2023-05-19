@@ -115,7 +115,11 @@ const QuizScreen = () => {
 			if (first === null) return;
 			if (!["0", "1", "2", "3"].includes(first as string)) return;
 			// Mannally reset selects after teleporting
-			console.log("SELECTED", Number(first));
+			console.log(
+				"SELECTED",
+				Number(first),
+				scene?.quiz?.answers[Number(first)]
+			);
 			window.channel.emit("quiz-update", {
 				id: player.id,
 				answer: scene?.quiz?.answers[Number(first)],
@@ -221,7 +225,7 @@ const QuizScreen = () => {
 											id: player.id,
 											select: "" + index,
 										});
-										setAnswer(0);
+										setAnswer(index);
 									}}
 									key={"quizanswer" + index}
 								>

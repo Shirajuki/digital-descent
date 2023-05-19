@@ -63,7 +63,7 @@ export const DIALOGUES = {
 			side: "left",
 		},
 		{
-			text: "Each task will have a defined time limit within an iteration. For this project, we've set the iteration time to 5 days..",
+			text: "Each task will have a defined time limit within an iteration. For this project, we've set the iteration time to 5 days.",
 			speaker: "Team lead",
 			side: "left",
 		},

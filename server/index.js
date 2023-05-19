@@ -818,16 +818,16 @@ io.on("connection", (channel) => {
 			// Reset ready quiz
 			rooms[channel.roomId].readyQuiz = {};
 			const checkQuiz = rooms[channel.roomId]?.quiz[currentQuiz];
-			const answer = checkQuiz.quiz.choices[parseInt(readies[0])];
-			if (answer === checkQuiz.quiz.answer) {
-				console.log("QUIZ CORRECT", answer, checkQuiz.quiz.answer);
+			// const answer = checkQuiz.quiz.choices[parseInt(readies[0])];
+			if (data.answer === checkQuiz.quiz.answer) {
+				console.log("QUIZ CORRECT", data.answer, checkQuiz.quiz.answer);
 				checkQuiz.weight = Math.max(1, checkQuiz.weight - 1);
 				io.to(channel.roomId).emit("quiz-correct", {
 					quiz: checkQuiz.quiz,
 					type: "quiz-correct",
 				});
 			} else {
-				console.log("QUIZ INCORRECT", answer, checkQuiz.quiz.answer);
+				console.log("QUIZ INCORRECT", data.answer, checkQuiz.quiz.answer);
 				io.to(channel.roomId).emit("quiz-wrong", {
 					quiz: checkQuiz.quiz,
 					type: "quiz-wrong",

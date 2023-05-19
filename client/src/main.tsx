@@ -60,11 +60,11 @@ window.sfx.nextDialogue = new Howl({
 // Quiz
 window.sfx.quizCorrect = new Howl({
 	src: ["/sfx/quiz-correct.mp3"],
-	volume: 0.8,
+	volume: 1,
 });
 window.sfx.quizWrong = new Howl({
 	src: ["/sfx/quiz-wrong.mp3"],
-	volume: 0.6,
+	volume: 1,
 });
 
 // Battle
