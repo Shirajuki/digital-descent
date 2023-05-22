@@ -35,7 +35,7 @@ export default class BattleSystem {
 			return ["Bug Bite", "Error", "Crash"][Math.floor(Math.random() * 3)];
 		}
 		if (monster.monsterType === "VIRUS") {
-			return ["Infect", "Spread"][Math.floor(Math.random() * 3)];
+			return ["Infect", "Spread"][Math.floor(Math.random() * 2)];
 		}
 		if (monster.monsterType.startsWith("CUSTOMER")) {
 			return ["Unclear Requirements", "Feature Request", "Dissatisfaction"][
