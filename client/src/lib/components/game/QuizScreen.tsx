@@ -6,6 +6,7 @@ import DigitalWorldScene from "../../scenes/digitalworld";
 import OfficeScene from "../../scenes/office";
 import { PLAYER_COLORS } from "../../constants";
 import ExplorationScene from "../../scenes/exploration";
+import { clearFocus } from "../../utils";
 
 function useAutoAnimate(options = {}) {
 	const [element, setElement] = React.useState<any>(null);
@@ -51,44 +52,50 @@ const QuizScreen = () => {
 				forceUpdate();
 			}
 		});
-		const force = (window as any).forceQuiz;
-		if (!force) {
-			(window as any).forceQuiz = true;
-			console.log("Update quiz listening on correct and wrong");
-			channel.on("quiz-correct", () => {
-				console.log("correct!");
-				window.sfx.quizCorrect.play();
-				toggleQuiz();
-				scene.game.data.money += scene?.quiz?.rewards;
 
-				setSelects((oldSelects: any) => {
-					const newSelects = { ...oldSelects };
-					Object.keys(newSelects).forEach((key) => {
-						newSelects[key] = null;
-					});
-					return newSelects;
-				});
-				forceUpdate();
-			});
+		console.log("Update quiz listening on correct and wrong");
+		(window as any).forceQuiz = true;
+		channel.on("quiz-correct", () => {
+			console.log("correct!");
+			window.sfx.quizCorrect.play();
+			toggleQuiz();
+			scene.game.data.money += scene?.quiz?.rewards;
 
-			channel.on("quiz-wrong", () => {
-				console.log("wrong!");
-				window.sfx.quizWrong.play();
-				if (scene?.quiz?.rewards) {
-					scene.quiz.rewards -= 10;
-				}
-				setSelects((oldSelects: any) => {
-					const newSelects = { ...oldSelects };
-					Object.keys(newSelects).forEach((key) => {
-						newSelects[key] = null;
-					});
-					return newSelects;
+			setSelects((oldSelects: any) => {
+				const newSelects = { ...oldSelects };
+				Object.keys(newSelects).forEach((key) => {
+					newSelects[key] = null;
 				});
-				forceUpdate();
+				return newSelects;
 			});
-		}
+			forceUpdate();
+		});
+
+		channel.on("quiz-wrong", () => {
+			console.log("wrong!");
+			window.sfx.quizWrong.play();
+			if (scene?.quiz?.rewards) {
+				scene.quiz.rewards -= 10;
+				if (scene.quiz.rewards < 10) scene.quiz.rewards = 10;
+			}
+			scene.quiz.wrongs.push(answer ?? -1);
+			console.log(scene.quiz.wrongs);
+			setSelects((oldSelects: any) => {
+				const newSelects = { ...oldSelects };
+				Object.keys(newSelects).forEach((key) => {
+					newSelects[key] = null;
+				});
+				return newSelects;
+			});
+			forceUpdate();
+		});
 
 		forceUpdate();
+		return () => {
+			channel.off("selects");
+			channel.off("quiz-correct");
+			channel.off("quiz-wrong");
+		};
 	}, [
 		socket,
 		setPause,
@@ -99,6 +106,7 @@ const QuizScreen = () => {
 		selects,
 		scene,
 		scene?.quiz?.display,
+		(window as any).forceQuiz,
 	]);
 
 	useEffect(() => {
@@ -216,7 +224,9 @@ const QuizScreen = () => {
 						<div className="flex flex-col gap-4">
 							{scene?.quiz?.answers?.map((answer: any, index: number) => (
 								<button
-									className="relative bg-gray-900 w-full text-center transition-all duration-500"
+									className={`relative bg-gray-900 w-full text-center transition-all duration-500 border-2 border-gray-700 ${
+										scene.quiz.wrongs.includes(index) ? "border-red-500" : ""
+									}`}
 									onClick={() => {
 										window.sfx.btnClick.play();
 										window.channel.emit("selects-update", {
@@ -224,6 +234,7 @@ const QuizScreen = () => {
 											select: "" + index,
 										});
 										setAnswer(index);
+										clearFocus();
 									}}
 									key={"quizanswer" + index}
 								>

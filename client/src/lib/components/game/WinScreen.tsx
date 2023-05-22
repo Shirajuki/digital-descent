@@ -48,10 +48,10 @@ const StatsComponent = ({ stats, newStats }: any) => {
 				DEF: {stats.DEF + newStats.DEF}{" "}
 				{newStats.DEF != 0 ? `(+${newStats.DEF})` : ""}
 			</p>
-			<p>
+			{/* <p>
 				LUCK: {stats.LUCK + newStats.LUCK}{" "}
 				{newStats.LUCK != 0 ? `(+${newStats.LUCK})` : ""}
-			</p>
+			</p> */}
 		</div>
 	);
 };
@@ -293,7 +293,7 @@ const WinScreen = () => {
 							>
 								Defence
 							</button>
-							<button
+							{/* <button
 								className={`bg-gray-900 rounded-sm p-2 w-32 text-center ${
 									levelSelect === "LUCK"
 										? "!bg-zinc-900 outline-offset-4 outline-1 outline"
@@ -305,20 +305,20 @@ const WinScreen = () => {
 								}}
 							>
 								Luck
-							</button>
+							</button> */}
 						</div>
 						<div className="flex gap-10 justify-center" ref={levelingInfo}>
 							<div className="w-28">
 								<p>HP: {player.stats.HP}</p>
 								<p>ATK: {player.stats.ATK}</p>
 								<p>DEF: {player.stats.DEF}</p>
-								<p>LUCK: {player.stats.LUCK}</p>
+								{/* <p>LUCK: {player.stats.LUCK}</p> */}
 							</div>
 							<div>
 								<p>→</p>
 								<p>→</p>
 								<p>→</p>
-								<p>→</p>
+								{/* <p>→</p> */}
 							</div>
 							{levelSelect !== "" ? (
 								<StatsComponent

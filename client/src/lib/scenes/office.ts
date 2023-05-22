@@ -233,22 +233,44 @@ export default class OfficeScene extends Scene {
 				if (this.game.data.days % 5 === 0)
 					this.game.data.displayDays = this.game.data.days;
 				this.game.data.days++;
-				this.switch("battle");
+				setTimeout(() => {
+					this.switch("battle");
+				}, 300);
 			} else if (action === "CUSTOMER_MEETING_WIN") {
 				this.switch("digitalworld");
+				// Generate new set of tasks
+				const tasks = generateTasks(20);
+				this.game.data.openTasks = tasks;
+				window?.channel?.emit("task-initialize", {
+					tasks: tasks,
+				});
 			} else if (action === "CUSTOMER_MEETING_LOSE") {
 				this.switch("digitalworld");
+				// Generate new set of tasks
+				const tasks = generateTasks(20);
+				this.game.data.openTasks = tasks;
+				window?.channel?.emit("task-initialize", {
+					tasks: tasks,
+				});
 			}
 		} else if (this.game.currentScene === "deliveryoffice") {
 			if (action === "INITIALIZE_PROJECT_DELIVERY_BATTLE") {
 				this.game.data.returnBackTo = "deliveryoffice";
 				this.game.data.battleType = "projectdelivery";
-				this.switch("battle");
+				setTimeout(() => {
+					this.switch("battle");
+				}, 300);
 			} else if (action === "PROJECT_DELIVERY_WIN") {
 				// Game over!
 				this.switch("partyoffice");
 			} else if (action === "PROJECT_DELIVERY_LOSE") {
 				this.switch("digitalworld");
+				// Generate new set of tasks
+				const tasks = generateTasks(20);
+				this.game.data.openTasks = tasks;
+				window?.channel?.emit("task-initialize", {
+					tasks: tasks,
+				});
 			}
 		}
 	}

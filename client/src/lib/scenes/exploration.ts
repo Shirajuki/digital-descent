@@ -37,6 +37,7 @@ export default class ExplorationScene extends Scene {
 		display: false,
 		ready: false,
 		answers: ["a", "b", "c", "d"],
+		wrongs: [-1],
 		question: "test",
 		rewards: 100,
 	};
@@ -336,6 +337,7 @@ export default class ExplorationScene extends Scene {
 				display: true,
 				ready: false,
 				answers: quiz.choices,
+				wrongs: [],
 				question: quiz.question,
 				rewards: 100,
 			};

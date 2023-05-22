@@ -14,6 +14,7 @@ import ExplorationHUD from "./ExplorationHUD";
 import DaysScreen from "./DaysScreen";
 import BattleHelpScreen from "./BattleHelpScreen";
 import QuizScreen from "./QuizScreen";
+import GameOverScreen from "./GameOverScreen";
 
 function HUD({ engine }: { engine: PhaserEngine | null }) {
 	const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -57,6 +58,7 @@ function HUD({ engine }: { engine: PhaserEngine | null }) {
 			{engine?.game.currentScene === "battle" ? <BattleHelpScreen /> : <></>}
 			<DialogueScreen />
 			<CursorScreen />
+			{engine?.game.currentScene === "partyoffice" ? <GameOverScreen /> : <></>}
 		</>
 	);
 }

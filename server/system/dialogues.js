@@ -119,7 +119,7 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "As you can notice, aach task is assigned an energy cost, representing the team's capacity to handle tasks concurrently. It's crucial to consider energy usage and strategically plan which tasks to prioritize.",
+			text: "As you can notice, each task is assigned an energy cost, representing the team's capacity to handle tasks concurrently. It's crucial to consider energy usage and strategically plan which tasks to prioritize.",
 			speaker: "Team lead",
 			image: "/sprites/dialogue/energyTaskBoard.png",
 			side: "right",
@@ -394,7 +394,12 @@ export const DIALOGUES = {
 			side: "right",
 		},
 		{
-			text: "Use the attack skills you have to defeat the enemies and complete your tasks.",
+			text: "In the upper right corner of your screen, you'll find your team's HP and status effects. The HP represents your team's health. The battle ends either when all monster's HP is depleted or when your team's HP is reaches zero.",
+			speaker: "Team lead",
+			side: "right",
+		},
+		{
+			text: "In the upper left corner of your screen, you'll find the attack turn indicator. It displays the order in which the team members will attack.",
 			speaker: "Team lead",
 			side: "right",
 		},
