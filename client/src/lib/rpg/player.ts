@@ -1,5 +1,6 @@
-import { ELEMENT, SCALE, SPEED } from "../constants";
+import { ELEMENT, NAMES, SCALE, SPEED } from "../constants";
 import { getSkills } from "./class";
+import { MONSTER_PRESET_BY_RISKLEVEL } from "./monster";
 
 export const initializePlayer = (
 	scene: any,
@@ -98,6 +99,11 @@ export const initializePlayer = (
 	if (oldPlayer) {
 		oldPlayer.destroy();
 		oldPlayer?.nameEntity?.destroy();
+	}
+
+	if (window.playerName) {
+		const v = NAMES.indexOf(window.playerName);
+		player.stats.SPEED = 20 - v;
 	}
 
 	player.getData = function () {
