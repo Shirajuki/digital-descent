@@ -21,6 +21,13 @@ export default class BattleSystem {
 	}
 
 	initializeQueue() {
+		// sort scene.players by alphabetical order on name
+		this.players.sort((a, b) => {
+			if (a?.name < b?.name) return -1;
+			if (a?.name > b?.name) return 1;
+			return 0;
+		});
+
 		const queue = [...this.players, ...this.monsters];
 		queue.sort((a, b) => b.stats.SPEED - a.stats.SPEED);
 		this.turnQueue = queue;
