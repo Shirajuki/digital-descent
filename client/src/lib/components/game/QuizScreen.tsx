@@ -52,50 +52,47 @@ const QuizScreen = () => {
 				forceUpdate();
 			}
 		});
+		const force = (window as any).forceQuiz;
+		if (!force) {
+			(window as any).forceQuiz = true;
+			console.log("Update quiz listening on correct and wrong");
+			channel.on("quiz-correct", () => {
+				console.log("correct!");
+				window.sfx.quizCorrect.play();
+				toggleQuiz();
+				scene.game.data.money += scene?.quiz?.rewards;
 
-		console.log("Update quiz listening on correct and wrong");
-		(window as any).forceQuiz = true;
-		channel.on("quiz-correct", () => {
-			console.log("correct!");
-			window.sfx.quizCorrect.play();
-			toggleQuiz();
-			scene.game.data.money += scene?.quiz?.rewards;
-
-			setSelects((oldSelects: any) => {
-				const newSelects = { ...oldSelects };
-				Object.keys(newSelects).forEach((key) => {
-					newSelects[key] = null;
+				setSelects((oldSelects: any) => {
+					const newSelects = { ...oldSelects };
+					Object.keys(newSelects).forEach((key) => {
+						newSelects[key] = null;
+					});
+					return newSelects;
 				});
-				return newSelects;
+				forceUpdate();
 			});
-			forceUpdate();
-		});
 
-		channel.on("quiz-wrong", () => {
-			console.log("wrong!");
-			window.sfx.quizWrong.play();
-			if (scene?.quiz?.rewards) {
-				scene.quiz.rewards -= 10;
-				if (scene.quiz.rewards < 10) scene.quiz.rewards = 10;
-			}
-			scene.quiz.wrongs.push(answer ?? -1);
-			console.log(scene.quiz.wrongs);
-			setSelects((oldSelects: any) => {
-				const newSelects = { ...oldSelects };
-				Object.keys(newSelects).forEach((key) => {
-					newSelects[key] = null;
+			channel.on("quiz-wrong", () => {
+				console.log("wrong!");
+				window.sfx.quizWrong.play();
+				if (scene?.quiz?.rewards) {
+					scene.quiz.rewards -= 10;
+					if (scene.quiz.rewards < 10) scene.quiz.rewards = 10;
+				}
+				scene.quiz.wrongs.push((window as any).quizAnswer || -1);
+				console.log(scene.quiz.wrongs);
+				setSelects((oldSelects: any) => {
+					const newSelects = { ...oldSelects };
+					Object.keys(newSelects).forEach((key) => {
+						newSelects[key] = null;
+					});
+					return newSelects;
 				});
-				return newSelects;
+				forceUpdate();
 			});
-			forceUpdate();
-		});
+		}
 
 		forceUpdate();
-		return () => {
-			channel.off("selects");
-			channel.off("quiz-correct");
-			channel.off("quiz-wrong");
-		};
 	}, [
 		socket,
 		setPause,
@@ -106,7 +103,6 @@ const QuizScreen = () => {
 		selects,
 		scene,
 		scene?.quiz?.display,
-		(window as any).forceQuiz,
 	]);
 
 	useEffect(() => {
@@ -234,6 +230,7 @@ const QuizScreen = () => {
 											select: "" + index,
 										});
 										setAnswer(index);
+										(window as any).quizAnswer = index;
 										clearFocus();
 									}}
 									key={"quizanswer" + index}
