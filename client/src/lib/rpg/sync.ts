@@ -68,7 +68,7 @@ export const addPlayers = (
 				player.setInteractive();
 				player.on("pointerup", () => {
 					if (!scene.battle.state.running && !player.battleStats.dead) {
-						scene.battle.state.target = scene.battle.players[i];
+						scene.battle.state.target = player;
 						scene.observable.notify();
 					}
 				});
