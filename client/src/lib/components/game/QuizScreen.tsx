@@ -79,7 +79,7 @@ const QuizScreen = () => {
 					scene.quiz.rewards -= 10;
 					if (scene.quiz.rewards < 10) scene.quiz.rewards = 10;
 				}
-				scene.quiz.wrongs.push((window as any).quizAnswer || -1);
+				scene.quiz.wrongs.push((window as any).quizAnswer ?? -1);
 				console.log(scene.quiz.wrongs);
 				setSelects((oldSelects: any) => {
 					const newSelects = { ...oldSelects };
