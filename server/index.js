@@ -472,7 +472,10 @@ io.on("connection", (channel) => {
 				rooms[channel.roomId].battle.players = players;
 				rooms[channel.roomId].battle.initializeQueue();
 			}
-			console.log(rooms[channel.roomId].players);
+			console.log(
+				"BATTLE INITIALIZE:",
+				rooms[channel.roomId].battle.players.map((p) => p.id)
+			);
 			io.to(channel.roomId).emit("battle", {
 				battle: rooms[channel.roomId].battle,
 				type: "battle-initialize",
@@ -497,9 +500,10 @@ io.on("connection", (channel) => {
 	channel.on("battle-turn", (data) => {
 		if (rooms[channel.roomId] && data) {
 			const battle = rooms[channel.roomId].battle;
+			console.log("BATTLE TURN:", channel.id, "START", battle.turnQueue[0].id);
 			// If not player's turn, then skip
 			if (battle.turnQueue[0].id !== channel.id) return;
-			console.log("BATTLE TURN:", channel.id, "START");
+			console.log("BATTLE TURN:", channel.id, "PLAYERS TURN");
 
 			// Get attack information
 			const attack = data.attack;
