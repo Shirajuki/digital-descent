@@ -499,6 +499,7 @@ io.on("connection", (channel) => {
 			const battle = rooms[channel.roomId].battle;
 			// If not player's turn, then skip
 			if (battle.turnQueue[0].id !== channel.id) return;
+			console.log("BATTLE TURN:", channel.id, "START");
 
 			// Get attack information
 			const attack = data.attack;
@@ -581,6 +582,7 @@ io.on("connection", (channel) => {
 					battle.applyEffects(monsters[i], buff[1]);
 				}
 			});
+			console.log("BATTLE TURN:", channel.id, "DONE");
 			// Emit updated state to all clients and update the turn queue
 			io.to(channel.roomId).emit("battle", {
 				players: rooms[channel.roomId].players,
