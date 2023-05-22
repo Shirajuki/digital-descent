@@ -710,6 +710,7 @@ io.on("connection", (channel) => {
 				battle.updateEffects(monster);
 
 				const player = battle.pickPlayerByWeighting();
+				console.log("MONSTER IS ATTACKING", player.id);
 
 				let extraInfo = "";
 				const damages = [];
@@ -719,7 +720,10 @@ io.on("connection", (channel) => {
 				}
 				for (let i = 0; i < battle.players.length; i++) {
 					let damage = { damage: 0, elementEffectiveness: 1 };
-					if (players[i].battleStats.HP > 0 && player.id === players[i].id) {
+					if (
+						players[i].battleStats.HP > 0 &&
+						player.id === battle.players[i].id
+					) {
 						damage = battle.calculateDamage(monster, player);
 					}
 					damages.push(damage);
