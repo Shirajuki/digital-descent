@@ -709,7 +709,7 @@ io.on("connection", (channel) => {
 				// Update effects
 				battle.updateEffects(monster);
 
-				const player = battle.pickPlayerByWeighting(players);
+				const player = battle.pickPlayerByWeighting();
 
 				let extraInfo = "";
 				const damages = [];
@@ -717,7 +717,7 @@ io.on("connection", (channel) => {
 				if (monster?.effects?.some((e) => e.type === "lag")) {
 					extraInfo = `${monster.name} is lagging, turn skipped`;
 				}
-				for (let i = 0; i < players.length; i++) {
+				for (let i = 0; i < battle.players.length; i++) {
 					let damage = { damage: 0, elementEffectiveness: 1 };
 					if (players[i].battleStats.HP > 0 && player.id === players[i].id) {
 						damage = battle.calculateDamage(monster, player);

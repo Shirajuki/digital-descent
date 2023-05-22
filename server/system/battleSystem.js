@@ -175,9 +175,9 @@ export default class BattleSystem {
 		}
 	}
 
-	pickPlayerByWeighting(players) {
+	pickPlayerByWeighting() {
 		// Calculate players weight
-		const playersWeight = players.map((p) => {
+		const playersWeight = this.players.map((p) => {
 			let weight = p.battleStats.HP;
 			if (p.effects.find((e) => e.type === "nervous")) weight *= 0.5;
 			if (p.effects.find((e) => e.type === "taunt")) weight += 400;
