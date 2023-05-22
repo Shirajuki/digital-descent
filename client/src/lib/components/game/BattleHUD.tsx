@@ -244,7 +244,10 @@ const BattleHUD = () => {
 								: ""
 						}
 						`}
-						onClick={() => specialAttack()}
+						onClick={() => {
+							if (battle.turnQueue[0]?.id !== player.id) return;
+							specialAttack();
+						}}
 						title={`${player?.skills?.special?.name} (${player?.skills?.special?.chargeCost} charge)`}
 					>
 						<img
@@ -274,7 +277,10 @@ const BattleHUD = () => {
 								? "opacity-50 cursor-not-allowed"
 								: ""
 						}`}
-						onClick={() => chargeAttack()}
+						onClick={() => {
+							if (battle.turnQueue[0]?.id !== player.id) return;
+							chargeAttack();
+						}}
 						title={`${player?.skills?.charge?.name} (${player?.skills?.charge?.chargeCost} charge)`}
 					>
 						<img
@@ -304,11 +310,14 @@ const BattleHUD = () => {
 								? "opacity-50 cursor-not-allowed"
 								: ""
 						}`}
-						onClick={() => normalAttack()}
+						onClick={() => {
+							if (battle.turnQueue[0]?.id !== player.id) return;
+							normalAttack();
+						}}
 						title={`${player?.skills?.normal?.name} (${player?.skills?.normal?.chargeCost} charge)`}
 					>
 						<img
-							className="-rotate-45 w-10/12 [user-select:none]"
+							className="-rotate-45 w-10/12 pointer-events-none [user-select:none]"
 							src={`/${player?.skills?.normal?.icon}`}
 							alt="normal attack icon"
 						/>
