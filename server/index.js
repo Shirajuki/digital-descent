@@ -526,6 +526,8 @@ io.on("connection", (channel) => {
 			const damages = [];
 			rooms[channel.roomId].battle.state = data.state;
 			const playerAttacker = battle.players.find((p) => p.id === channel.id);
+			// Update effects
+			battle.updateEffects(playerAttacker);
 
 			// Calculate player's damage on monsters
 			for (const monster of battle.monsters) {
@@ -713,7 +715,7 @@ io.on("connection", (channel) => {
 				// Update effects
 				battle.updateEffects(monster);
 
-				player = battle.pickPlayerByWeighting();
+				player = battle.pickPlayerByWeighting(players);
 				console.log("MONSTER IS ATTACKING", player.id);
 
 				let extraInfo = "";

@@ -17,7 +17,7 @@ const bug = () => {
 			LEVEL: 1,
 		},
 		battleStats: {
-			HP: 20,
+			HP: Math.ceil(20 + (((window as any).gameData?.days ?? 1) / 5) * 10),
 			dead: false,
 		},
 		effects: [],
@@ -32,7 +32,7 @@ const virus = () => {
 		monsterType: "VIRUS",
 		sprite: "./spritesheet.png",
 		stats: {
-			HP: Math.ceil(30 + (((window as any).gameData?.days ?? 1) / 5) * 12),
+			HP: Math.ceil(25 + (((window as any).gameData?.days ?? 1) / 5) * 12),
 			ATK: 30,
 			DEF: 12,
 			LUCK: 5,
@@ -41,7 +41,7 @@ const virus = () => {
 			LEVEL: 1,
 		},
 		battleStats: {
-			HP: 20,
+			HP: Math.ceil(25 + (((window as any).gameData?.days ?? 1) / 5) * 12),
 			dead: false,
 		},
 		effects: [],

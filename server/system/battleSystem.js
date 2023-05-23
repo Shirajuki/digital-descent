@@ -8,6 +8,20 @@ const ELEMENT_EFFECTIVENESS_TABLE = [
 export const randomInt = (min, max) => {
 	return Math.random() * (max - min) + min;
 };
+export const weightedRandom = (arr) => {
+	const cumulativeWeights = [];
+	for (let i = 0; i < arr.length; i += 1) {
+		cumulativeWeights.push(arr[i].weight + (cumulativeWeights[i - 1] || 0));
+	}
+	const randomNumber =
+		Math.random() * cumulativeWeights[cumulativeWeights.length - 1];
+	for (let i = 0; i < arr.length; i += 1) {
+		if (cumulativeWeights[i] >= randomNumber) {
+			return i;
+		}
+	}
+	return 0;
+};
 
 export default class BattleSystem {
 	constructor(players, monsters) {
@@ -199,19 +213,22 @@ export default class BattleSystem {
 		}
 	}
 
-	pickPlayerByWeighting() {
+	pickPlayerByWeighting(players) {
 		// Calculate players weight
-		const playersWeight = this.players.map((p) => {
-			let weight = p.battleStats.HP;
+		const playersWeight = players.map((p) => {
+			let weight = p.stats.HP - p.battleStats.HP;
 			if (p.effects.find((e) => e.type === "nervous")) weight *= 0.5;
 			if (p.effects.find((e) => e.type === "taunt")) weight += 400;
 			return { player: p, weight };
 		});
+		console.log(playersWeight);
+
 		// Pick player by highest weight
-		const player = playersWeight.reduce((prev, current) =>
-			prev.weight > current.weight ? prev : current
-		);
-		return player.player;
+		// const player = playersWeight.reduce((prev, current) =>
+		// 	prev.weight > current.weight ? prev : current
+		// );
+		const player = players[weightedRandom(playersWeight)];
+		return player;
 	}
 
 	updateTurn() {
