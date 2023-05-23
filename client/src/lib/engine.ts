@@ -124,6 +124,7 @@ export default class PhaserEngine {
 			returnBackTo: "digitalworld",
 			money: 0,
 		};
+		(window as any).gameData = this.game.data;
 	}
 
 	init() {

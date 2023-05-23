@@ -525,12 +525,14 @@ io.on("connection", (channel) => {
 			let extraInfo = "";
 			const damages = [];
 			rooms[channel.roomId].battle.state = data.state;
-			if (data.state.attacker?.effects?.some((e) => e.type === "lag")) {
-				extraInfo = `${data.state.attacker.name} is lagging, turn skipped`;
-			} else {
-				// Calculate player's damage on monsters
-				for (const monster of battle.monsters) {
-					let damage = { damage: 0, elementEffectiveness: 1 };
+			const playerAttacker = battle.players.find((p) => p.id === channel.id);
+
+			// Calculate player's damage on monsters
+			for (const monster of battle.monsters) {
+				let damage = { damage: 0, elementEffectiveness: 1 };
+				if (playerAttacker.effects?.some((e) => e.type === "lag")) {
+					extraInfo = `${data.state.attacker.name} is lagging, turn skipped`;
+				} else {
 					if (
 						attack.targets.type === "monster" &&
 						monster.id === data.state.target.id &&
@@ -553,12 +555,13 @@ io.on("connection", (channel) => {
 							attack
 						);
 					}
-					damages.push(damage);
-
-					monster.battleStats.HP -= damage.damage;
-					if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
 				}
+				damages.push(damage);
+
+				monster.battleStats.HP -= damage.damage;
+				if (monster.battleStats.HP <= 0) battle.queueRemove(monster);
 			}
+
 			// Apply effects to attacker
 			attackerEffects.forEach((effect) => {
 				const buff = effect.split("-");
@@ -702,6 +705,7 @@ io.on("connection", (channel) => {
 				return;
 			}
 
+			let player;
 			if (battle.turnQueue[0].type === "monster") {
 				// Calculate monsters's damage and emit updated state to all clients
 				const monster = battle.turnQueue[0];
@@ -709,7 +713,7 @@ io.on("connection", (channel) => {
 				// Update effects
 				battle.updateEffects(monster);
 
-				const player = battle.pickPlayerByWeighting();
+				player = battle.pickPlayerByWeighting();
 				console.log("MONSTER IS ATTACKING", player.id);
 
 				let extraInfo = "";
@@ -728,17 +732,67 @@ io.on("connection", (channel) => {
 					}
 					damages.push(damage);
 				}
+				const attackText = battle.getAttack(monster);
+				const attackEffect = {};
+				// Bug
+				if (attackText === "Crash") {
+					attackEffect.target = ["single-lag"];
+				} else if (attackText === "Error") {
+					attackEffect.target = ["single-memoryLeak"];
+				}
+				// Virus
+				else if (attackText === "Infect") {
+					attackEffect.target = ["single-memoryLeak"];
+				}
+				// Customer
+				else if (attackText === "Dissatisfaction") {
+					attackEffect.target = ["single-nervous"];
+				}
+				// Customer delivery
+				else if (attackText === "Dissatisfaction") {
+					attackEffect.target = ["single-nervous"];
+				} else if (attackText === "Unconvinced") {
+					attackEffect.attacker = ["single-defenceBoost"];
+				} else if (attackText === "Unhappy") {
+					attackEffect.target = ["all-nervous", "all-lag"];
+				}
 
+				// Apply effects to attacker
+				attackEffect?.attacker?.forEach((effect) => {
+					const buff = effect.split("-");
+					const monsters =
+						buff[0] === "single"
+							? battle.monsters.filter((p) => p.id === player.id)
+							: battle.monsters;
+
+					for (let i = 0; i < monsters.length; i++) {
+						battle.applyEffects(monsters[i], buff[1]);
+					}
+				});
+
+				// Apply effects to target
+				attackEffect?.target?.forEach((effect) => {
+					const buff = effect.split("-");
+					const players =
+						buff[0] === "single"
+							? battle.players.filter((p) => p.id === player.id)
+							: battle.players;
+
+					for (let i = 0; i < players.length; i++) {
+						battle.applyEffects(players[i], buff[1]);
+					}
+				});
+				console.log("Monster attack effects:", attackEffect);
 				io.to(channel.roomId).emit("battle", {
 					players: rooms[channel.roomId].players,
 					battle: rooms[channel.roomId].battle,
-					attack: { effects: {}, damage: damages },
+					attack: { effects: attackEffect, damage: damages },
 					state: {
 						type: "single-attack",
 						attacker: monster.id,
 						target: player.id,
 						running: true,
-						text: battle.getAttack(monster),
+						text: attackText,
 						finished: false,
 						initialPosition: { x: 0, y: 0 },
 					},

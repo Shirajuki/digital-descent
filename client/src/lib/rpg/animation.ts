@@ -28,7 +28,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 	let [idle, jump] = ["idle", "jump"];
 	if (attacker?.monsterType === "BUG" || attacker?.monsterType === "VIRUS") {
 		const texture = attacker.texture.key;
-		[idle, jump] = [texture + "Idle", texture + "Idle"];
+		[idle, jump] = [texture + "Idle", texture + "Jump"];
 	}
 
 	if (attacker && target) {
@@ -69,7 +69,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 						}
 					}
 					// Do damage to target
-					console.log(attack);
+					console.log(attack, scene.currentBuffDelay, idle, jump);
 					window.sfx.battleHit.play();
 					const targetEntities =
 						attacker.type === "monster" ? scene.players : scene.monsters;
@@ -184,6 +184,7 @@ export const animateSingleAttack = (scene: BattleScene) => {
 							}
 						}
 					}
+
 					if (attack.effects.target) {
 						if (attack.effects.target.length > 0)
 							window.sfx.battleEffect.play();

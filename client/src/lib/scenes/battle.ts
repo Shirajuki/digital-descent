@@ -119,7 +119,23 @@ export default class BattleScene extends Scene {
 			repeat: -1,
 		});
 		this.anims.create({
+			key: "monsterBugJump",
+			frames: this.anims.generateFrameNumbers("monsterBug", {
+				frames: [0, 0, 1, 1],
+			}),
+			frameRate: 10,
+			repeat: -1,
+		});
+		this.anims.create({
 			key: "monsterVirusIdle",
+			frames: this.anims.generateFrameNumbers("monsterVirus", {
+				frames: [0, 0, 1, 1],
+			}),
+			frameRate: 10,
+			repeat: -1,
+		});
+		this.anims.create({
+			key: "monsterVirusJump",
 			frames: this.anims.generateFrameNumbers("monsterVirus", {
 				frames: [0, 0, 1, 1],
 			}),
@@ -599,13 +615,14 @@ export default class BattleScene extends Scene {
 
 				if (monster.monsterType === "BUG" || monster.monsterType === "VIRUS") {
 					monsterSprite.play(spriteType + "Idle");
+					monsterSprite.animationState = spriteType + "Idle";
 				} else {
 					monsterSprite.play("idle");
+					monsterSprite.animationState = "idle";
 				}
 				monsterSprite.setDepth(monsterSprite.y);
 				monsterSprite.setScale(scaling);
 				monsterSprite.flipX = false;
-				monsterSprite.animationState = "idle";
 				monsterSprite.name = monster.name;
 				monsterSprite.stats = monster.stats;
 				monsterSprite.battleStats = monster.battleStats;

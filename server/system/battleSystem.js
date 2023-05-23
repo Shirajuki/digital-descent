@@ -39,15 +39,39 @@ export default class BattleSystem {
 
 	getAttack(monster) {
 		if (monster.monsterType === "BUG") {
-			return ["Bug Bite", "Error", "Crash"][Math.floor(Math.random() * 3)];
-		}
-		if (monster.monsterType === "VIRUS") {
-			return ["Infect", "Spread"][Math.floor(Math.random() * 2)];
-		}
-		if (monster.monsterType.startsWith("CUSTOMER")) {
-			return ["Unclear Requirements", "Feature Request", "Dissatisfaction"][
-				Math.floor(Math.random() * 3)
+			return [
+				"Bug Bite",
+				"Bug Bite",
+				"Bug Bite",
+				"Bug Bite",
+				"Error",
+				"Error",
+				"Crash",
+			][Math.floor(Math.random() * 7)];
+		} else if (monster.monsterType === "VIRUS") {
+			return ["Infest", "Infest", "Error", "Error", "Crash"][
+				Math.floor(Math.random() * 5)
 			];
+		} else if (monster.monsterType.startsWith("CUSTOMER")) {
+			return [
+				"Unclear Requirements",
+				"Unclear Requirements",
+				"Feature Request",
+				"Feature Request",
+				"Dissatisfaction",
+			][Math.floor(Math.random() * 5)];
+		} else if (monster.monsterType.startsWith("CUSTOMER_DELIVERY")) {
+			return [
+				"Security Concern",
+				"Security Concern",
+				"Unclear Requirements",
+				"Unclear Requirements",
+				"Feature Request",
+				"Feature Request",
+				"Unconvinced",
+				"Dissatisfaction",
+				"Unhappy",
+			][Math.floor(Math.random() * 9)];
 		}
 		return "Bash";
 	}
