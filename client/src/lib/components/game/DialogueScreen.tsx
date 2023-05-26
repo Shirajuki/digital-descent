@@ -103,7 +103,7 @@ const DialogueScreen = () => {
 											? "[transform:scale(-1,1)]"
 											: ""
 									}
-									src="/sprites/customerPortrait.png"
+									src="/digital-descent/sprites/customerPortrait.png"
 									alt="customer portrait"
 								/>
 							) : (
@@ -116,7 +116,7 @@ const DialogueScreen = () => {
 											? "[transform:scale(-1,1)]"
 											: ""
 									}
-									src="/sprites/teamleadPortrait.png"
+									src="/digital-descent/sprites/teamleadPortrait.png"
 									alt="customer portrait"
 								/>
 							) : (

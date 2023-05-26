@@ -140,7 +140,7 @@ const RoleScreen = () => {
 								</p>
 								<img
 									className="absolute top-1 right-1 w-6 h-6 cursor-help"
-									src={"/sprites/tankIcon.png"}
+									src={"/digital-descent/sprites/tankIcon.png"}
 									alt="tank icon"
 									title="Tank"
 								/>
@@ -180,7 +180,7 @@ const RoleScreen = () => {
 								</p>
 								<img
 									className="absolute top-1 right-1 w-6 h-6 cursor-help"
-									src={"/sprites/supportIcon.png"}
+									src={"/digital-descent/sprites/supportIcon.png"}
 									alt="support icon"
 									title="Support"
 								/>
@@ -220,7 +220,7 @@ const RoleScreen = () => {
 								</p>
 								<img
 									className="absolute top-1 right-1 w-6 h-6 cursor-help"
-									src={"/sprites/dpsIcon.png"}
+									src={"/digital-descent/sprites/dpsIcon.png"}
 									alt="dps icon"
 									title="DPS"
 								/>

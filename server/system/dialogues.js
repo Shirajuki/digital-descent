@@ -106,7 +106,7 @@ export const DIALOGUES = {
 		{
 			text: "In the upper left corner of your screen, you'll find your task list and a day counter, keeping you updated on your progress. You've got this!",
 			speaker: "Team lead",
-			image: "/sprites/dialogue/currentTaskList.png",
+			image: "/digital-descent/sprites/dialogue/currentTaskList.png",
 			side: "right",
 		},
 	],
@@ -121,7 +121,7 @@ export const DIALOGUES = {
 		{
 			text: "As you can notice, each task is assigned an energy cost, representing the team's capacity to handle tasks concurrently. It's crucial to consider energy usage and strategically plan which tasks to prioritize.",
 			speaker: "Team lead",
-			image: "/sprites/dialogue/energyTaskBoard.png",
+			image: "/digital-descent/sprites/dialogue/energyTaskBoard.png",
 			side: "right",
 		},
 		{
@@ -147,7 +147,7 @@ export const DIALOGUES = {
 		{
 			text: "Upon accessing the portal, you'll encounter two options: [work] and [delivery]. Typically, we select [work] to progress with the project. Each step within this option presents choices and challenges that we must navigate through together.",
 			speaker: "Team lead",
-			image: "/sprites/dialogue/portalScreen.png",
+			image: "/digital-descent/sprites/dialogue/portalScreen.png",
 			side: "right",
 		},
 		{
@@ -203,7 +203,7 @@ export const DIALOGUES = {
 		{
 			text: "Additionally, note the calendar in the upper left corner of your screen. It displays the remaining days until our meeting with the customer.",
 			speaker: "Team lead",
-			image: "/sprites/dialogue/calendar.png",
+			image: "/digital-descent/sprites/dialogue/calendar.png",
 			side: "right",
 		},
 		{
@@ -390,7 +390,7 @@ export const DIALOGUES = {
 		{
 			text: "Each of you have three different attack skills depending on your team role, some of which costs energy to use. Attacking normally recovers charge points.",
 			speaker: "Team lead",
-			image: "/sprites/dialogue/battle.png",
+			image: "/digital-descent/sprites/dialogue/battle.png",
 			side: "right",
 		},
 		{

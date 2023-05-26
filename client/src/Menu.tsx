@@ -21,7 +21,8 @@ function Menu() {
 	useEffect(() => {
 		if (!navigate || !setLobbyId || !setChannel || !setLobbyId) return;
 		if (window.channel) return;
-		const channel = io(`http://${window.location.hostname}:3000`);
+		// const channel = io(`http://${window.location.hostname}:3000`);
+		const channel = io("https://digital-descent.onrender.com");
 		window.channel = channel;
 		setChannel(channel);
 		channel.on("lobby-joined", (data: any) => {

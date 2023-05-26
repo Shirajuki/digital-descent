@@ -79,13 +79,13 @@ const DaysScreen = () => {
 									{scene.game.data.days === scene.game.data.displayDays + 1 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/currentDays.png"
+											src="/digital-descent/sprites/currentDays.png"
 											alt="days marker"
 										/>
 									) : scene.game.data.days > scene.game.data.displayDays + 1 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/finishedDays.png"
+											src="/digital-descent/sprites/finishedDays.png"
 											alt="days marker"
 										/>
 									) : (
@@ -100,13 +100,13 @@ const DaysScreen = () => {
 									{scene.game.data.days === scene.game.data.displayDays + 2 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/currentDays.png"
+											src="/digital-descent/sprites/currentDays.png"
 											alt="days marker"
 										/>
 									) : scene.game.data.days > scene.game.data.displayDays + 2 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/finishedDays.png"
+											src="/digital-descent/sprites/finishedDays.png"
 											alt="days marker"
 										/>
 									) : (
@@ -121,13 +121,13 @@ const DaysScreen = () => {
 									{scene.game.data.days === scene.game.data.displayDays + 3 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/currentDays.png"
+											src="/digital-descent/sprites/currentDays.png"
 											alt="days marker"
 										/>
 									) : scene.game.data.days > scene.game.data.displayDays + 3 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/finishedDays.png"
+											src="/digital-descent/sprites/finishedDays.png"
 											alt="days marker"
 										/>
 									) : (
@@ -142,13 +142,13 @@ const DaysScreen = () => {
 									{scene.game.data.days === scene.game.data.displayDays + 4 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/currentDays.png"
+											src="/digital-descent/sprites/currentDays.png"
 											alt="days marker"
 										/>
 									) : scene.game.data.days > scene.game.data.displayDays + 4 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/finishedDays.png"
+											src="/digital-descent/sprites/finishedDays.png"
 											alt="days marker"
 										/>
 									) : (
@@ -163,13 +163,13 @@ const DaysScreen = () => {
 									{scene.game.data.days === scene.game.data.displayDays + 5 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/currentDays.png"
+											src="/digital-descent/sprites/currentDays.png"
 											alt="days marker"
 										/>
 									) : scene.game.data.days > scene.game.data.displayDays + 5 ? (
 										<img
 											className="absolute scale-[1.3] opacity-90"
-											src="/sprites/finishedDays.png"
+											src="/digital-descent/sprites/finishedDays.png"
 											alt="days marker"
 										/>
 									) : (

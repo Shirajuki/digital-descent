@@ -36,7 +36,8 @@ function Game() {
 		} else {
 			// Initialize socket from scratch, for testing purposes
 			// TODO: at some point remove this when done with dev
-			channel = io(`http://${window.location.hostname}:3000`);
+			// channel = io(`http://${window.location.hostname}:3000`);
+			channel = io("https://digital-descent.onrender.com");
 			window.channel = channel;
 			channel.on("lobby-joined", (data: any) => {
 				setRoomId(data.roomId);

@@ -1,21 +1,21 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "DEV=1 nodemon .",
-    "start": "node ."
-  },
-  "type": "module",
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "socket.io": "^4.6.1"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.21"
-  }
+	"name": "server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "DEV=1 nodemon .",
+		"start": "node ."
+	},
+	"type": "module",
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.18.2",
+		"socket.io": "^4.6.1"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.21"
+	}
 }
