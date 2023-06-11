@@ -5,7 +5,7 @@ export const inspire = () => {
 		name: "Inspire",
 		description:
 			"An inspirational attack against a targeted enemy. This attack has also a chance to boost the teams's morale and attack, as well as recovering a part of their HP",
-		icon: "sprites/skills/inspire.png",
+		icon: "digital-descent/sprites/skills/inspire.png",
 		icons: ["dps", "support"],
 		type: "normal",
 		animationType: "single-attack",
@@ -26,7 +26,7 @@ export const delegate = () => {
 		name: "Delegate",
 		description:
 			"Delegate tasks to the team members, boosting their efficiency. This restores the team's HP and grants the whole team a temporary boost in attack and defense. Additionally, a damaging attack that hits all enemies are unleashed.",
-		icon: "sprites/skills/delegate.png",
+		icon: "digital-descent/sprites/skills/delegate.png",
 		icons: ["support", "disrupt"],
 		type: "charge",
 		animationType: "standing-attack",
@@ -46,7 +46,7 @@ export const systemRestore = () => {
 		name: "System Restore",
 		description:
 			"Initiate a restart and restore on a team member's system, fully recovering their health and removing any negative status effects. The jolt of energy from the restart also deals damage to all enemies making them leak memory.",
-		icon: "sprites/skills/systemRestore.png",
+		icon: "digital-descent/sprites/skills/systemRestore.png",
 		icons: ["support", "disrupt"],
 		type: "special",
 		animationType: "standing-attack",
@@ -68,7 +68,7 @@ export const debugging = () => {
 	return {
 		name: "Debugging",
 		description: "Launches a basic debugging attack against a targeted enemy.",
-		icon: "sprites/skills/debugging.png",
+		icon: "digital-descent/sprites/skills/debugging.png",
 		icons: ["dps"],
 		type: "normal",
 		animationType: "single-attack",
@@ -88,7 +88,7 @@ export const firewall = () => {
 		name: "Firewall",
 		description:
 			"Creates a protective firewall around the player. The firewall draws the attention of enemies and makes them more likely to target the player, as well as granting the player a temporary defence boost, allowing them to absorb more damage.",
-		icon: "sprites/skills/firewall.png",
+		icon: "digital-descent/sprites/skills/firewall.png",
 		icons: ["support"],
 		type: "charge",
 		animationType: "standing-attack",
@@ -108,7 +108,7 @@ export const codeReview = () => {
 		name: "Code Review",
 		description:
 			"Identify and eliminate bugs in the team's code, temporary boosting all team members' defense. In addition, the player deals moderate damage to all enemies.",
-		icon: "sprites/skills/codeReview.png",
+		icon: "digital-descent/sprites/skills/codeReview.png",
 		icons: ["support"],
 		type: "special",
 		animationType: "standing-attack",
@@ -131,7 +131,7 @@ export const patch = () => {
 		name: "Patch",
 		description:
 			"Releases a patch to fix bugs in the codebase, dealing moderate damage to a targeted enemy. Has a small chance to make the enemy nervous, becoming weaker to further attacks.",
-		icon: "sprites/skills/patch.png",
+		icon: "digital-descent/sprites/skills/patch.png",
 		icons: ["dps", "disrupt"],
 		type: "normal",
 		animationType: "single-attack",
@@ -155,7 +155,7 @@ export const testSuite = () => {
 		name: "Test Suite",
 		description:
 			"Runs a comprehensive test suite, analyzing every aspect of the targeted enemy dealing massive damage. A random debuff of either lag, nervous or memory-leak are also applied to the targeted enemy.",
-		icon: "sprites/skills/testSuite.png",
+		icon: "digital-descent/sprites/skills/testSuite.png",
 		icons: ["dps", "disrupt"],
 		type: "charge",
 		animationType: "single-attack",
@@ -176,7 +176,7 @@ export const refactoring = () => {
 		name: "Refactoring",
 		description:
 			"The player takes a moment to refactor and optimize the codebase, boosting their and the team members' attack power for a set number of turns. Additionally, the player deals massive damage and applies lag to all enemies.",
-		icon: "sprites/skills/refactoring.png",
+		icon: "digital-descent/sprites/skills/refactoring.png",
 		icons: ["dps", "disrupt"],
 		type: "charge",
 		animationType: "standing-attack",
